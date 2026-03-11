@@ -1376,23 +1376,26 @@ function DashboardSection() {
 
   const dashboardFeatures = [
     { title: 'Projects', desc: 'Displays all the projects you have created in FlutterFlow. Use the overflow menu to rename, duplicate, delete, leave the project, add tags, and open the project in a new browser tab.', note: 'When you duplicate a project containing the Firebase setup, you must delete the config files in your duplicated project and initiate a new Firebase setup for your project.', color: '#4361ee', spanClass: 'md:col-span-2' },
-    { title: 'Dark/Light mode', desc: 'Choose between a light and dark color scheme for the builder.', color: '#f59e0b', spanClass: 'md:col-span-1' },
-    { title: 'Search & Filter', desc: 'Search for projects or filter them based on their privacy settings (private, shared by you, shared with you).', color: '#00f5d4', spanClass: 'md:col-span-1' },
-    { title: 'Tag Project', desc: 'Create and add a tag to projects, providing a quick and organized way to classify and identify them based on characteristics, purpose, or status.', color: '#7b2ff7', spanClass: 'md:col-span-2' },
-    { title: 'Create New', desc: 'Use the + Create New button to start a completely new project from scratch or using templates.', color: '#ff2d55', spanClass: 'md:col-span-1' },
-    { title: 'Notifications Center', desc: 'Simplifies how you manage comments and invites across various projects. Centralizes all communications. Tap a comment to jump directly to the relevant section.', color: '#00e676', spanClass: 'md:col-span-2' },
-    { title: 'My Organization', desc: 'Share custom code, assets, design systems, and APIs between your team users and across multiple projects seamlessly.', color: '#f59e0b', spanClass: 'md:col-span-2' },
-    { title: 'Marketplace & Resources', desc: 'Access pre-built components and templates. Find valuable links and video tutorials that can help you build apps more efficiently.', color: '#4361ee', spanClass: 'md:col-span-1' },
-    { title: 'Community', desc: 'Redirects to the Community Forum to share amazing ideas, ask questions, and troubleshoot issues with other FlutterFlow builders.', color: '#ff2d55', spanClass: 'md:col-span-3' },
+    { title: 'Dark/Light mode', desc: 'Choose between a light and dark color scheme for the builder.', color: '#f59e0b', spanClass: 'md:col-span-1', image: '/dashboard/dark_light_mode.png' },
+    { title: 'Search & Filter', desc: 'Search for projects or filter them based on their privacy settings (private, shared by you, shared with you).', color: '#00f5d4', spanClass: 'md:col-span-1', image: '/dashboard/search_filter.png' },
+    { title: 'Tag Project', desc: 'Create and add a tag to projects, providing a quick and organized way to classify and identify them based on characteristics, purpose, or status.', color: '#7b2ff7', spanClass: 'md:col-span-2', image: '/dashboard/tag_project.png' },
+    { title: 'Create New', desc: 'Use the + Create New button to start a completely new project from scratch or using templates.', color: '#ff2d55', spanClass: 'md:col-span-1', image: '/dashboard/create_new.png' },
+    { title: 'Notifications Center', desc: 'Simplifies how you manage comments and invites across various projects. Centralizes all communications. Tap a comment to jump directly to the relevant section.', color: '#00e676', spanClass: 'md:col-span-2', image: '/dashboard/notifications.png' },
+    { title: 'My Organization', desc: 'Share custom code, assets, design systems, and APIs between your team users and across multiple projects seamlessly.', color: '#f59e0b', spanClass: 'md:col-span-2', image: '/dashboard/organization.png' },
+    { title: 'Marketplace & Resources', desc: 'Access pre-built components and templates. Find valuable links and video tutorials that can help you build apps more efficiently.', color: '#4361ee', spanClass: 'md:col-span-1', image: '/dashboard/marketplace.png' },
+    { title: 'Community', desc: 'Redirects to the Community Forum to share amazing ideas, ask questions, and troubleshoot issues with other FlutterFlow builders.', color: '#ff2d55', spanClass: 'md:col-span-3', image: '/dashboard/community.png' },
   ];
 
   const adminFeatures = [
-    { title: 'Account', desc: 'Look at your account information, upload a profile picture, reset your password, see your referrals, or delete account.' },
-    { title: 'Plan info', desc: 'See information about the current plan and eventually upgrade to access additional features.' },
-    { title: 'Logout', desc: 'Safely log out from your FlutterFlow account.' },
+    { id: 'forum', title: 'Community Forum', desc: 'The community forum requires an account, which we auto-create when you click on the "Community" tab. To add a password, go to forum settings and click \'Forget Password.\' Ensure that you have added a name to your FlutterFlow profile. The same name will be used for the community forum profile.', icon: '💬', color: '#7b2ff7' },
+    { id: 'url', title: 'URL Access (Enterprise Only)', desc: 'You can view and copy URLs that need to be whitelisted for FlutterFlow to function correctly in enterprise environments with restricted internet access.', icon: '🌐', color: '#ff2d55', image: 'https://login.skillizee.io/s/articles/69b10c7ceb63f46810cf7a99/images/image-20260311120237-2.png' },
+    { id: 'account', title: 'Account Settings', desc: 'Look at your account information, upload a profile picture, reset your password, see your referrals, or delete account.', icon: '👤', color: '#00f5d4' },
+    { id: 'plan', title: 'Plan info & Billing', desc: 'See information about the current plan and eventually upgrade to access additional features.', icon: '💳', color: '#f59e0b' },
+    { id: 'logout', title: 'Sign Out', desc: 'Safely log out from your FlutterFlow account.', icon: '🚪', color: '#4361ee' },
   ];
 
   const [activeFeat, setActiveFeat] = useState(0);
+  const [activeAdminTab, setActiveAdminTab] = useState(adminFeatures[0]);
   const feat = dashboardFeatures[activeFeat];
 
   return (
@@ -1565,11 +1568,17 @@ function DashboardSection() {
                       display: 'flex', flexDirection: 'column', height: '100%', position: 'relative', zIndex: 1 
                     }}
                   >
+                    {f.image && (
+                      <div style={{ marginBottom: '1.5rem', width: '100%', borderRadius: '16px', overflow: 'hidden', border: `1px solid ${f.color}40`, flexShrink: 0 }}>
+                        <img src={f.image} alt={f.title} style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'block' }} />
+                      </div>
+                    )}
+                    
                     <div style={{ 
                       display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
-                      width: '64px', height: '64px', borderRadius: '16px', 
+                      width: '48px', height: '48px', borderRadius: '12px', 
                       background: `${f.color}20`, border: `1px solid ${f.color}40`, 
-                      color: f.color, fontSize: '1.8rem', marginBottom: 'auto' 
+                      color: f.color, fontSize: '1.4rem', marginBottom: '1rem' 
                     }}>
                        ✦
                     </div>
@@ -1586,7 +1595,7 @@ function DashboardSection() {
                       <div style={{
                         background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)',
                         borderRadius: '16px', padding: '1.5rem', color: '#c8c8e0', fontSize: '1rem', lineHeight: 1.6,
-                        display: 'flex', gap: '1rem', maxWidth: '80%'
+                        display: 'flex', gap: '1rem', maxWidth: '80%', marginTop: 'auto'
                       }}>
                         <span style={{ fontSize: '1.2rem' }}>💡</span>
                         <div>
@@ -1602,65 +1611,105 @@ function DashboardSection() {
           })}
         </div>
 
-        {/* ── Forum & URL Access Section ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '4rem', alignItems: 'stretch' }}>
-          <MotionReveal>
-            <motion.div style={{
-              background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '20px', padding: '2.5rem', height: '100%', borderLeft: '3px solid #7b2ff7',
+        {/* ── Mac OS Command Center UI ── */}
+        <MotionReveal>
+          <div style={{
+            width: '100%', maxWidth: '1200px', margin: '0 auto 6rem',
+            background: 'rgba(15, 15, 25, 0.6)', backdropFilter: 'blur(20px)',
+            borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 40px 100px rgba(0,0,0,0.5)', overflow: 'hidden',
+            display: 'flex', flexDirection: 'column', height: '600px'
+          }}>
+            
+            {/* Native OS Title Bar */}
+            <div style={{
+              height: '48px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', padding: '0 20px', gap: '8px'
             }}>
-              <h3 style={{ fontSize: '1.6rem', color: '#fff', marginBottom: '1.5rem', fontWeight: 700 }}>Creating an account in Forum</h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  <motion.div whileHover={{ x: 4 }} style={{ display: 'flex', gap: '0.85rem', color: '#b0b0cc', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                    <span style={{ color: '#7b2ff7' }}>•</span> 
-                    The community forum requires an account, which we auto-create when you click on the "Community" tab. To add a password, go to forum settings and click 'Forget Password.'
-                  </motion.div>
-                  <motion.div whileHover={{ x: 4 }} style={{ display: 'flex', gap: '0.85rem', color: '#b0b0cc', fontSize: '0.9rem', lineHeight: 1.6 }}>
-                    <span style={{ color: '#7b2ff7' }}>•</span> 
-                    Ensure that you have added a name to your FlutterFlow profile. The same name will be used for the community forum profile.
-                  </motion.div>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
+              <div style={{ margin: '0 auto', color: '#6c6c8e', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '1px' }}>
+                System Administration
               </div>
-            </motion.div>
-          </MotionReveal>
+            </div>
 
-          <MotionReveal delay={0.1}>
-            <motion.div style={{
-              background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
-              borderRadius: '20px', padding: '2.5rem', height: '100%', borderLeft: '3px solid #ff2d55',
-            }}>
-              <h3 style={{ fontSize: '1.6rem', color: '#fff', marginBottom: '1.5rem', fontWeight: 700 }}>URL Access (Enterprise Only)</h3>
-              <p style={{ color: '#b0b0cc', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                You can view and copy URLs that need to be whitelisted for FlutterFlow to function correctly in enterprise environments with restricted internet access.
-              </p>
-              <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-                <img src="https://login.skillizee.io/s/articles/69b10c7ceb63f46810cf7a99/images/image-20260311120237-2.png" alt="URL whitelisting" style={{ width: '100%', display: 'block' }} />
+            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+              
+              {/* Sidebar Navigation */}
+              <div style={{
+                width: '320px', background: 'rgba(0,0,0,0.2)', borderRight: '1px solid rgba(255,255,255,0.06)',
+                padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto'
+              }}>
+                <div style={{ color: '#6c6c8e', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', paddingLeft: '1rem', letterSpacing: '1px' }}>
+                  Control Panel
+                </div>
+                {adminFeatures.map((feat) => {
+                  const isActive = activeAdminTab.id === feat.id;
+                  return (
+                    <motion.div
+                      key={feat.id}
+                      onClick={() => setActiveAdminTab(feat)}
+                      whileHover={{ x: 4, backgroundColor: isActive ? `${feat.color}20` : 'rgba(255,255,255,0.05)' }}
+                      style={{
+                        padding: '1rem 1.25rem', borderRadius: '12px', cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', gap: '1rem',
+                        background: isActive ? `${feat.color}15` : 'transparent',
+                        border: isActive ? `1px solid ${feat.color}40` : '1px solid transparent',
+                        transition: 'all 0.3s ease'
+                      }}
+                    >
+                      <span style={{ fontSize: '1.4rem' }}>{feat.icon}</span>
+                      <span style={{ color: isActive ? '#fff' : '#b0b0cc', fontWeight: isActive ? 600 : 500, fontSize: '1rem' }}>
+                        {feat.title}
+                      </span>
+                    </motion.div>
+                  )
+                })}
               </div>
-            </motion.div>
-          </MotionReveal>
-        </div>
 
-        {/* ── Admin Features Grid ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '4rem' }}>
-          {adminFeatures.map((feat, i) => (
-             <MotionReveal key={i} delay={i * 0.1}>
-               <motion.div
-                 whileHover={{ y: -6, backgroundColor: 'rgba(67, 97, 238, 0.08)', borderColor: 'rgba(67, 97, 238, 0.3)' }}
-                 style={{
-                   background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)',
-                   borderRadius: '16px', padding: '1.5rem', height: '100%',
-                   display: 'flex', flexDirection: 'column', gap: '1rem',
-                   transition: 'border-color 0.3s, background-color 0.3s'
-                 }}
-               >
-                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <span style={{ color: '#4361ee', fontSize: '1.2rem' }}>✦</span>
-                    <h4 style={{ color: '#fff', fontSize: '1.1rem', margin: 0, fontWeight: 600 }}>{feat.title}</h4>
-                 </div>
-                 <p style={{ color: '#b0b0cc', fontSize: '0.9rem', lineHeight: 1.6, margin: 0 }}>{feat.desc}</p>
-               </motion.div>
-             </MotionReveal>
-          ))}
-        </div>
+              {/* Main Content Area */}
+              <div style={{ flex: 1, padding: '4rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                <motion.div
+                  key={activeAdminTab.id}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+                >
+                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '16px', background: `${activeAdminTab.color}20`, color: activeAdminTab.color, fontSize: '2rem', marginBottom: '1.5rem', border: `1px solid ${activeAdminTab.color}40` }}>
+                    {activeAdminTab.icon}
+                  </div>
+                  <h2 style={{ fontSize: '2.5rem', color: '#fff', fontWeight: 800, marginBottom: '1.5rem' }}>
+                    {activeAdminTab.title}
+                  </h2>
+                  <p style={{ color: '#c8c8e0', fontSize: '1.2rem', lineHeight: 1.8, maxWidth: '800px', marginBottom: '2rem' }}>
+                    {activeAdminTab.desc}
+                  </p>
+                  
+                  {activeAdminTab.image && (
+                    <div style={{ marginTop: 'auto', borderRadius: '16px', overflow: 'hidden', border: `1px solid ${activeAdminTab.color}40`, boxShadow: `0 20px 40px ${activeAdminTab.color}20` }}>
+                      <img src={activeAdminTab.image} alt={activeAdminTab.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', display: 'block' }} />
+                    </div>
+                  )}
+
+                  <motion.button 
+                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                    style={{
+                      marginTop: activeAdminTab.image ? '1.5rem' : 'auto', alignSelf: 'flex-start',
+                      padding: '1rem 2rem', borderRadius: '12px', background: activeAdminTab.color, color: '#fff',
+                      fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', border: 'none',
+                      boxShadow: `0 10px 30px ${activeAdminTab.color}40`, display: 'inline-flex', alignItems: 'center', gap: '0.5rem'
+                    }}
+                  >
+                    Access {activeAdminTab.title} <span>→</span>
+                  </motion.button>
+                </motion.div>
+              </div>
+
+            </div>
+          </div>
+        </MotionReveal>
 
       </div>
     </section>
