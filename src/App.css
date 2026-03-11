@@ -1,0 +1,20 @@
+/* App.css — Component-specific overrides */
+
+.app-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Three.js canvas */
+.hero-canvas canvas {
+  pointer-events: none !important;
+}
+
+/* Bento card grid items need full height */
+.bento > div {
+  display: flex;
+}
+.bento > div > .bento-card {
+  flex: 1;
+}
