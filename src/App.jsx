@@ -2925,6 +2925,158 @@ function PageListProjects() {
         </div>
       </div>
 
+      {/* Live Application Showcases Section */}
+      <div style={{ marginTop: '4rem' }}>
+        <MotionReveal>
+          <h2 style={{
+            fontSize: 'clamp(1.6rem, 3vw, 2.2rem)', fontWeight: 700,
+            color: '#fff', marginBottom: '0.75rem'
+          }}>
+            Live Application Showcases
+          </h2>
+          <p style={{ color: '#b0b0cc', fontSize: '1rem', marginBottom: '1.8rem', maxWidth: '760px' }}>
+            Interact with live versions of built applications below or view their dedicated showcase pages.
+          </p>
+        </MotionReveal>
+
+        <div style={{ display: 'grid', gap: '2rem' }}>
+          {/* Showcase 1 */}
+          <MotionReveal delay={0.1}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Ornate Licorice App</h3>
+                <a href="https://main--ornate-licorice-ac07bd.netlify.app/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://main--ornate-licorice-ac07bd.netlify.app/" title="Ornate Licorice" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 2 */}
+          <MotionReveal delay={0.2}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Tangerine Genie App</h3>
+                <a href="https://tangerine-genie-772d57.netlify.app/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://tangerine-genie-772d57.netlify.app/" title="Tangerine Genie" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 3 */}
+          <MotionReveal delay={0.3}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Extrawest Portfolio Web App</h3>
+                <a href="https://extrawest-portfolio-web-app-h3r6ii.flutterflow.app/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://extrawest-portfolio-web-app-h3r6ii.flutterflow.app/" title="Extrawest Portfolio Web App" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+          
+          {/* Showcase 4 */}
+          <MotionReveal delay={0.4}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Otto App</h3>
+                <a href="https://ottoapp.net/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://ottoapp.net/" title="Otto App" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 5 */}
+          <MotionReveal delay={0.5}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Care Number App</h3>
+                <a href="http://carenumber.net/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="http://carenumber.net/" title="Care Number App" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 6 */}
+          <MotionReveal delay={0.6}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>The Limelight App</h3>
+                <a href="https://www.thelimelight.app/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://www.thelimelight.app/" title="The Limelight App" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 7 */}
+          <MotionReveal delay={0.7}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>LumoChat</h3>
+                <a href="https://lumochat.flutterflow.app/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open App <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://lumochat.flutterflow.app/" title="LumoChat" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 8 */}
+          <MotionReveal delay={0.8}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>FlutterFlow Showcase</h3>
+                <a href="https://www.flutterflow.io/showcase" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open Showcase <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://www.flutterflow.io/showcase" title="FlutterFlow Showcase" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Showcase 9 */}
+          <MotionReveal delay={0.9}>
+            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Community App Showcase</h3>
+                <a href="https://community.flutterflow.io/app-showcase" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
+                  Open Community <span>→</span>
+                </a>
+              </div>
+              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <iframe src="https://community.flutterflow.io/app-showcase" title="Community App Showcase" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
+              </div>
+            </div>
+          </MotionReveal>
+        </div>
+      </div>
+
       <div style={{ marginTop: '3.5rem' }}>
         <MotionReveal>
           <h2 style={{
