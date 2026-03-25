@@ -5,7 +5,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
 import './App.css'
-// Stitch import removed - using original themed components instead
+import CapstoneModule from './CapstoneModule'
 
 /* ─── Framer Motion Variants ─── */
 const fadeUp = {
@@ -1324,87 +1324,144 @@ function CanvasSection() {
   ]
 
   return (
-    <section className="sec" id="canvas" style={{ paddingTop: '0', paddingBottom: '40px', position: 'relative', overflow: 'hidden' }}>
-      <SectionHeroBackdrop height={420} opacity={0.62} />
-      <div className="wrap hero-grid" style={{ paddingTop: '120px', paddingBottom: '60px', position: 'relative', zIndex: 2 }}>
+    <section className="sec" id="canvas" style={{ padding: '80px 0', position: 'relative', overflow: 'hidden', background: 'rgba(3, 5, 12, 0.3)', backdropFilter: 'blur(8px)', borderTop: '2px solid rgba(0,255,136,0.2)', borderBottom: '2px solid rgba(0,255,136,0.2)' }}>
+      {/* Dynamic Grid Background specific to this section */}
+      <div style={{
+        position: 'absolute', inset: 0,
+        backgroundImage: 'linear-gradient(rgba(0,255,136,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,255,136,0.05) 1px, transparent 1px)',
+        backgroundSize: '40px 40px',
+        opacity: 0.5, pointerEvents: 'none', zIndex: 0
+      }} />
+      <div style={{
+        position: 'absolute', top: '20%', left: '50%', transform: 'translate(-50%, -50%)',
+        width: '800px', height: '800px', borderRadius: '50%',
+        background: 'radial-gradient(circle, rgba(0, 230, 118, 0.15) 0%, rgba(67, 97, 238, 0.1) 40%, transparent 70%)',
+        filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0
+      }} />
+
+      <div className="wrap" style={{ position: 'relative', zIndex: 2 }}>
         <MotionReveal>
-          <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-            <span className="chip" style={{ display: 'inline-flex', alignItems: 'center', marginBottom: '1.5rem', color: '#00e676', border: '1px solid rgba(0, 230, 118, 0.3)', background: 'rgba(0, 230, 118, 0.12)' }}>
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '6px' }}><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 3v18"/><path d="M3 8h18"/></svg> Module 2 — Chapter 4
-            </span>
-            <h1 style={{
-              fontSize: 'clamp(2.6rem, 5vw, 3.6rem)', fontWeight: 800,
-              lineHeight: 1.1, marginBottom: '1.5rem',
-              background: 'linear-gradient(135deg, #00e676, #4361ee, #00f5d4)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '4rem' }}>
+            <div style={{ 
+              display: 'inline-flex', alignItems: 'center', marginBottom: '1.5rem', 
+              padding: '0.6rem 1.2rem', borderRadius: '30px',
+              backgroundColor: 'rgba(0, 230, 118, 0.1)', border: '1px solid rgba(0, 230, 118, 0.4)',
+              color: '#00e676', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', fontSize: '0.85rem',
+              boxShadow: '0 0 20px rgba(0, 230, 118, 0.2)'
             }}>
-              Canvas
+              <span style={{ marginRight: '8px', display: 'flex' }}><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v18"/><path d="M4 12h16"/></svg></span>
+              Module 2 — Chapter 4
+            </div>
+            <h1 style={{
+              fontSize: 'clamp(3rem, 7vw, 5.5rem)', fontWeight: 900,
+              lineHeight: 1, marginBottom: '1.5rem', letterSpacing: '-0.03em',
+              background: 'linear-gradient(to right, #ffffff, #00e676, #00f5d4)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+              textShadow: '0 0 40px rgba(0, 230, 118, 0.3)'
+            }}>
+              THE CANVAS
             </h1>
-            <p style={{ fontSize: '1.1rem', color: '#c8c8e0', lineHeight: 1.8, maxWidth: '620px' }}>
-              The Canvas shows the screen of the device and lets you add widgets via drag-and-drop. You can select, move, and position widgets anywhere on the canvas.
+            <p style={{ fontSize: '1.25rem', color: '#a0aabf', lineHeight: 1.7, maxWidth: '700px', fontWeight: 300 }}>
+              The central hub where your app takes form. Drag, drop, adjust, and perfect your user interface with pixel-level precision.
             </p>
           </div>
         </MotionReveal>
 
         <MotionReveal>
           <div style={{
-            position: 'relative', width: '100%',
-            borderRadius: '20px', overflow: 'hidden',
-            border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
+            position: 'relative', width: '100%', marginBottom: '6rem',
+            borderRadius: '24px', overflow: 'hidden', padding: '1rem',
+            background: 'rgba(255,255,255,0.02)',
+            border: '1px solid rgba(255,255,255,0.05)',
+            boxShadow: '0 30px 80px rgba(0,0,0,0.6), inset 0 0 40px rgba(0, 230, 118, 0.05)',
+            transform: 'perspective(1200px) rotateX(2deg)',
+            transformOrigin: 'top center'
           }}>
-            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161546-9.png" alt="Canvas" style={{ width: '100%', display: 'block' }} />
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', paddingLeft: '8px' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }}/>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}/>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}/>
+            </div>
+            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161546-9.png" alt="Canvas overview" style={{ width: '100%', display: 'block', borderRadius: '12px' }} />
           </div>
         </MotionReveal>
-      </div>
 
-      <div className="wrap">
-        <MotionReveal>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '3rem' }}>
           <h2 style={{
-            fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 700,
-            textAlign: 'center', marginBottom: '1rem',
-            background: 'linear-gradient(135deg, #00e676, #4361ee)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
+            fontSize: '2rem', fontWeight: 300, letterSpacing: '6px',
+            textTransform: 'uppercase', color: '#fff', textAlign: 'center',
+            borderBottom: '1px solid rgba(0,255,136,0.3)', paddingBottom: '1rem'
           }}>
             Canvas Controls & Features
           </h2>
-          <p style={{ textAlign: 'center', color: '#b0b0cc', fontSize: '1.05rem', marginBottom: '2.5rem' }}>
-            Explore everything you can adjust and preview directly from the canvas.
-          </p>
-        </MotionReveal>
+        </div>
 
-        <div className="chapter-grid">
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', 
+          gap: '2rem',
+          alignItems: 'start'
+        }}>
           {canvasItems.map((item, i) => {
-            const hue = (i * 25 + 120) % 360
-            const accent = `hsl(${hue}, 70%, 55%)`
+            const isWide = item.layout === 'wide';
+            const gridColumn = isWide ? '1 / -1' : 'auto';
+            
             return (
-              <HoloCard
+              <motion.div
                 key={item.id}
-                className="gsap-child"
-                style={{ minHeight: '220px' }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: (i % 3) * 0.1 }}
+                whileHover={{ y: -8, scale: 1.02 }}
+                style={{ 
+                  gridColumn,
+                  background: 'linear-gradient(160deg, rgba(30,35,50,0.7) 0%, rgba(15,18,25,0.9) 100%)',
+                  borderRadius: '20px',
+                  padding: '2rem',
+                  border: '1px solid rgba(0, 230, 118, 0.15)',
+                  borderTop: '2px solid rgba(0, 230, 118, 0.4)',
+                  boxShadow: '0 15px 35px rgba(0,0,0,0.4)',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  display: 'flex', flexDirection: isWide ? (typeof window !== 'undefined' && window.innerWidth > 800 ? 'row' : 'column') : 'column',
+                  gap: '1.5rem',
+                  alignItems: isWide ? 'center' : 'flex-start'
+                }}
               >
-                <div style={{
-                  width: '44px', height: '44px', borderRadius: '50%',
-                  background: `hsla(${hue}, 70%, 55%, 0.12)`,
-                  border: `1.5px solid hsla(${hue}, 70%, 55%, 0.35)`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  color: accent, fontWeight: 800, marginBottom: '1rem', fontSize: '0.85rem',
-                  boxShadow: `0 0 20px hsla(${hue}, 70%, 55%, 0.15)`
-                }}>{item.short || i + 1}</div>
-                <h3 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '0.6rem' }}>{item.title}</h3>
-                <div style={{ color: '#c8c8e0', fontSize: '0.98rem', lineHeight: 1.7 }}>
-                  {item.desc}
+                <div style={{ position: 'absolute', top: 0, right: 0, width: '100px', height: '100px', background: 'radial-gradient(circle at top right, rgba(0, 230, 118, 0.2), transparent 70%)', pointerEvents: 'none' }} />
+                
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.2rem' }}>
+                    <div style={{
+                      padding: '0.4rem 0.8rem', borderRadius: '8px',
+                      background: 'rgba(0, 230, 118, 0.15)',
+                      color: '#00f5d4', fontWeight: 800, fontFamily: 'monospace', fontSize: '1.1rem',
+                      border: '1px solid rgba(0, 230, 118, 0.3)'
+                    }}>
+                      {item.short || String(i + 1).padStart(2, '0')}
+                    </div>
+                    <h3 style={{ color: '#fff', fontSize: '1.4rem', fontWeight: 600, margin: 0, letterSpacing: '0.5px' }}>{item.title}</h3>
+                  </div>
+                  <div className="canvas-item-desc" style={{ color: '#b8c2d4', fontSize: '1.05rem', lineHeight: 1.8, fontWeight: 400 }}>
+                    {item.desc}
+                  </div>
                 </div>
+
                 {item.image && (
                   <div style={{
-                    marginTop: '1rem', borderRadius: '14px', overflow: 'hidden',
-                    border: `1px solid ${accent}35`,
-                    boxShadow: `0 8px 24px ${accent}10`
+                    flex: isWide ? '0 0 45%' : '1 1 auto',
+                    width: isWide ? 'auto' : '100%',
+                    borderRadius: '16px', overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+                    position: 'relative'
                   }}>
-                    <img src={item.image} alt={item.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', display: 'block' }} />
+                    <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(110deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0) 60%)', pointerEvents: 'none' }} />
+                    <img src={item.image} alt={item.title} style={{ width: '100%', display: 'block', objectFit: 'cover' }} />
                   </div>
                 )}
-              </HoloCard>
+              </motion.div>
             )
           })}
         </div>
@@ -2416,6 +2473,21 @@ function Chapter5_2() {
   return (
     <>
       <Module5_2Section />
+      
+      <div style={{ padding: '6rem 2rem', textAlign: 'center', background: 'linear-gradient(to bottom, transparent, rgba(123, 47, 247, 0.1))', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+        <h2 style={{ fontSize: '3rem', color: '#fff', marginBottom: '1rem', fontWeight: 800 }}>Ready for the Final Challenge?</h2>
+        <p style={{ color: '#c8c8e0', fontSize: '1.2rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto 2.5rem auto' }}>
+          You've completed all the modules! It's time to test your FlutterFlow skills by spinning the wheel for your official Capstone Project.
+        </p>
+        <a href="/capstone" style={{
+          display: 'inline-block', padding: '1.2rem 3rem', fontSize: '1.3rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px',
+          borderRadius: '50px', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', color: '#fff', 
+          textDecoration: 'none', boxShadow: '0 15px 30px rgba(123, 47, 247, 0.3)', transition: 'all 0.3s ease'
+        }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
+          Start Capstone Project 🚀
+        </a>
+      </div>
+
       <FAQSection />
     </>
   )
@@ -3183,70 +3255,178 @@ function PageWhatIsProject() {
     },
   ]
 
+  // A Blueprint / IDE highly unique styling theme
   return (
-    <div style={{ paddingTop: '80px', paddingBottom: '40px' }}>
-      <MotionReveal>
-        <span className="chip" style={{ color: '#00f5d4' }}>Module 3 — Chapter 3.1 · Page 2</span>
-        <h1 className="sec-title">What is a Project?</h1>
-        <p className="sec-desc">
-          A Project in FlutterFlow represents a complete Flutter application. It contains all the generated code for a Flutter app. This means that you can export your code and your app will run as a normal Flutter app without requiring FlutterFlow.
-        </p>
-      </MotionReveal>
+    <div style={{
+      padding: '100px 40px',
+      margin: '40px 0',
+      backgroundColor: 'rgba(10, 13, 20, 0.3)',
+      backdropFilter: 'blur(8px)',
+      backgroundImage: 'linear-gradient(rgba(45, 100, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(45, 100, 255, 0.04) 1px, transparent 1px)',
+      backgroundSize: '30px 30px',
+      borderLeft: '4px solid #2d64ff',
+      borderRight: '1px solid rgba(45, 100, 255, 0.2)',
+      borderTop: '1px solid rgba(45, 100, 255, 0.2)',
+      borderBottom: '1px solid rgba(45, 100, 255, 0.2)',
+      borderRadius: '0 24px 24px 0',
+      position: 'relative',
+      fontFamily: 'monospace'
+    }}>
+      {/* Decorative Blueprint Corner Marks */}
+      <div style={{ position: 'absolute', top: 10, left: 10, width: 20, height: 20, borderTop: '2px solid #2d64ff', borderLeft: '2px solid #2d64ff' }}></div>
+      <div style={{ position: 'absolute', bottom: 10, right: 10, width: 20, height: 20, borderBottom: '2px solid #2d64ff', borderRight: '2px solid #2d64ff' }}></div>
 
       <MotionReveal>
-        <p style={{ color: '#c8c8e0', fontSize: '1.02rem', lineHeight: 1.8, maxWidth: '980px', marginBottom: '2rem' }}>
-          A FlutterFlow project includes all the files and packages generated by the <code>flutter create</code> command, along with additional packages specifically added to support common functionalities. These include:
-        </p>
-      </MotionReveal>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
+          <div style={{ flex: '1 1 500px' }}>
+            <div style={{ 
+              display: 'inline-block', padding: '4px 12px', background: 'rgba(45, 100, 255, 0.15)', 
+              color: '#4db8ff', fontSize: '0.9rem', marginBottom: '1.5rem', border: '1px solid rgba(45, 100, 255, 0.3)',
+              textTransform: 'uppercase', letterSpacing: '1px'
+            }}>
+              [ Module 3 — Chapter 3.1 · Page 2 ]
+            </div>
+            
+            <h1 style={{
+              fontSize: 'clamp(2.5rem, 5vw, 4rem)', fontWeight: 300,
+              color: '#ffffff', marginBottom: '1.5rem', letterSpacing: '-1px',
+              fontFamily: 'var(--font-heading)',
+              textShadow: '0 0 20px rgba(45, 100, 255, 0.4)'
+            }}>
+              <span style={{ color: '#2d64ff', fontWeight: 600 }}>&gt; </span>WHAT IS A PROJECT?
+            </h1>
+            
+            <p style={{
+              fontSize: '1.15rem', color: '#8e9cbd', lineHeight: 1.8, maxWidth: '800px',
+              fontFamily: 'var(--font-body)', fontWeight: 400
+            }}>
+              A Project in FlutterFlow represents a complete Flutter application. It contains all the generated code for a Flutter app. This means that you can export your code and your app will run as a normal Flutter app without requiring FlutterFlow.
+            </p>
+          </div>
 
-      <div className="h-scroll-rail" style={{ marginTop: '2rem' }}>
-        {packageSections.map((section, i) => (
-          <MotionReveal key={section.title} delay={i * 0.05}>
-            <NeonCard
-              className="gsap-child"
-              style={{
-                width: '340px',
-                scrollSnapAlign: 'start',
-              }}
-            >
-              <div style={{ display: 'grid', gap: '0.8rem' }}>
-                <h3 style={{ color: '#fff', fontSize: '1.15rem', marginBottom: '0.2rem', fontWeight: 700 }}>{section.title}</h3>
-                <ul style={{ listStyle: 'none', display: 'grid', gap: '0.6rem', padding: 0, margin: 0 }}>
-                  {section.items.map((item, idx) => (
-                    <li key={idx} style={{ color: '#c8c8e0', fontSize: '0.92rem', lineHeight: 1.6 }}>
-                      {item.label ? item.label : (
-                        <a href={item.href} className="text-link" target="_blank" rel="noopener noreferrer">{item.name}</a>
-                      )}
-                      <span style={{ color: '#a9a9c6' }}>: {item.desc}</span>
-                    </li>
-                  ))}
-                </ul>
-                {section.extra && (
-                  <div style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-                    {section.extra}
-                  </div>
-                )}
-              </div>
-            </NeonCard>
-          </MotionReveal>
-        ))}
-      </div>
-
-      <MotionReveal>
-        <div style={{ marginTop: '2.5rem' }}>
-          <CalloutCard tone="note" title="Included in Generated Code">
-            Any elements (e.g. pages, widgets), business logic, or packages that are added to the project will be included in the generated code.
-          </CalloutCard>
+          <div style={{
+            flex: '0 1 350px',
+            background: 'rgba(0,0,0,0.4)',
+            border: '1px solid rgba(45, 100, 255, 0.3)',
+            padding: '1.5rem',
+            borderRadius: '12px',
+            boxShadow: '0 15px 30px rgba(0,0,0,0.5)',
+            position: 'relative',
+            overflow: 'hidden'
+          }}>
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: 'linear-gradient(90deg, #2d64ff, #00f5d4)' }} />
+            <h3 style={{ color: '#00f5d4', marginBottom: '1rem', fontSize: '1.2rem', fontFamily: 'monospace' }}>// system_architecture.yaml</h3>
+            <p style={{ color: '#a0aabf', fontSize: '0.95rem', lineHeight: 1.6, fontFamily: 'monospace' }}>
+              A FlutterFlow project includes all the files and packages generated by the <code>flutter create</code> command, along with additional packages specifically added to support common functionalities.
+            </p>
+          </div>
         </div>
       </MotionReveal>
 
+      <div style={{ marginTop: '4rem' }}>
+        <MotionReveal>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
+            <div style={{ height: '1px', flex: 1, background: 'rgba(45, 100, 255, 0.3)' }} />
+            <h2 style={{ color: '#4db8ff', fontSize: '1.4rem', letterSpacing: '2px', textTransform: 'uppercase' }}>
+              Core Integrations Array
+            </h2>
+            <div style={{ height: '1px', flex: 1, background: 'rgba(45, 100, 255, 0.3)' }} />
+          </div>
+        </MotionReveal>
+
+        {/* Unique Nested Tree Layout for Packages */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2.5rem' }}>
+          {packageSections.map((section, i) => (
+            <motion.div
+              key={section.title}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-50px" }}
+              transition={{ duration: 0.5, delay: i * 0.1 }}
+              style={{
+                background: 'rgba(15, 20, 35, 0.6)',
+                borderLeft: '2px solid rgba(45, 100, 255, 0.5)',
+                padding: '1.5rem 1.5rem 1.5rem 2rem',
+                position: 'relative'
+              }}
+            >
+              <div style={{
+                position: 'absolute', top: '24px', left: '-6px', width: '10px', height: '10px',
+                borderRadius: '50%', background: '#2d64ff', boxShadow: '0 0 10px #2d64ff'
+              }} />
+              
+              <h3 style={{ color: '#ffffff', fontSize: '1.25rem', marginBottom: '1.2rem', fontFamily: 'monospace', textTransform: 'uppercase' }}>
+                <span style={{ color: '#4db8ff' }}>def</span> {section.title.replace(/\s+/g, '_')}():
+              </h3>
+              
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                {section.items.map((item, idx) => (
+                  <div key={idx} style={{ 
+                    position: 'relative', paddingLeft: '1.5rem', 
+                    borderLeft: '1px dashed rgba(255,255,255,0.15)'
+                  }}>
+                    <div style={{ position: 'absolute', top: '12px', left: 0, width: '1rem', height: '1px', borderTop: '1px dashed rgba(255,255,255,0.15)' }} />
+                    <div style={{ 
+                      background: 'rgba(0,0,0,0.5)', padding: '0.8rem 1rem', borderRadius: '6px',
+                      border: '1px solid rgba(255,255,255,0.05)'
+                    }}>
+                      <div style={{ marginBottom: '0.4rem', fontFamily: 'monospace' }}>
+                        {item.label ? (
+                          <span style={{ color: '#00f5d4' }}>{item.label}</span>
+                        ) : (
+                          <a href={item.href} style={{ color: '#00f5d4', textDecoration: 'none', fontWeight: 600 }} target="_blank" rel="noopener noreferrer">
+                            {item.name}
+                          </a>
+                        )}
+                      </div>
+                      <div style={{ color: '#8e9cbd', fontSize: '0.9rem', lineHeight: 1.5, fontFamily: 'var(--font-body)' }}>
+                        {item.desc}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {section.extra && (
+                <div style={{ 
+                  marginTop: '1.5rem', padding: '1rem', background: 'rgba(45, 100, 255, 0.1)', 
+                  border: '1px solid rgba(45, 100, 255, 0.2)', borderRadius: '6px', fontSize: '0.9rem'
+                }}>
+                  <span style={{ color: '#4db8ff', marginRight: '8px' }}>// RESOURCE:</span>
+                  {section.extra}
+                </div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
       <MotionReveal>
-        <div style={{ marginTop: '2.5rem' }}>
-          <h2 style={{ fontSize: '1.5rem', color: '#fff', marginBottom: '0.6rem' }}>Generated Code</h2>
-          <p style={{ color: '#b0b0cc', fontSize: '0.98rem', lineHeight: 1.7, maxWidth: '880px' }}>
-            FlutterFlow automatically generates a complete Flutter application for you. To dive deeper into the project structure of a Flutter app generated by FlutterFlow, explore the{' '}
-            <a href="https://docs.flutterflow.io/generated-code/project-structure" className="text-link" target="_blank" rel="noopener noreferrer">Directory Structure</a> guide.
-          </p>
+        <div style={{ 
+          marginTop: '4rem', display: 'flex', flexWrap: 'wrap', gap: '2rem',
+          background: 'linear-gradient(135deg, rgba(45, 100, 255, 0.1), rgba(0, 245, 212, 0.05))',
+          padding: '2rem', borderRadius: '16px', border: '1px solid rgba(45, 100, 255, 0.2)'
+        }}>
+          <div style={{ flex: '1 1 300px' }}>
+            <h2 style={{ fontSize: '1.4rem', color: '#fff', marginBottom: '0.8rem', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d64ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Included in Generated Code
+            </h2>
+            <p style={{ color: '#a0aabf', fontSize: '0.95rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+              Any elements (e.g. pages, widgets), business logic, or packages that are added to the project will be included in the generated code.
+            </p>
+          </div>
+          
+          <div style={{ flex: '1 1 300px' }}>
+            <h2 style={{ fontSize: '1.4rem', color: '#fff', marginBottom: '0.8rem', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00f5d4" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Generated Code Details
+            </h2>
+            <p style={{ color: '#a0aabf', fontSize: '0.95rem', lineHeight: 1.7, fontFamily: 'var(--font-body)' }}>
+              FlutterFlow automatically generates a complete Flutter application for you. To dive deeper into the project structure of a generated backend, explore the{' '}
+              <a href="https://docs.flutterflow.io/generated-code/project-structure" style={{ color: '#00f5d4', textDecoration: 'underline' }} target="_blank" rel="noopener noreferrer">Directory Structure</a> guide.
+            </p>
+          </div>
         </div>
       </MotionReveal>
     </div>
@@ -6392,8 +6572,43 @@ function Module5_1Section() {
           </div>
         </MotionReveal>
 
-        {/* Relevant Projects Table / Grid */}
+        {/* Play Store Steps - REDESIGNED */}
         <MotionReveal delay={0.1}>
+          <div className="chapter-stack" style={{ marginBottom: '5rem' }}>
+            {playStoreSteps.map((step, idx) => (
+              <TiltCard key={idx} accent="#00f5d4" className="chapter-card gsap-child" style={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem', margin: '0' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '2rem', alignItems: 'center' }}>
+                  <div>
+                    <h3 style={{ color: '#fff', fontSize: '1.8rem', marginBottom: '1rem', fontWeight: 800 }}>{step.title}</h3>
+                    <p style={{ color: '#c8c8e0', fontSize: '1.1rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>{step.content}</p>
+                    
+                    <h4 style={{ color: '#00f5d4', fontSize: '1rem', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Action Steps</h4>
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.8rem' }}>
+                      {step.steps.map((s, i) => (
+                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                          <span style={{ color: '#ff2d55', fontWeight: 800, fontSize: '0.9rem' }}>0{i + 1}</span>
+                          <span style={{ color: '#fff', fontSize: '0.95rem', lineHeight: 1.5 }}>{s}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
+                  {/* Visual Aid */}
+                  <div style={{ width: '400px', flexShrink: 0, borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', position: 'relative' }}>
+                    <img src={step.image} alt={step.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
+                    <a href={step.videoLink} target="_blank" rel="noopener noreferrer" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', padding: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#fff', textDecoration: 'none', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+                      <span style={{ color: '#ff2d55', fontSize: '1.2rem' }}>▶️</span>
+                      <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Watch: {step.videoDesc.split('-')[0].trim()}</span>
+                    </a>
+                  </div>
+                </div>
+              </TiltCard>
+            ))}
+          </div>
+        </MotionReveal>
+
+        {/* Relevant Projects Table / Grid */}
+        <MotionReveal delay={0.2}>
           <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 600 }}>Relevant Projects</h3>
           <p style={{ color: '#a9a9c6', marginBottom: '2rem' }}>These open-source GitHub repos serve as hands-on examples. Clone them for demos or Run and Test projects.</p>
           <div className="chapter-grid">
@@ -6622,6 +6837,7 @@ export default function App() {
         <Route path="/3-1" element={<Module3Section />} />
         <Route path="/3-2" element={<Module3_2Section />} />
         <Route path="/3-3" element={<Module3_3Section />} />
+        <Route path="/capstone" element={<CapstoneModule />} />
       </Routes>
 
     </div>
