@@ -1910,7 +1910,7 @@ function ResourceHierarchySection() {
             border: '1px solid rgba(255,255,255,0.08)',
             boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
           }}>
-            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161857-25.png" alt="Resource description tooltip" style={{ width: '100%', display: 'block' }} />
+            <img src="https://login.skillizee.io/s/articles/69c3aa46047a840d4b730433/images/image-20260325145940-3.png" alt="Resource description tooltip" style={{ width: '100%', display: 'block' }} />
           </div>
         </MotionReveal>
       </div>
@@ -1926,7 +1926,7 @@ function ResourceHierarchySection() {
             marginTop: '1rem', borderRadius: '16px', overflow: 'hidden',
             border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 15px 40px rgba(0,0,0,0.3)'
           }}>
-            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161857-23.png" alt="FlutterFlow app parts" style={{ width: '100%', display: 'block' }} />
+            <img src="https://login.skillizee.io/s/articles/69c3aa46047a840d4b730433/images/image-20260325145940-1.png" alt="FlutterFlow app parts" style={{ width: '100%', display: 'block' }} />
           </div>
         </MotionReveal>
 
@@ -1957,7 +1957,7 @@ function ResourceHierarchySection() {
             marginTop: '1rem', borderRadius: '16px', overflow: 'hidden',
             border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 15px 40px rgba(0,0,0,0.3)'
           }}>
-            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161857-24.png" alt="Flutter to FlutterFlow mapping" style={{ width: '100%', display: 'block' }} />
+            <img src="https://login.skillizee.io/s/articles/69c3aa46047a840d4b730433/images/image-20260325145940-2.png" alt="Flutter to FlutterFlow mapping" style={{ width: '100%', display: 'block' }} />
           </div>
         </MotionReveal>
 
@@ -2058,7 +2058,7 @@ class OrderInfo {
             marginTop: '1rem', borderRadius: '16px', overflow: 'hidden',
             border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 15px 40px rgba(0,0,0,0.3)'
           }}>
-            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161857-25.png" alt="Resource description tooltip" style={{ width: '100%', display: 'block' }} />
+            <img src="https://login.skillizee.io/s/articles/69c3aa46047a840d4b730433/images/image-20260325145940-3.png" alt="Resource description tooltip" style={{ width: '100%', display: 'block' }} />
           </div>
         </MotionReveal>
       </div>
