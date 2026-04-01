@@ -24,160 +24,73 @@ const chapterActivities = {}
 
 chapterActivities['1-1'] = {
   accent: '#00f5d4',
-  subtitle: 'Guide each step through the app-building pipeline in the correct order.',
+  subtitle: 'Build the MVP pipeline — but avoid the over-engineering traps!',
   activity: {
-    type: 'pipeline',
-    visualKind: 'pipeline',
-    title: 'App Building Pipeline',
-    instructions: 'Click the correct next step to advance the pipeline. If you pick the wrong step, the pipeline jams and you get a hint.',
-    success: 'You know the complete quick start workflow from cloning to running your first FlutterFlow app!',
-    stages: [
-      {
-        id: 'clone',
-        label: 'Clone or Create Project',
-        desc: 'Start by cloning the starter app or creating a new project in FlutterFlow.',
-        icon: '1',
-      },
-      {
-        id: 'buildui',
-        label: 'Build the UI',
-        desc: 'Drag widgets onto the canvas to create the user interface layout.',
-        icon: '2',
-      },
-      {
-        id: 'style',
-        label: 'Customize Style',
-        desc: 'Use the Properties Panel to adjust colors, fonts, sizes, and spacing.',
-        icon: '3',
-      },
-      {
-        id: 'state',
-        label: 'Manage State',
-        desc: 'Add state variables and actions so the app responds to user interactions.',
-        icon: '4',
-      },
-      {
-        id: 'run',
-        label: 'Run the App',
-        desc: 'Test your app using Test Mode or Run Mode to see it in action.',
-        icon: '5',
-      },
-    ],
+    type: 'pipeline_3d',
+    visualKind: 'build',
+    title: '3D Factory Floor',
+    instructions: 'Route the app conveyor belt by selecting only the essential MVP stations. Decoy stations will jam the factory!',
+    success: 'A perfect, lean MVP pipeline established!',
+    stations: [
+      { id: '1', label: 'Create Blank App', desc: 'Initialize the core project infrastructure.', decoy: false },
+      { id: '2', label: 'Build Core UI', desc: 'Assemble the minimum screens for the user flow.', decoy: false },
+      { id: 'd1', label: 'Microservice Architecture', desc: 'Create a highly scalable kubernetes cluster.', decoy: true, warning: 'Over-engineering! Keep it simple for an MVP.' },
+      { id: '3', label: 'Hook up Data', desc: 'Connect Firebase or basic Supabase tables.', decoy: false },
+      { id: 'd2', label: 'Custom Animation Engine', desc: 'Write a bespoke physics engine for transitions.', decoy: true, warning: 'Scope creep! Built-in animations are fine.' },
+      { id: '4', label: 'Test Locally', desc: 'Run on device to verify immediate logic.', decoy: false },
+      { id: '5', label: 'Deploy & Iterate', desc: 'Launch v1 and gather user feedback.', decoy: false },
+    ]
   },
 }
 
 chapterActivities['1-2'] = {
   accent: '#7b2ff7',
-  subtitle: 'Toggle layers on a real app screen to discover what belongs to UI, Logic, and Data.',
+  subtitle: 'Isolate the mobile phone layers in 3D to diagnose the architectural bugs.',
   activity: {
-    type: 'xray',
+    type: 'xray_3d',
     visualKind: 'xray',
-    title: 'Layer X-Ray Scanner',
-    instructions: 'Toggle each layer to see which parts of the app belong to it, then answer the questions to prove your understanding.',
-    success: 'You can look at any app screen and identify which elements belong to the UI, Logic, and Data layers!',
+    title: '3D Device Exploder',
+    instructions: 'Explode the device into its 3 UI, Logic, and Data layers. Then, assign the bug reports to the layer responsible for fixing them.',
+    success: 'You can instantly diagnose where a bug lives in a full-stack application!',
     layers: [
-      {
-        id: 'ui',
-        name: 'UI Layer',
-        color: '#ff2d55',
-        icon: 'UI',
-        highlights: [
-          { label: 'Product Image', x: 15, y: 8, w: 70, h: 32 },
-          { label: 'Product Title & Price', x: 10, y: 42, w: 80, h: 10 },
-          { label: 'Add to Cart Button', x: 20, y: 78, w: 60, h: 10 },
-          { label: 'Quantity +/- Buttons', x: 25, y: 58, w: 50, h: 12 },
-        ],
-        question: {
-          prompt: 'Which of these is NOT a UI Layer responsibility?',
-          options: ['Positioning the Add to Cart button', 'Setting font colors and sizes', 'Validating the quantity before checkout', 'Choosing layout direction (row vs column)'],
-          correct: 2,
-          explanation: 'Validation is business logic, not visual layout. The UI Layer handles appearance and arrangement.',
-        },
-      },
-      {
-        id: 'logic',
-        name: 'Logic Layer',
-        color: '#7b2ff7',
-        icon: 'FN',
-        highlights: [
-          { label: 'Quantity State Variable', x: 30, y: 55, w: 40, h: 8 },
-          { label: 'Increment / Decrement Actions', x: 15, y: 65, w: 70, h: 8 },
-          { label: 'Navigate to Cart Action', x: 20, y: 82, w: 60, h: 8 },
-        ],
-        question: {
-          prompt: 'When the user taps the + button, which layer handles incrementing the quantity?',
-          options: ['Logic Layer — it updates the state variable', 'UI Layer — the button changes its own label', 'Data Layer — the database stores the new count', 'None — FlutterFlow does it automatically'],
-          correct: 0,
-          explanation: 'The Logic Layer manages state variables and actions. The UI just reflects the updated value.',
-        },
-      },
-      {
-        id: 'data',
-        name: 'Data Layer',
-        color: '#f59e0b',
-        icon: 'DB',
-        highlights: [
-          { label: 'Product Data from Firestore', x: 10, y: 5, w: 80, h: 50 },
-          { label: 'Cart API / Database Write', x: 15, y: 78, w: 70, h: 14 },
-        ],
-        question: {
-          prompt: 'Where does the product name and price originally come from?',
-          options: ['Data Layer — fetched from Firestore or an API', 'UI Layer — typed directly into the text widget', 'Logic Layer — generated by a custom function', 'It is hardcoded and never changes'],
-          correct: 0,
-          explanation: 'Product data lives in the Data Layer (database/API). The UI displays it, and Logic decides when to fetch it.',
-        },
-      },
+      { id: 'ui', label: 'UI Layer', color: '#ff2d55', desc: 'Visuals, styling, static layout' },
+      { id: 'logic', label: 'Logic Layer', color: '#7b2ff7', desc: 'State, actions, API calls, routing' },
+      { id: 'data', label: 'Data Layer', color: '#f59e0b', desc: 'Database, storage, external API backend' }
     ],
+    bugs: [
+      { id: 'b1', prompt: 'The "Add to Cart" button is overlapping the product title on small screens.', answer: 'ui' },
+      { id: 'b2', prompt: 'Tapping "Checkout" does nothing when the cart is empty, but no error is shown.', answer: 'logic' },
+      { id: 'b3', prompt: 'New users are seeing products that were deleted from the catalog yesterday.', answer: 'data' },
+      { id: 'b4', prompt: 'The loading spinner spins forever after entering payment details.', answer: 'logic' },
+      { id: 'b5', prompt: 'The font size in the header is completely illegible on dark mode.', answer: 'ui' },
+    ]
   },
 }
 
 chapterActivities['1-3'] = {
   accent: '#ff9a5c',
-  subtitle: 'Trace the journey of a user action from the phone screen to the server and back.',
+  subtitle: 'Route the API request journey, but beware of dead-ends and dropped packets.',
   activity: {
-    type: 'journey',
+    type: 'journey_3d',
     visualKind: 'journey',
-    title: 'Request Journey Simulator',
-    instructions: 'For each scenario, click the steps in the correct order to complete the request-response journey. Get all steps right to see the flow animate!',
-    success: 'You understand how frontend and backend communicate through APIs for different user actions!',
+    title: '3D Request Journey',
+    instructions: 'Direct the energy packet from User to Server and back. Wrong turns result in dropped packets!',
+    success: 'You perfectly grasp the client-server request/response loop!',
     scenarios: [
       {
         id: 'login',
-        title: 'User Login',
-        icon: 'A',
-        steps: [
-          { id: 'tap', label: 'User taps "Login" button', side: 'frontend', order: 1 },
-          { id: 'send', label: 'Frontend sends credentials via API', side: 'api', order: 2 },
-          { id: 'validate', label: 'Backend validates username & password', side: 'backend', order: 3 },
-          { id: 'token', label: 'Backend sends auth token back', side: 'api', order: 4 },
-          { id: 'navigate', label: 'Frontend stores token & navigates to Home', side: 'frontend', order: 5 },
-        ],
-      },
-      {
-        id: 'products',
-        title: 'Load Products',
-        icon: 'B',
-        steps: [
-          { id: 'open', label: 'User opens the Products page', side: 'frontend', order: 1 },
-          { id: 'request', label: 'Frontend requests product list from API', side: 'api', order: 2 },
-          { id: 'query', label: 'Backend queries the database', side: 'backend', order: 3 },
-          { id: 'respond', label: 'Backend sends product data as JSON', side: 'api', order: 4 },
-          { id: 'render', label: 'Frontend renders product cards on screen', side: 'frontend', order: 5 },
-        ],
-      },
-      {
-        id: 'upload',
-        title: 'Upload Profile Photo',
-        icon: 'C',
-        steps: [
-          { id: 'pick', label: 'User picks a photo from their device', side: 'frontend', order: 1 },
-          { id: 'upload', label: 'Frontend uploads file to cloud storage', side: 'api', order: 2 },
-          { id: 'store', label: 'Backend saves the file and generates a URL', side: 'backend', order: 3 },
-          { id: 'return', label: 'Backend returns the image URL', side: 'api', order: 4 },
-          { id: 'display', label: 'Frontend updates the avatar with the new URL', side: 'frontend', order: 5 },
-        ],
-      },
-    ],
+        title: 'User Login Flow',
+        path: [
+          { id: 'tap', label: 'Frontend: Taps "Login"', decoy: false },
+          { id: 'd1', label: 'Backend: Immediately redirect', decoy: true, warning: 'The frontend has not sent credentials yet!' },
+          { id: 'send', label: 'Frontend: Sends Auth API Post', decoy: false },
+          { id: 'validate', label: 'Backend: Validates Database', decoy: false },
+          { id: 'd2', label: 'Frontend: Generates Auth Token', decoy: true, warning: 'The frontend cannot securely generate auth tokens!' },
+          { id: 'token', label: 'Backend: Returns JWT Token', decoy: false },
+          { id: 'store', label: 'Frontend: Stores Token & Navigates', decoy: false }
+        ]
+      }
+    ]
   },
 }
 
@@ -1849,479 +1762,255 @@ function WheelActivity({ activity, accent }) {
 }
 
 /* ═══════ PIPELINE ACTIVITY (Chapter 1-1) ═══════ */
-function PipelineActivity({ activity, accent }) {
-  const [completed, setCompleted] = useState([])
-  const [jammed, setJammed] = useState(null)
-  const [showSuccess, setShowSuccess] = useState(false)
+function PipelineActivity3D({ activity, accent }) {
+  const [stepIndex, setStepIndex] = useState(0)
+  const [errorId, setErrorId] = useState(null)
 
-  const currentStep = completed.length
-  const allDone = completed.length === activity.stages.length
+  const correctStations = activity.stations.filter(s => !s.decoy)
+  const isDone = stepIndex === correctStations.length
 
-  const handleStageClick = (index) => {
-    if (allDone) return
-    if (index === currentStep) {
-      const next = [...completed, activity.stages[index].id]
-      setCompleted(next)
-      setJammed(null)
-      if (next.length === activity.stages.length) {
-        setShowSuccess(true)
-      }
+  const handleStationClick = (station) => {
+    if (isDone) return
+    const expected = correctStations[stepIndex]
+    
+    if (station.id === expected.id) {
+      setStepIndex(prev => prev + 1)
     } else {
-      setJammed(index)
-      setTimeout(() => setJammed(null), 1500)
+      setErrorId(station.id)
+      setTimeout(() => setErrorId(null), 800)
     }
   }
 
-  const reset = () => {
-    setCompleted([])
-    setJammed(null)
-    setShowSuccess(false)
+  // Pre-calculate positions
+  const getPos = (index, type) => {
+    const isDecoy = type === 'decoy'
+    const x = isDecoy ? (index % 2 === 0 ? -1.5 : 1.5) : (index - 2) * 1.5
+    const z = isDecoy ? 1.5 : 0
+    return [x, 0, z]
   }
-
-  const shuffled = useState(() => {
-    const indices = activity.stages.map((_, i) => i)
-    for (let i = indices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1))
-      const temp = indices[i]
-      indices[i] = indices[j]
-      indices[j] = temp
-    }
-    return indices
-  })[0]
 
   return (
-    <div>
-      {/* Pipeline visualization */}
-      <div style={{
-        marginBottom: '1.5rem', padding: '1.5rem', borderRadius: '20px',
-        background: 'rgba(255,255,255,0.03)', border: `1px solid ${hexToRgba(accent, 0.18)}`,
-      }}>
-        <div style={{
-          color: accent, fontSize: '0.74rem', letterSpacing: '0.16em',
-          textTransform: 'uppercase', fontWeight: 800, marginBottom: '1rem',
-        }}>
-          Pipeline Progress
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', flexWrap: 'wrap' }}>
-          {activity.stages.map((stage, i) => {
-            const isDone = completed.includes(stage.id)
-            const isCurrent = i === currentStep && !allDone
-            return (
-              <div key={stage.id} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                <div style={{
-                  width: '52px', height: '52px', borderRadius: '50%',
-                  display: 'grid', placeItems: 'center',
-                  background: isDone
-                    ? `linear-gradient(135deg, ${accent}, ${hexToRgba(accent, 0.6)})`
-                    : isCurrent
-                      ? hexToRgba(accent, 0.15)
-                      : 'rgba(255,255,255,0.04)',
-                  border: `2px solid ${isDone ? accent : isCurrent ? hexToRgba(accent, 0.5) : 'rgba(255,255,255,0.1)'}`,
-                  color: isDone ? '#041019' : isCurrent ? accent : '#6f7890',
-                  fontWeight: 800, fontSize: '1.2rem',
-                  transition: 'all 0.4s ease',
-                  boxShadow: isDone ? `0 4px 20px ${hexToRgba(accent, 0.3)}` : 'none',
-                }}>
-                  {isDone ? '✓' : stage.icon}
-                </div>
-                {i < activity.stages.length - 1 && (
-                  <div style={{
-                    width: '28px', height: '3px',
-                    background: isDone
-                      ? `linear-gradient(90deg, ${accent}, ${hexToRgba(accent, 0.4)})`
-                      : 'rgba(255,255,255,0.08)',
-                    borderRadius: '2px',
-                    transition: 'background 0.4s ease',
-                  }} />
-                )}
-              </div>
-            )
-          })}
-        </div>
-        {allDone && (
-          <div style={{
-            marginTop: '1rem', padding: '0.75rem', borderRadius: '12px',
-            background: hexToRgba(accent, 0.1), border: `1px solid ${hexToRgba(accent, 0.3)}`,
-            color: accent, fontWeight: 700, textAlign: 'center',
-          }}>
-            Pipeline complete — all 5 stages cleared.
+    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+      <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Canvas camera={{ position: [0, 5, 5], fov: 45 }}>
+          <Environment preset="city" />
+          <ambientLight intensity={0.4} />
+          <pointLight position={[2, 4, 3]} intensity={1.5} color="#fff" />
+          <pointLight position={[-2, -2, 2]} intensity={1} color={accent} />
+
+          <group position={[0, -0.5, 0]}>
+            {/* The main conveyor belt line */}
+            <mesh position={[0, -0.05, 0]} rotation={[-Math.PI/2, 0, 0]}>
+              <planeGeometry args={[8, 0.4]} />
+              <meshPhysicalMaterial color="#111622" metalness={0.9} roughness={0.1} clearcoat={1} />
+            </mesh>
+            
+            {activity.stations.map((station, i) => {
+              const expectedIdx = correctStations.findIndex(s => s.id === station.id)
+              const isCompleted = !station.decoy && expectedIdx < stepIndex
+              const isNext = !station.decoy && expectedIdx === stepIndex
+              
+              const pos = station.decoy ? getPos(i, 'decoy') : getPos(expectedIdx, 'valid')
+              
+              const color = isCompleted ? '#86ffb7' : isNext ? accent : (station.decoy && errorId === station.id) ? '#ff2d55' : '#4f5973'
+              
+              return (
+                <group key={station.id} position={pos} onClick={() => handleStationClick(station)}>
+                  {/* Station base */}
+                  <mesh position={[0, 0.1, 0]}>
+                    <boxGeometry args={[0.6, 0.2, 0.6]} />
+                    <meshPhysicalMaterial color={color} transmission={0.5} roughness={0.2} emissive={color} emissiveIntensity={isNext ? 0.8 : 0.2} />
+                  </mesh>
+                  {/* Glowing Core */}
+                  {(isCompleted || isNext) && (
+                    <Float speed={5} floatIntensity={0.5}>
+                      <mesh position={[0, 0.5, 0]}>
+                        <octahedronGeometry args={[0.2, 0]} />
+                        <meshPhysicalMaterial color={color} emissive={color} emissiveIntensity={1.5} transmission={0.9} />
+                      </mesh>
+                    </Float>
+                  )}
+                  {isNext && <Sparkles position={[0, 0.5, 0]} count={15} scale={1} size={2} color={color} speed={2} />}
+                  
+                  {/* Label */}
+                  <Text position={[0, -0.2, 0]} fontSize={0.12} color="#fff" font={undefined}>
+                    {station.label}
+                  </Text>
+                </group>
+              )
+            })}
+          </group>
+
+          <ContactShadows position={[0, -1, 0]} opacity={0.7} scale={15} blur={2.5} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+        </Canvas>
+      </div>
+
+      <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+        {activity.stations.map((station) => {
+          const expectedIdx = correctStations.findIndex(s => s.id === station.id)
+          const isCompleted = !station.decoy && expectedIdx < stepIndex
+          const isError = errorId === station.id
+          
+          return (
+            <button
+              key={station.id}
+              onClick={() => handleStationClick(station)}
+              disabled={isCompleted}
+              className={isError ? 'jam-shake' : ''}
+              style={{
+                padding: '0.85rem 1rem', borderRadius: '12px', textAlign: 'left',
+                background: isError ? 'rgba(255,45,85,0.1)' : isCompleted ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                border: isError ? '1px solid #ff2d55' : isCompleted ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.15)',
+                color: isError ? '#ff2d55' : isCompleted ? '#6f7890' : '#fff',
+                cursor: isCompleted ? 'default' : 'pointer', transition: 'all 0.2s'
+              }}
+            >
+              <div style={{ fontWeight: 700 }}>{station.label} {isCompleted && <span style={{ float: 'right', color: '#86ffb7' }}>Running</span>}</div>
+              <div style={{ fontSize: '0.8rem', color: '#6f7890', marginTop: '0.2rem' }}>{station.desc}</div>
+              {isError && station.warning && (
+                <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.4rem', fontWeight: 600 }}>WARNING: {station.warning}</div>
+              )}
+            </button>
+          )
+        })}
+
+        {isDone && (
+          <div style={{ marginTop: '0.5rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
+            {activity.success}
           </div>
         )}
       </div>
-
-      {/* Stage info for completed ones */}
-      {completed.length > 0 && (
-        <div style={{ marginBottom: '1.5rem', display: 'grid', gap: '0.5rem' }}>
-          {completed.map((id, i) => {
-            const stage = activity.stages.find(s => s.id === id)
-            return (
-              <div key={id} style={{
-                padding: '0.75rem 1rem', borderRadius: '14px',
-                background: hexToRgba(accent, 0.06),
-                border: `1px solid ${hexToRgba(accent, 0.2)}`,
-                display: 'grid', gridTemplateColumns: '32px 1fr', gap: '0.75rem', alignItems: 'center',
-              }}>
-                <span style={{
-                  width: '32px', height: '32px', borderRadius: '50%',
-                  background: accent, color: '#041019', fontWeight: 800,
-                  display: 'grid', placeItems: 'center', fontSize: '0.85rem',
-                }}>
-                  {i + 1}
-                </span>
-                <div>
-                  <div style={{ color: '#fff', fontWeight: 700, fontSize: '0.95rem' }}>{stage.icon} {stage.label}</div>
-                  <div style={{ color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.5 }}>{stage.desc}</div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      )}
-
-      {/* Clickable choices */}
-      {!allDone && (
-        <div>
-          <div style={{
-            color: '#fff', fontSize: '1rem', fontWeight: 700, marginBottom: '0.75rem',
-          }}>
-            Step {currentStep + 1}: What comes next?
-          </div>
-          <div style={{ display: 'grid', gap: '0.7rem' }}>
-            {shuffled.map((stageIndex) => {
-              const stage = activity.stages[stageIndex]
-              const isDone = completed.includes(stage.id)
-              const isJammed = jammed === stageIndex
-
-              if (isDone) return null
-
-              return (
-                <button
-                  key={stage.id}
-                  type="button"
-                  onClick={() => handleStageClick(stageIndex)}
-                  style={{
-                    textAlign: 'left', padding: '1rem 1.1rem', borderRadius: '16px',
-                    border: `1px solid ${isJammed ? 'rgba(255,125,107,0.6)' : 'rgba(255,255,255,0.12)'}`,
-                    background: isJammed ? 'rgba(255,125,107,0.1)' : 'rgba(255,255,255,0.03)',
-                    color: '#fff', cursor: 'pointer',
-                    transition: 'all 0.3s ease',
-                    animation: isJammed ? 'shake 0.4s ease' : 'none',
-                  }}
-                >
-                  <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-                    <span style={{ fontSize: '1.3rem' }}>{stage.icon}</span>
-                    <div>
-                      <div style={{ fontWeight: 700 }}>{stage.label}</div>
-                      {isJammed && (
-                        <div style={{ color: '#ffb4a8', fontSize: '0.85rem', marginTop: '0.3rem' }}>
-                          Pipeline jammed! That is not the next step. Think about what must happen first.
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </button>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* Success banner */}
-      {showSuccess && (
-        <ResultBanner score={activity.stages.length} total={activity.stages.length} successText={activity.success} />
-      )}
-
-      <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', marginTop: '1.5rem' }}>
-        <button
-          type="button"
-          onClick={reset}
-          style={{
-            padding: '0.9rem 1.35rem', borderRadius: '14px',
-            border: '1px solid rgba(255,255,255,0.14)',
-            cursor: 'pointer', background: 'rgba(255,255,255,0.04)',
-            color: '#fff', fontWeight: 700,
-          }}
-        >
-          Try Again
-        </button>
-      </div>
-      <style>{`
-        @keyframes shake {
-          0%, 100% { transform: translateX(0); }
-          20% { transform: translateX(-6px); }
-          40% { transform: translateX(6px); }
-          60% { transform: translateX(-4px); }
-          80% { transform: translateX(4px); }
-        }
-      `}</style>
     </div>
   )
 }
 
 /* ═══════ X-RAY SCANNER ACTIVITY (Chapter 1-2) ═══════ */
-function XRayActivity({ activity, accent }) {
-  const [activeLayer, setActiveLayer] = useState(null)
+function XRayActivity3D({ activity, accent }) {
   const [answers, setAnswers] = useState({})
-  const [submitted, setSubmitted] = useState(false)
+  const [errorLayer, setErrorLayer] = useState(null)
+  const [exploded, setExploded] = useState(true)
 
-  const allAnswered = activity.layers.every(l => answers[l.id] !== undefined)
-  const score = activity.layers.reduce((count, layer) => {
-    return count + (answers[layer.id] === layer.question.correct ? 1 : 0)
-  }, 0)
+  const isDone = Object.keys(answers).length === activity.bugs.length
+  
+  const getNextBug = () => activity.bugs.find(b => !answers[b.id])
+  const activeBug = isDone ? null : getNextBug()
 
-  const reset = () => {
-    setActiveLayer(null)
-    setAnswers({})
-    setSubmitted(false)
+  const handleLayerClick = (layerId) => {
+    if (isDone || !activeBug) return
+    
+    if (activeBug.answer === layerId) {
+      setAnswers(prev => ({ ...prev, [activeBug.id]: layerId }))
+    } else {
+      setErrorLayer(layerId)
+      setTimeout(() => setErrorLayer(null), 800)
+    }
+  }
+
+  // Calculate positions: 0, 1, 2
+  const getLayerPos = (index) => {
+    const spacing = exploded ? 1.5 : 0.2
+    return [0, (1 - index) * spacing, 0]
   }
 
   return (
-    <div>
-      {submitted && <ResultBanner score={score} total={activity.layers.length} successText={activity.success} />}
+    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+      <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', position: 'relative' }}>
+        <button 
+          onClick={() => setExploded(!exploded)}
+          style={{ position: 'absolute', top: 16, right: 16, zIndex: 10, padding: '0.5rem 1rem', background: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', borderRadius: '8px', color: '#fff', cursor: 'pointer', fontWeight: 600 }}
+        >
+          {exploded ? 'Collapse Layers' : 'Explode Layers'}
+        </button>
+        <Canvas camera={{ position: [4, 3, 5], fov: 40 }}>
+          <Environment preset="city" />
+          <ambientLight intensity={0.5} />
+          <pointLight position={[2, 4, 3]} intensity={1.5} color="#fff" />
 
-      {/* Simulated App Screen with overlays */}
-      <div style={{
-        marginBottom: '1.5rem', borderRadius: '20px', overflow: 'hidden',
-        border: `1px solid ${hexToRgba(accent, 0.2)}`,
-        background: '#0c1425', position: 'relative',
-      }}>
-        {/* Simulated product screen */}
-        <div style={{
-          padding: '1.5rem', position: 'relative', minHeight: '380px',
-        }}>
-          {/* Mock phone header */}
-          <div style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            marginBottom: '1.25rem', padding: '0.5rem 0',
-            borderBottom: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem' }}>Product Detail</span>
-            <span style={{ color: '#6f7890', fontSize: '0.8rem' }}>FlutterFlow App</span>
-          </div>
+          <group position={[0, -0.5, 0]}>
+            {activity.layers.map((layer, i) => {
+              const pos = getLayerPos(i)
+              const isError = errorLayer === layer.id
+              
+              return (
+                <Float key={layer.id} speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+                  <group position={pos} onClick={() => handleLayerClick(layer.id)}>
+                    <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                      <boxGeometry args={[2.5, 4, 0.1]} />
+                      <meshPhysicalMaterial 
+                        color={isError ? '#ff2d55' : layer.color} 
+                        transmission={0.8} 
+                        roughness={0.1} 
+                        clearcoat={1} 
+                        thickness={0.5}
+                        emissive={isError ? '#ff2d55' : layer.color}
+                        emissiveIntensity={isError ? 0.8 : 0.2}
+                      />
+                    </mesh>
+                    {/* Layer Outline/Grid */}
+                    <mesh rotation={[-Math.PI / 2, 0, 0]}>
+                      <boxGeometry args={[2.52, 4.02, 0.05]} />
+                      <meshBasicMaterial color={layer.color} wireframe />
+                    </mesh>
+                    <Text position={[1.8, 0, 0]} fontSize={0.2} color={layer.color} font={undefined} anchorX="left">
+                      {layer.label}
+                    </Text>
+                  </group>
+                </Float>
+              )
+            })}
+          </group>
 
-          {/* Product image placeholder */}
-          <div style={{
-            width: '100%', height: '120px', borderRadius: '14px',
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.08))',
-            display: 'grid', placeItems: 'center', marginBottom: '1rem',
-            border: '1px solid rgba(255,255,255,0.06)',
-          }}>
-            <span style={{ fontSize: '2.5rem', color: '#6f7890' }}>Product</span>
-          </div>
-
-          {/* Product title and price */}
-          <div style={{ marginBottom: '1rem' }}>
-            <div style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.25rem' }}>
-              Premium Headphones
-            </div>
-            <div style={{ color: '#86ffb7', fontSize: '1.1rem', fontWeight: 600 }}>$129.99</div>
-          </div>
-
-          {/* Quantity controls */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '1rem',
-            padding: '0.75rem 1rem', borderRadius: '12px',
-            background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)',
-            marginBottom: '1rem',
-          }}>
-            <button type="button" style={{
-              width: '36px', height: '36px', borderRadius: '10px',
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-              color: '#fff', fontWeight: 800, fontSize: '1.1rem', cursor: 'default',
-            }}>−</button>
-            <span style={{ color: '#fff', fontWeight: 700, fontSize: '1.1rem', minWidth: '40px', textAlign: 'center' }}>1</span>
-            <button type="button" style={{
-              width: '36px', height: '36px', borderRadius: '10px',
-              background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)',
-              color: '#fff', fontWeight: 800, fontSize: '1.1rem', cursor: 'default',
-            }}>+</button>
-          </div>
-
-          {/* Add to Cart button */}
-          <div style={{
-            padding: '0.85rem', borderRadius: '12px', textAlign: 'center',
-            background: 'linear-gradient(135deg, #7b2ff7, #4361ee)',
-            color: '#fff', fontWeight: 700, fontSize: '0.95rem',
-          }}>
-            Add to Cart
-          </div>
-
-          {/* Layer highlight overlays */}
-          {activeLayer && activity.layers.find(l => l.id === activeLayer)?.highlights.map((hl, i) => {
-            const layer = activity.layers.find(l => l.id === activeLayer)
-            return (
-              <div key={`${activeLayer}-${i}`} style={{
-                position: 'absolute',
-                left: `${hl.x}%`, top: `${hl.y + 8}%`,
-                width: `${hl.w}%`, height: `${hl.h}%`,
-                border: `2px solid ${layer.color}`,
-                borderRadius: '8px',
-                background: `${layer.color}15`,
-                pointerEvents: 'none',
-                transition: 'all 0.3s ease',
-                animation: 'xrayPulse 2s ease-in-out infinite',
-              }}>
-                <span style={{
-                  position: 'absolute', top: '-10px', left: '8px',
-                  background: layer.color, color: '#fff',
-                  padding: '2px 8px', borderRadius: '6px',
-                  fontSize: '0.65rem', fontWeight: 700,
-                  whiteSpace: 'nowrap',
-                }}>
-                  {hl.label}
-                </span>
-              </div>
-            )
-          })}
-        </div>
+          <ContactShadows position={[0, -2, 0]} opacity={0.5} scale={10} blur={2} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate={!activeBug} autoRotateSpeed={0.5} />
+        </Canvas>
       </div>
 
-      {/* Layer toggle buttons */}
-      <div style={{
-        display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '0.75rem', marginBottom: '1.5rem',
-      }}>
-        {activity.layers.map((layer) => {
-          const isActive = activeLayer === layer.id
-          const isAnswered = answers[layer.id] !== undefined
-          const isCorrect = submitted && answers[layer.id] === layer.question.correct
+      <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+        <div style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+          Bug Reports
+        </div>
+        {activity.bugs.map((bug) => {
+          const solvedLayerId = answers[bug.id]
+          const solvedLayer = solvedLayerId ? activity.layers.find(l => l.id === solvedLayerId) : null
+          const isActive = activeBug?.id === bug.id
+          
           return (
-            <button
-              key={layer.id}
-              type="button"
-              onClick={() => setActiveLayer(isActive ? null : layer.id)}
+            <div
+              key={bug.id}
+              className={errorLayer && isActive ? 'jam-shake' : ''}
               style={{
-                padding: '0.85rem', borderRadius: '14px', textAlign: 'center',
-                border: `2px solid ${isActive ? layer.color : isAnswered ? `${layer.color}40` : 'rgba(255,255,255,0.1)'}`,
-                background: isActive ? `${layer.color}18` : 'rgba(255,255,255,0.03)',
-                color: isActive ? layer.color : '#d7d7ea',
-                cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem',
-                transition: 'all 0.2s ease',
-                boxShadow: isActive ? `0 4px 20px ${layer.color}20` : 'none',
+                padding: '0.85rem 1rem', borderRadius: '12px',
+                background: solvedLayer ? `${solvedLayer.color}15` : isActive ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.02)',
+                border: `1px solid ${solvedLayer ? solvedLayer.color : isActive ? accent : 'rgba(255,255,255,0.05)'}`,
+                color: solvedLayer ? '#fff' : isActive ? accent : '#6f7890',
+                transition: 'all 0.3s'
               }}
             >
-              <div style={{ fontSize: '1.3rem', marginBottom: '0.3rem' }}>{layer.icon}</div>
-              <div>{layer.name}</div>
-              {isAnswered && (
-                <div style={{
-                  marginTop: '0.3rem', fontSize: '0.72rem',
-                  color: isCorrect ? '#86ffb7' : submitted ? '#ffb4a8' : layer.color,
-                }}>
-                  {submitted ? (isCorrect ? 'Correct' : 'Review') : 'Answered'}
+              <div style={{ fontSize: '0.85rem', marginBottom: '0.3rem', fontWeight: 600, display: 'flex', justifyContent: 'space-between' }}>
+                <span>{bug.prompt}</span>
+              </div>
+              {solvedLayer ? (
+                <div style={{ fontWeight: 800, color: solvedLayer.color, fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                  ✓ Fixed in {solvedLayer.label}
                 </div>
-              )}
-            </button>
+              ) : isActive ? (
+                <div style={{ fontWeight: 800, color: accent, fontSize: '0.75rem', textTransform: 'uppercase', animation: 'pulse 1.5s infinite' }}>
+                  Click 3D layer to assign...
+                </div>
+              ) : null}
+            </div>
           )
         })}
-      </div>
 
-      {/* Question per active layer */}
-      {activeLayer && (() => {
-        const layer = activity.layers.find(l => l.id === activeLayer)
-        const q = layer.question
-        const selectedOption = answers[layer.id]
-        return (
-          <div style={{
-            padding: '1.25rem', borderRadius: '18px',
-            background: `${layer.color}08`,
-            border: `1px solid ${layer.color}30`,
-            marginBottom: '1rem',
-          }}>
-            <div style={{
-              color: layer.color, fontSize: '0.74rem', letterSpacing: '0.14em',
-              textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem',
-            }}>
-              {layer.name} Question
-            </div>
-            <h4 style={{ color: '#fff', margin: '0 0 0.95rem 0', lineHeight: 1.5, fontSize: '1rem' }}>
-              {q.prompt}
-            </h4>
-            <div style={{ display: 'grid', gap: '0.65rem' }}>
-              {q.options.map((option, optIdx) => {
-                const isSelected = selectedOption === optIdx
-                const isCorrectOpt = q.correct === optIdx
-                const isWrongSelected = submitted && isSelected && !isCorrectOpt
-
-                let borderStyle = 'rgba(255,255,255,0.12)'
-                let bgStyle = 'rgba(255,255,255,0.03)'
-                let colorStyle = '#d7d7ea'
-
-                if (isSelected) {
-                  borderStyle = `${layer.color}60`
-                  bgStyle = `${layer.color}14`
-                  colorStyle = '#fff'
-                }
-                if (submitted && isCorrectOpt) {
-                  borderStyle = 'rgba(134,255,183,0.5)'
-                  bgStyle = 'rgba(134,255,183,0.12)'
-                  colorStyle = '#fff'
-                }
-                if (isWrongSelected) {
-                  borderStyle = 'rgba(255,125,107,0.5)'
-                  bgStyle = 'rgba(255,125,107,0.12)'
-                  colorStyle = '#fff'
-                }
-
-                return (
-                  <button
-                    key={optIdx}
-                    type="button"
-                    onClick={() => {
-                      setAnswers({ ...answers, [layer.id]: optIdx })
-                      setSubmitted(false)
-                    }}
-                    style={{
-                      textAlign: 'left', padding: '0.9rem 1rem',
-                      borderRadius: '14px',
-                      border: `1px solid ${borderStyle}`,
-                      background: bgStyle, color: colorStyle,
-                      cursor: 'pointer',
-                      display: 'grid', gridTemplateColumns: '30px 1fr',
-                      gap: '0.75rem', alignItems: 'start',
-                    }}
-                  >
-                    <span style={{
-                      width: '30px', height: '30px', borderRadius: '50%',
-                      display: 'grid', placeItems: 'center',
-                      background: 'rgba(255,255,255,0.08)',
-                      color: submitted && isCorrectOpt ? '#86ffb7' : layer.color,
-                      fontWeight: 800,
-                    }}>
-                      {String.fromCharCode(65 + optIdx)}
-                    </span>
-                    <span style={{ lineHeight: 1.6 }}>{option}</span>
-                  </button>
-                )
-              })}
-            </div>
-            {submitted && (
-              <div style={{
-                marginTop: '0.9rem', padding: '0.9rem 1rem',
-                borderRadius: '14px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-              }}>
-                <div style={{
-                  color: '#aeb7cf', fontSize: '0.74rem', letterSpacing: '0.16em',
-                  textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.4rem',
-                }}>
-                  Feedback
-                </div>
-                <p style={{ margin: 0, color: '#d7d7ea', lineHeight: 1.7 }}>{q.explanation}</p>
-              </div>
-            )}
+        {isDone && (
+          <div style={{ marginTop: '0.5rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
+            {activity.success}
           </div>
-        )
-      })()}
-
-      <ActionButtons
-        onCheck={() => setSubmitted(true)}
-        onReset={reset}
-        canCheck={allAnswered}
-        accent={accent}
-      />
+        )}
+      </div>
       <style>{`
-        @keyframes xrayPulse {
+        @keyframes pulse {
           0%, 100% { opacity: 0.7; }
           50% { opacity: 1; }
         }
@@ -2331,289 +2020,138 @@ function XRayActivity({ activity, accent }) {
 }
 
 /* ═══════ REQUEST JOURNEY ACTIVITY (Chapter 1-3) ═══════ */
-function JourneyActivity({ activity, accent }) {
+function JourneyActivity3D({ activity, accent }) {
   const [activeScenario, setActiveScenario] = useState(0)
-  const [clickedSteps, setClickedSteps] = useState([])
-  const [wrongStep, setWrongStep] = useState(null)
-  const [completedScenarios, setCompletedScenarios] = useState([])
+  const [stepIndex, setStepIndex] = useState(0)
+  const [errorId, setErrorId] = useState(null)
 
   const scenario = activity.scenarios[activeScenario]
-  const allScenariosComplete = completedScenarios.length === activity.scenarios.length
-  const currentStepOrder = clickedSteps.length + 1
-  const scenarioComplete = clickedSteps.length === scenario.steps.length
+  const path = scenario.path || []
+  const correctSteps = path.filter(s => !s.decoy)
+  const isDone = stepIndex === correctSteps.length
 
   const handleStepClick = (step) => {
-    if (scenarioComplete) return
-    if (clickedSteps.includes(step.id)) return
-
-    if (step.order === currentStepOrder) {
-      const next = [...clickedSteps, step.id]
-      setClickedSteps(next)
-      setWrongStep(null)
-      if (next.length === scenario.steps.length && !completedScenarios.includes(scenario.id)) {
-        setCompletedScenarios([...completedScenarios, scenario.id])
-      }
+    if (isDone) return
+    const expected = correctSteps[stepIndex]
+    
+    if (step.id === expected.id) {
+      setStepIndex(prev => prev + 1)
     } else {
-      setWrongStep(step.id)
-      setTimeout(() => setWrongStep(null), 1200)
+      setErrorId(step.id)
+      setTimeout(() => setErrorId(null), 800)
     }
   }
 
-  const switchScenario = (index) => {
-    setActiveScenario(index)
-    if (completedScenarios.includes(activity.scenarios[index].id)) {
-      setClickedSteps(activity.scenarios[index].steps.map(s => s.id))
-    } else {
-      setClickedSteps([])
-    }
-    setWrongStep(null)
-  }
-
-  const retryScenario = () => {
-    setClickedSteps([])
-    setWrongStep(null)
-    setCompletedScenarios(completedScenarios.filter(id => id !== scenario.id))
-  }
-
-  const resetAll = () => {
-    setActiveScenario(0)
-    setClickedSteps([])
-    setWrongStep(null)
-    setCompletedScenarios([])
-  }
-
-  const sideColors = {
-    frontend: '#00f5d4',
-    api: '#ffd166',
-    backend: '#7b2ff7',
-  }
-
-  const sideLabels = {
-    frontend: 'Frontend',
-    api: 'API',
-    backend: 'Backend',
+  // Frontend is left (-1.5), Backend is right (1.5)
+  const getPos = (step, index) => {
+    const isFrontend = step.label.toLowerCase().includes('frontend')
+    const x = isFrontend ? -1.5 : 1.5
+    // Z spacing
+    const z = (index * 0.8) - 1.5
+    return [x, 0, z]
   }
 
   return (
-    <div>
-      {allScenariosComplete && (
-        <ResultBanner
-          score={activity.scenarios.length}
-          total={activity.scenarios.length}
-          successText={activity.success}
-        />
-      )}
+    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+      <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+        <Canvas camera={{ position: [0, 4, 6], fov: 45 }}>
+          <Environment preset="city" />
+          <ambientLight intensity={0.4} />
+          <pointLight position={[2, 4, 3]} intensity={1.5} color="#fff" />
+          
+          <group position={[0, -0.5, 0]}>
+            {/* Frontend Node */}
+            <mesh position={[-1.5, 0, -2.5]}>
+              <cylinderGeometry args={[0.5, 0.5, 0.2]} />
+              <meshPhysicalMaterial color="#00f5d4" roughness={0.2} metalness={0.8} />
+            </mesh>
+            <Text position={[-1.5, 0.3, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Frontend</Text>
+            
+            {/* Backend Node */}
+            <mesh position={[1.5, 0, -2.5]}>
+              <boxGeometry args={[0.8, 0.8, 0.8]} />
+              <meshPhysicalMaterial color="#7b2ff7" roughness={0.2} metalness={0.8} />
+            </mesh>
+            <Text position={[1.5, 0.6, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Backend</Text>
 
-      {/* Scenario tabs */}
-      <div style={{
-        display: 'flex', gap: '0.65rem', marginBottom: '1.5rem', flexWrap: 'wrap',
-      }}>
-        {activity.scenarios.map((s, i) => {
-          const isActive = i === activeScenario
-          const isDone = completedScenarios.includes(s.id)
+            {/* Connecting wire */}
+            <mesh position={[0, 0, -2.5]} rotation={[0, 0, Math.PI/2]}>
+              <cylinderGeometry args={[0.02, 0.02, 3]} />
+              <meshBasicMaterial color="rgba(255,255,255,0.1)" />
+            </mesh>
+
+            {path.map((step, i) => {
+              const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
+              const isCompleted = !step.decoy && expectedIdx < stepIndex
+              const isNext = !step.decoy && expectedIdx === stepIndex
+              
+              const pos = getPos(step, i)
+              const color = isCompleted ? '#86ffb7' : isNext ? accent : (step.decoy && errorId === step.id) ? '#ff2d55' : '#4f5973'
+              
+              // Only draw valid/completed path nodes
+              if (!isCompleted && !isNext && !step.decoy) return null
+              if (step.decoy && errorId !== step.id) return null
+
+              return (
+                <Float key={step.id} speed={isCompleted ? 0 : 4} floatIntensity={0.2}>
+                  <group position={pos}>
+                    <mesh>
+                      <sphereGeometry args={[isNext ? 0.15 : 0.1]} />
+                      <meshPhysicalMaterial color={color} emissive={color} emissiveIntensity={isNext ? 1.5 : 0.5} roughness={0.1} transmission={0.9} thickness={0.5} />
+                    </mesh>
+                    {isNext && <Sparkles count={10} scale={0.5} size={1} color={color} speed={2} />}
+                  </group>
+                </Float>
+              )
+            })}
+          </group>
+
+          <ContactShadows position={[0, -1, 0]} opacity={0.6} scale={10} blur={2} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
+        </Canvas>
+      </div>
+
+      <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
+        <div style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.5rem' }}>
+          Journey: {scenario.title}
+        </div>
+        
+        {path.map((step) => {
+          const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
+          const isCompleted = !step.decoy && expectedIdx < stepIndex
+          const isError = errorId === step.id
+          
           return (
             <button
-              key={s.id}
-              type="button"
-              onClick={() => switchScenario(i)}
+              key={step.id}
+              onClick={() => handleStepClick(step)}
+              disabled={isCompleted}
+              className={isError ? 'jam-shake' : ''}
               style={{
-                padding: '0.75rem 1.1rem', borderRadius: '14px',
-                border: `1px solid ${isActive ? hexToRgba(accent, 0.5) : isDone ? 'rgba(134,255,183,0.3)' : 'rgba(255,255,255,0.12)'}`,
-                background: isActive ? hexToRgba(accent, 0.1) : isDone ? 'rgba(134,255,183,0.06)' : 'rgba(255,255,255,0.03)',
-                color: isDone ? '#86ffb7' : isActive ? '#fff' : '#d7d7ea',
-                cursor: 'pointer', fontWeight: 700, fontSize: '0.9rem',
+                padding: '0.85rem 1rem', borderRadius: '12px', textAlign: 'left',
+                background: isError ? 'rgba(255,45,85,0.1)' : isCompleted ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
+                border: isError ? '1px solid #ff2d55' : isCompleted ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.15)',
+                color: isError ? '#ff2d55' : isCompleted ? '#6f7890' : '#fff',
+                cursor: isCompleted ? 'default' : 'pointer', transition: 'all 0.2s',
+                display: 'flex', gap: '0.75rem', alignItems: 'center'
               }}
             >
-              <span style={{ marginRight: '0.4rem' }}>{s.icon}</span>
-              {s.title}
-              {isDone && <span style={{ marginLeft: '0.5rem' }}>Done</span>}
+              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: step.label.toLowerCase().includes('frontend') ? '#00f5d4' : '#7b2ff7', flexShrink: 0 }} />
+              <div>
+                <div style={{ fontWeight: 700 }}>{step.label}</div>
+                {isError && step.warning && (
+                  <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.3rem', fontWeight: 600 }}>Dropped: {step.warning}</div>
+                )}
+              </div>
             </button>
           )
         })}
-      </div>
 
-      {/* Journey visualization */}
-      <div style={{
-        padding: '1.25rem', borderRadius: '20px',
-        background: 'rgba(255,255,255,0.02)', border: `1px solid ${hexToRgba(accent, 0.15)}`,
-        marginBottom: '1.25rem',
-      }}>
-        {/* Three-column header */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
-          gap: '0.5rem', marginBottom: '1.25rem', textAlign: 'center',
-        }}>
-          {['frontend', 'api', 'backend'].map(side => (
-            <div key={side} style={{
-              padding: '0.5rem', borderRadius: '10px',
-              background: `${sideColors[side]}10`,
-              border: `1px solid ${sideColors[side]}30`,
-              color: sideColors[side], fontWeight: 700, fontSize: '0.8rem',
-            }}>
-              {sideLabels[side]}
-            </div>
-          ))}
-        </div>
-
-        {/* Flow lines + steps */}
-        <div style={{ display: 'grid', gap: '0.5rem' }}>
-          {scenario.steps.map((step, i) => {
-            const isDone = clickedSteps.includes(step.id)
-            const isNext = step.order === currentStepOrder
-            const isWrong = wrongStep === step.id
-            const colMap = { frontend: 1, api: 2, backend: 3 }
-            const col = colMap[step.side]
-
-            // Direction arrow
-            const prevStep = i > 0 ? scenario.steps[i - 1] : null
-            const showArrow = prevStep && isDone
-
-            return (
-              <div key={step.id}>
-                {/* Connection arrow */}
-                {i > 0 && (
-                  <div style={{
-                    display: 'grid', gridTemplateColumns: '1fr 1fr 1fr',
-                    gap: '0.5rem', marginBottom: '0.25rem',
-                  }}>
-                    {[1, 2, 3].map(c => {
-                      const prevCol = prevStep ? colMap[prevStep.side] : 0
-                      const curCol = colMap[step.side]
-                      const minCol = Math.min(prevCol, curCol)
-                      const maxCol = Math.max(prevCol, curCol)
-                      const isInRange = c >= minCol && c <= maxCol && isDone
-
-                      return (
-                        <div key={c} style={{
-                          height: '16px',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}>
-                          {isInRange && (
-                            <div style={{
-                              width: prevCol === curCol ? '2px' : '100%',
-                              height: prevCol === curCol ? '100%' : '2px',
-                              background: `${sideColors[step.side]}60`,
-                              borderRadius: '1px',
-                            }} />
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                )}
-
-                {/* Step card positioned in correct column */}
-                <div style={{
-                  display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem',
-                }}>
-                  {[1, 2, 3].map(c => (
-                    <div key={c}>
-                      {c === col && (
-                        <button
-                          type="button"
-                          onClick={() => handleStepClick(step)}
-                          disabled={isDone}
-                          style={{
-                            width: '100%', textAlign: 'left',
-                            padding: '0.75rem 0.85rem', borderRadius: '12px',
-                            border: `1px solid ${
-                              isDone ? `${sideColors[step.side]}50`
-                                : isWrong ? 'rgba(255,125,107,0.6)'
-                                  : isNext ? `${sideColors[step.side]}40`
-                                    : 'rgba(255,255,255,0.08)'
-                            }`,
-                            background: isDone ? `${sideColors[step.side]}12`
-                              : isWrong ? 'rgba(255,125,107,0.08)'
-                                : 'rgba(255,255,255,0.02)',
-                            color: isDone ? '#fff' : '#c8c8e0',
-                            cursor: isDone ? 'default' : 'pointer',
-                            opacity: isDone ? 1 : isNext ? 1 : 0.6,
-                            transition: 'all 0.3s ease',
-                            animation: isWrong ? 'shake 0.4s ease' : 'none',
-                          }}
-                        >
-                          <div style={{
-                            display: 'flex', gap: '0.5rem', alignItems: 'center',
-                          }}>
-                            {isDone && (
-                              <span style={{
-                                width: '22px', height: '22px', borderRadius: '50%',
-                                background: sideColors[step.side],
-                                color: '#041019', fontWeight: 800, fontSize: '0.7rem',
-                                display: 'grid', placeItems: 'center', flexShrink: 0,
-                              }}>
-                                {step.order}
-                              </span>
-                            )}
-                            <span style={{ fontSize: '0.85rem', lineHeight: 1.5, fontWeight: isDone ? 600 : 400 }}>
-                              {step.label}
-                            </span>
-                          </div>
-                          {isWrong && (
-                            <div style={{
-                              color: '#ffb4a8', fontSize: '0.75rem', marginTop: '0.3rem',
-                            }}>
-                              Not yet! Something else must happen first.
-                            </div>
-                          )}
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Scenario complete message */}
-        {scenarioComplete && (
-          <div style={{
-            marginTop: '1rem', padding: '0.75rem', borderRadius: '12px',
-            background: 'rgba(134,255,183,0.08)', border: '1px solid rgba(134,255,183,0.25)',
-            textAlign: 'center', color: '#86ffb7', fontWeight: 700,
-          }}>
-            {scenario.title} journey complete!
+        {isDone && (
+          <div style={{ marginTop: '0.5rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
+            {activity.success}
           </div>
         )}
-      </div>
-
-      {/* Status summary */}
-      <div style={{
-        padding: '0.85rem 1rem', borderRadius: '14px',
-        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-        marginBottom: '1rem', display: 'flex', justifyContent: 'space-between',
-        alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem',
-      }}>
-        <span style={{ color: '#d7d7ea', fontSize: '0.9rem' }}>
-          Scenarios completed: <strong style={{ color: '#fff' }}>{completedScenarios.length}</strong> / {activity.scenarios.length}
-        </span>
-        <div style={{ display: 'flex', gap: '0.5rem' }}>
-          <button
-            type="button"
-            onClick={retryScenario}
-            style={{
-              padding: '0.55rem 1rem', borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.12)',
-              background: 'rgba(255,255,255,0.04)',
-              color: '#d7d7ea', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem',
-            }}
-          >
-            Retry This
-          </button>
-          <button
-            type="button"
-            onClick={resetAll}
-            style={{
-              padding: '0.55rem 1rem', borderRadius: '10px',
-              border: '1px solid rgba(255,255,255,0.12)',
-              background: 'rgba(255,255,255,0.04)',
-              color: '#d7d7ea', cursor: 'pointer', fontWeight: 600, fontSize: '0.85rem',
-            }}
-          >
-            Reset All
-          </button>
-        </div>
       </div>
     </div>
   )
@@ -4132,9 +3670,9 @@ function ActivityBody({ activity, accent }) {
   if (activity.type === 'matchup') return <MatchUpActivity activity={activity} accent={accent} />
   if (activity.type === 'sequence') return <SequenceActivity activity={activity} accent={accent} />
   if (activity.type === 'wheel') return <WheelActivity activity={activity} accent={accent} />
-  if (activity.type === 'pipeline') return <PipelineActivity activity={activity} accent={accent} />
-  if (activity.type === 'xray') return <XRayActivity activity={activity} accent={accent} />
-  if (activity.type === 'journey') return <JourneyActivity activity={activity} accent={accent} />
+  if (activity.type === 'pipeline_3d') return <PipelineActivity3D activity={activity} accent={accent} />
+  if (activity.type === 'xray_3d') return <XRayActivity3D activity={activity} accent={accent} />
+  if (activity.type === 'journey_3d') return <JourneyActivity3D activity={activity} accent={accent} />
   if (activity.type === 'dashboard') return <DashboardActivity activity={activity} accent={accent} />
   if (activity.type === 'circuit') return <CircuitActivity activity={activity} accent={accent} />
   if (activity.type === 'toolbar') return <ToolbarActivity activity={activity} accent={accent} />
