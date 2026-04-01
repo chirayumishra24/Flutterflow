@@ -6,6 +6,7 @@ import * as THREE from 'three'
 import gsap from 'gsap'
 import './App.css'
 import CapstoneModule from './CapstoneModule'
+import ChapterActivities, { ActivityArtwork } from './ChapterActivities'
 
 /* ─── Framer Motion Variants ─── */
 const fadeUp = {
@@ -1508,7 +1509,6 @@ function PropertiesPanelSection() {
           {cards.map((card, i) => {
             const colors = ['#f59e0b', '#ff2d55']
             const color = colors[i]
-            const emojis = ['☰', '⚙']
             return (
               <FlipCard
                 key={card.title}
@@ -1528,8 +1528,11 @@ function PropertiesPanelSection() {
                       width: '52px', height: '52px', borderRadius: '50%',
                       background: `${color}18`, border: `2px solid ${color}50`,
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: color, fontWeight: 800, fontSize: '1.3rem', marginBottom: '0.75rem'
-                    }}>{emojis[i]}</div>
+                      color: color, fontWeight: 800, fontSize: '1.3rem', marginBottom: '0.75rem',
+                      padding: '0.35rem'
+                    }}>
+                      <ActivityArtwork kind={i === 0 ? 'organize' : 'configure'} title={card.title} />
+                    </div>
                     <h3 style={{ color: '#fff', marginBottom: '0.4rem', fontSize: '1.15rem' }}>{card.title}</h3>
                     <p style={{ color: '#b0b0cc', fontSize: '0.82rem' }}>Click to explore →</p>
                   </>
@@ -2329,6 +2332,7 @@ function Chapter1_1() {
       <QuickStartIntro />
       <StepsSection />
       <CTABanner />
+      <ChapterActivities chapterId="1-1" />
       <FAQSection />
     </>
   )
@@ -2339,6 +2343,7 @@ function Chapter1_2() {
     <>
       <RoadmapSection />
       <CTABanner />
+      <ChapterActivities chapterId="1-2" />
       <FAQSection />
     </>
   )
@@ -2348,6 +2353,7 @@ function Chapter1_3() {
   return (
     <>
       <BeforeYouBeginSection />
+      <ChapterActivities chapterId="1-3" />
     </>
   )
 }
@@ -2356,6 +2362,7 @@ function Chapter2_1() {
   return (
     <>
       <DashboardSection />
+      <ChapterActivities chapterId="2-1" />
       <FAQSection />
     </>
   )
@@ -2365,6 +2372,7 @@ function Chapter2_2() {
   return (
     <>
       <AppBuilderSection />
+      <ChapterActivities chapterId="2-2" />
       <FAQSection />
     </>
   )
@@ -2374,6 +2382,7 @@ function Chapter2_3() {
   return (
     <>
       <ToolbarSection />
+      <ChapterActivities chapterId="2-3" />
       <FAQSection />
     </>
   )
@@ -2383,6 +2392,7 @@ function Chapter2_4() {
   return (
     <>
       <CanvasSection />
+      <ChapterActivities chapterId="2-4" />
       <FAQSection />
     </>
   )
@@ -2392,6 +2402,7 @@ function Chapter2_5() {
   return (
     <>
       <StoryboardSection />
+      <ChapterActivities chapterId="2-5" />
       <FAQSection />
     </>
   )
@@ -2401,6 +2412,7 @@ function Chapter2_6() {
   return (
     <>
       <WidgetPaletteSection />
+      <ChapterActivities chapterId="2-6" />
       <FAQSection />
     </>
   )
@@ -2410,6 +2422,7 @@ function Chapter2_7() {
   return (
     <>
       <OrganizationSection />
+      <ChapterActivities chapterId="2-7" />
       <FAQSection />
     </>
   )
@@ -2419,6 +2432,7 @@ function Chapter2_8() {
   return (
     <>
       <ResourceHierarchySection />
+      <ChapterActivities chapterId="2-8" />
       <FAQSection />
     </>
   )
@@ -2428,6 +2442,7 @@ function Chapter4_1() {
   return (
     <>
       <Module4_1Section />
+      <ChapterActivities chapterId="4-1" />
       <FAQSection />
     </>
   )
@@ -2437,6 +2452,7 @@ function Chapter4_2() {
   return (
     <>
       <Module4_2Section />
+      <ChapterActivities chapterId="4-2" />
       <FAQSection />
     </>
   )
@@ -2446,6 +2462,7 @@ function Chapter4_3() {
   return (
     <>
       <Module4_3Section />
+      <ChapterActivities chapterId="4-3" />
       <FAQSection />
     </>
   )
@@ -2464,6 +2481,7 @@ function Chapter5_1() {
   return (
     <>
       <Module5_1Section />
+      <ChapterActivities chapterId="5-1" />
       <FAQSection />
     </>
   )
@@ -2484,10 +2502,18 @@ function Chapter5_2() {
           borderRadius: '50px', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', color: '#fff', 
           textDecoration: 'none', boxShadow: '0 15px 30px rgba(123, 47, 247, 0.3)', transition: 'all 0.3s ease'
         }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          Start Capstone Project 🚀
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}>
+            Start Capstone Project
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M5 19c3.5-1 8-4.5 10.5-10.5L20 4l-4.5 4.5C9.5 11 6 15.5 5 19Z" />
+              <path d="M15 9l-5 5" />
+              <path d="M7 17l-2 2" />
+            </svg>
+          </span>
         </a>
       </div>
 
+      <ChapterActivities chapterId="5-2" />
       <FAQSection />
     </>
   )
@@ -2669,6 +2695,8 @@ function Module3Section() {
           {currentPage === totalPages - 1 ? 'Finish' : 'Next Page →'}
         </motion.button>
       </div>
+
+      {currentPage === totalPages - 1 && <ChapterActivities chapterId="3-1" />}
     </section>
   )
 }
@@ -2747,6 +2775,8 @@ function Module3_2Section() {
           {currentPage === totalPages - 1 ? 'Finish' : 'Next Page →'}
         </motion.button>
       </div>
+
+      {currentPage === totalPages - 1 && <ChapterActivities chapterId="3-2" />}
     </section>
   )
 }
@@ -2824,6 +2854,8 @@ function Module3_3Section() {
           {currentPage === totalPages - 1 ? 'Finish' : 'Next Page →'}
         </motion.button>
       </div>
+
+      {currentPage === totalPages - 1 && <ChapterActivities chapterId="3-3" />}
     </section>
   )
 }
@@ -5861,6 +5893,8 @@ function Module4_4Section() {
           {currentPage === 1 ? 'Finish' : 'Next Page →'}
         </motion.button>
       </div>
+
+      {currentPage === 1 && <ChapterActivities chapterId="4-4" />}
     </section>
   )
 }
