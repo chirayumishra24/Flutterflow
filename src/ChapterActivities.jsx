@@ -1952,7 +1952,7 @@ function XRayActivity3D({ activity, accent }) {
                       <boxGeometry args={[2.52, 4.02, 0.05]} />
                       <meshBasicMaterial color={layer.color} wireframe />
                     </mesh>
-                    <Text position={[1.8, 0, 0]} fontSize={0.2} color={layer.color} font={undefined} anchorX="left">
+                    <Text position={[1.8, 0, 0]} fontSize={0.25} color={'#ffffff'} outlineWidth={0.02} outlineColor={layer.color} fontWeight="bold" anchorX="left">
                       {layer.label}
                     </Text>
                   </group>
@@ -2065,20 +2065,25 @@ function JourneyActivity3D({ activity, accent }) {
               <cylinderGeometry args={[0.5, 0.5, 0.2]} />
               <meshPhysicalMaterial color="#00f5d4" roughness={0.2} metalness={0.8} />
             </mesh>
-            <Text position={[-1.5, 0.3, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Frontend</Text>
+            <Text position={[-1.5, 0.3, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Client App (Frontend)</Text>
             
             {/* Backend Node */}
             <mesh position={[1.5, 0, -2.5]}>
               <boxGeometry args={[0.8, 0.8, 0.8]} />
               <meshPhysicalMaterial color="#7b2ff7" roughness={0.2} metalness={0.8} />
             </mesh>
-            <Text position={[1.5, 0.6, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Backend</Text>
+            <Text position={[1.5, 0.6, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Server Data (Backend)</Text>
 
             {/* Connecting wire */}
-            <mesh position={[0, 0, -2.5]} rotation={[0, 0, Math.PI/2]}>
-              <cylinderGeometry args={[0.02, 0.02, 3]} />
-              <meshBasicMaterial color="rgba(255,255,255,0.1)" />
-            </mesh>
+            <group position={[0, 0, -2.5]}>
+              <Text position={[0, 0.3, 0]} fontSize={0.15} color="#c8c8e0" font={undefined}>Internet / API</Text>
+              <Text position={[-0.5, 0.1, 0]} fontSize={0.12} color="#00f5d4" font={undefined}>Request →</Text>
+              <Text position={[0.5, -0.1, 0]} fontSize={0.12} color="#7b2ff7" font={undefined}>← Response</Text>
+              <mesh rotation={[0, 0, Math.PI/2]}>
+                <cylinderGeometry args={[0.02, 0.02, 3]} />
+                <meshBasicMaterial color="rgba(255,255,255,0.1)" />
+              </mesh>
+            </group>
 
             {path.map((step, i) => {
               const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
@@ -2510,23 +2515,42 @@ function WireframeActivity({ activity, accent }) {
       <div style={{
         flex: '1 1 300px', minHeight: '340px', background: '#0a0f18',
         borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem'
+        display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem',
+        position: 'relative', overflow: 'hidden'
       }}>
+        {/* Background Grid Pattern */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '20px 20px', zIndex: 0 }} />
         <div style={{
-          width: '100%', height: '100%', border: stepIndex > 0 ? `2px solid ${hexToRgba(accent, 0.3)}` : '2px dashed rgba(255,255,255,0.1)',
-          borderRadius: '8px', transition: 'all 0.4s ease',
-          display: stepIndex > 1 ? 'flex' : 'block',
-          flexDirection: 'row',
-          justifyContent: stepIndex > 3 ? 'space-around' : 'flex-start',
-          alignItems: 'center', padding: stepIndex > 3 ? '1rem' : '0',
-          transform: stepIndex > 4 ? 'scale(0.85)' : 'scale(1)',
+          position: 'relative', zIndex: 1,
+          width: '240px', height: '100%', minHeight: '280px', border: stepIndex > 0 ? `2px solid ${hexToRgba(accent, 0.5)}` : '2px dashed rgba(255,255,255,0.15)',
+          background: stepIndex > 0 ? 'rgba(255,255,255,0.03)' : 'transparent',
+          borderRadius: '24px', transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+          display: 'flex', flexDirection: 'column',
+          padding: '1rem',
+          transform: `scale(${stepIndex > 3 ? 0.95 : 1})`,
+          boxShadow: stepIndex > 0 ? `0 0 40px ${hexToRgba(accent, 0.1)}` : 'none',
+          opacity: stepIndex > 0 ? 1 : 0.4
         }}>
+          {/* Header */}
+          {stepIndex > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', animation: 'fadeIn 0.5s ease' }}>
+              <div style={{ width: '40px', height: '12px', background: 'rgba(255,255,255,0.2)', borderRadius: '6px' }} />
+              <div style={{ width: '24px', height: '24px', background: 'rgba(255,255,255,0.2)', borderRadius: '50%' }} />
+            </div>
+          )}
+          {/* Main Content Area */}
           {stepIndex > 2 && (
-            <>
-              <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', margin: stepIndex < 4 ? '1rem' : 0 }} />
-              <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', margin: stepIndex < 4 ? '1rem' : 0 }} />
-              <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', margin: stepIndex < 4 ? '1rem' : 0 }} />
-            </>
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginBottom: '1rem', animation: 'fadeIn 0.5s ease', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+               <div style={{ width: '60px', height: '60px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }} />
+            </div>
+          )}
+          {/* Bottom Tabs/List */}
+          {stepIndex > 3 && (
+            <div style={{ display: 'flex', gap: '0.8rem', animation: 'fadeIn 0.5s ease', justifyContent: 'space-around', alignItems: 'flex-end', paddingBottom: '0.5rem' }}>
+              <div style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+              <div style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+              <div style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+            </div>
           )}
         </div>
       </div>
@@ -2536,6 +2560,12 @@ function WireframeActivity({ activity, accent }) {
           {activity.success}
         </div>
       )}
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   )
 }
@@ -2650,7 +2680,21 @@ function SorterActivity({ activity, accent }) {
             {currentItem.label}
           </div>
         ) : (
-          <div style={{ color: accent, fontSize: '1.5rem', fontWeight: 700 }}>{activity.success}</div>
+          <div style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
+            animation: 'jamBounceIn 0.6s ease-out'
+          }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <div style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 600, letterSpacing: '0.02em', marginTop: '0.5rem' }}>
+              Completion Verified
+            </div>
+            <div style={{ color: '#8892b0', fontSize: '1rem' }}>
+              {activity.success}
+            </div>
+          </div>
         )}
       </div>
 

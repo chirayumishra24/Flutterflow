@@ -2324,7 +2324,7 @@ const cardRadius = (i) => (i % 3 === 0 ? '24px' : i % 3 === 1 ? '18px' : '30px')
 /* ─── Chapter Components ─── */
 function Chapter1_1() {
   return (
-    <>
+    <div className="module1-static">
       <Hero />
       <div className="glow-line" />
       <BentoSection />
@@ -2334,27 +2334,27 @@ function Chapter1_1() {
       <CTABanner />
       <ChapterActivities chapterId="1-1" />
       <FAQSection />
-    </>
+    </div>
   )
 }
 
 function Chapter1_2() {
   return (
-    <>
+    <div className="module1-static">
       <RoadmapSection />
       <CTABanner />
       <ChapterActivities chapterId="1-2" />
       <FAQSection />
-    </>
+    </div>
   )
 }
 
 function Chapter1_3() {
   return (
-    <>
+    <div className="module1-static">
       <BeforeYouBeginSection />
       <ChapterActivities chapterId="1-3" />
-    </>
+    </div>
   )
 }
 
@@ -6927,7 +6927,6 @@ function Hero() {
             style={{
               transform: `perspective(800px) rotateY(${tilt.x * 0.4}deg) rotateX(${-tilt.y * 0.4}deg)`,
             }}
-            whileHover={{ scale: 1.02 }}
             transition={{ type: 'spring', stiffness: 200 }}
           >
             <img
@@ -6983,7 +6982,6 @@ function BentoSection() {
             <MotionReveal key={i} delay={i * 0.5} className={card.span ? 'span-2' : ''}>
               <motion.div
                 className={`bento-card ${card.accent}`}
-                whileHover={{ y: -8, transition: { duration: 0.3 } }}
               >
                 <div className="bento-icon" style={{color: 'white', marginBottom: '1.25rem'}}>{card.icon}</div>
                 <h3>{card.title}</h3>
@@ -7067,7 +7065,6 @@ function StepRow({ step, index }) {
       {step.media !== 'none' && (
         <motion.div
           className="step-media"
-          whileHover={{ y: -8, scale: 1.01 }}
           transition={{ duration: 0.4 }}
         >
           {step.media === 'img' && (
@@ -7178,7 +7175,6 @@ function RoadmapLayerCard({ layerNum, title, description, color, accentClass, ch
         {/* Left: Number + Vertical Line */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
           <motion.div
-            whileHover={{ scale: 1.15, rotate: 5 }}
             style={{
               width: '56px', height: '56px', borderRadius: '16px',
               background: color, display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -7198,7 +7194,6 @@ function RoadmapLayerCard({ layerNum, title, description, color, accentClass, ch
         {/* Right: Card Content */}
         <motion.div
           className={`bento-card ${accentClass}`}
-          whileHover={{ y: -4, boxShadow: `0 12px 40px ${color}15` }}
           transition={{ duration: 0.3 }}
           style={{
             padding: '2.5rem', display: 'flex', flexDirection: 'column', gap: '1rem',
@@ -7309,7 +7304,6 @@ function RoadmapSection() {
           ].map((b, i) => (
             <motion.div
               key={i}
-              whileHover={{ y: -3, scale: 1.04 }}
               style={{
                 padding: '10px 24px', borderRadius: '999px',
                 background: 'rgba(255,255,255,0.04)', border: `1px solid ${b.color}30`,
@@ -7521,7 +7515,6 @@ function BeforeYouBeginSection() {
           >
             <motion.div
               className="hero-card"
-              whileHover={{ scale: 1.02 }}
               transition={{ type: 'spring', stiffness: 200 }}
               style={{ borderRadius: '20px', overflow: 'hidden' }}
             >
@@ -7573,7 +7566,6 @@ function BeforeYouBeginSection() {
           <MotionReveal>
             <motion.div
               className="bento-card accent-sage"
-              whileHover={{ y: -6 }}
               style={{ padding: '2.5rem', height: '100%', borderLeft: '3px solid #00f5d4', position: 'relative', overflow: 'hidden' }}
             >
               <div style={{
@@ -7593,7 +7585,6 @@ function BeforeYouBeginSection() {
                 {frontendPoints.map((point, i) => (
                   <motion.div
                     key={i}
-                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(0, 245, 212, 0.08)', borderColor: 'rgba(0, 245, 212, 0.3)' }}
                     style={{
                       display: 'flex', gap: '0.85rem', alignItems: 'flex-start',
                       padding: '1rem', borderRadius: '12px',
@@ -7614,7 +7605,6 @@ function BeforeYouBeginSection() {
           <MotionReveal delay={0.15}>
             <motion.div
               className="bento-card accent-violet"
-              whileHover={{ y: -6 }}
               style={{ padding: '2.5rem', height: '100%', borderLeft: '3px solid #7b2ff7', position: 'relative', overflow: 'hidden' }}
             >
               <div style={{
@@ -7634,7 +7624,6 @@ function BeforeYouBeginSection() {
                 {backendPoints.map((point, i) => (
                   <motion.div
                     key={i}
-                    whileHover={{ scale: 1.02, backgroundColor: 'rgba(123, 47, 247, 0.1)', borderColor: 'rgba(123, 47, 247, 0.3)' }}
                     style={{
                       display: 'flex', gap: '0.85rem', alignItems: 'flex-start',
                       padding: '1rem', borderRadius: '12px',
@@ -7655,7 +7644,6 @@ function BeforeYouBeginSection() {
         {/* ── API Interaction Callout ── */}
         <MotionReveal>
           <motion.div
-            whileHover={{ y: -4 }}
             style={{
               background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
               borderRadius: '16px', padding: '2rem 2.5rem', marginBottom: '4rem',
@@ -7684,7 +7672,7 @@ function BeforeYouBeginSection() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '5rem' }}>
           <MotionReveal>
-            <motion.div whileHover={{ y: -4 }} style={{
+            <motion.div style={{
               background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(123,47,247,0.15)',
               borderRadius: '16px', padding: '2rem', textAlign: 'center',
             }}>
@@ -7698,7 +7686,7 @@ function BeforeYouBeginSection() {
             </motion.div>
           </MotionReveal>
           <MotionReveal delay={0.15}>
-            <motion.div whileHover={{ y: -4 }} style={{
+            <motion.div style={{
               background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(0,245,212,0.15)',
               borderRadius: '16px', padding: '2rem', textAlign: 'center',
             }}>
@@ -7730,7 +7718,6 @@ function BeforeYouBeginSection() {
           {architectureCards.map((card, i) => (
             <MotionReveal key={i} delay={i * 0.08}>
               <motion.div
-                whileHover={{ y: -6, boxShadow: `0 12px 40px ${card.color}12` }}
                 style={{
                   background: 'rgba(255,255,255,0.03)', border: `1px solid ${card.color}20`,
                   borderRadius: '16px', padding: '2rem', position: 'relative', overflow: 'hidden',
@@ -7773,7 +7760,7 @@ function BeforeYouBeginSection() {
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1.5rem' }}>
                 <h4 style={{ color: '#00f5d4', fontSize: '0.95rem', marginBottom: '1rem', fontWeight: 600 }}>General Requirements</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#00f5d4' }}>•</span> Screen at least 1280 x 1024
                   </motion.div>
                 </div>
@@ -7782,13 +7769,13 @@ function BeforeYouBeginSection() {
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1.5rem' }}>
                 <h4 style={{ color: '#4361ee', fontSize: '0.95rem', marginBottom: '1rem', fontWeight: 600 }}>Browser Recommendations</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#4361ee' }}>•</span> Works best on Google Chrome
                   </motion.div>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#4361ee' }}>•</span> Keep browser up-to-date
                   </motion.div>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#4361ee' }}>•</span> Allow pop-ups and clipboard
                   </motion.div>
                 </div>
@@ -7797,13 +7784,13 @@ function BeforeYouBeginSection() {
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1.5rem' }}>
                 <h4 style={{ color: '#ff2d55', fontSize: '0.95rem', marginBottom: '1rem', fontWeight: 600 }}>Desktop App</h4>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#ff2d55' }}>•</span> macOS: 13 or higher
                   </motion.div>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#ff2d55' }}>•</span> Windows: 10 or higher
                   </motion.div>
-                  <motion.div whileHover={{ x: 4, color: '#fff' }} style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
+                  <motion.div style={{ display: 'flex', gap: '0.75rem', color: '#b0b0cc', fontSize: '0.85rem', lineHeight: 1.6, padding: '0.5rem', borderRadius: '8px', background: 'rgba(255,255,255,0.03)', transition: '0.2s' }}>
                     <span style={{ color: '#ff2d55' }}>•</span> Native <a href="https://docs.flutterflow.io/testing/local-run" className="text-link" target="_blank" rel="noopener noreferrer">local run</a> support
                   </motion.div>
                 </div>
@@ -7811,7 +7798,6 @@ function BeforeYouBeginSection() {
             </div>
 
             <motion.div
-              whileHover={{ y: -2 }}
               style={{
                 marginTop: '1.5rem', padding: '1rem 1.5rem',
                 background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)',
