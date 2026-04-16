@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, useScroll, useTransform, useSpring, useInView, AnimatePresence } from 'framer-motion'
-import { Routes, Route, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
@@ -6833,6 +6843,7 @@ function Module5_2Section() {
 export default function App() {
   return (
     <div className="app-wrapper">
+      <ScrollToTop />
       {/* Background layers */}
       <div className="mesh-bg" aria-hidden>
         <div className="orb orb-1" />

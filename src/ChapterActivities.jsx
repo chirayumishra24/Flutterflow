@@ -1,7 +1,84 @@
-import { useState, useRef, useMemo } from 'react'
+import { useState, useRef, useMemo, useEffect } from 'react'
 import { Canvas, useFrame } from '@react-three/fiber'
 import { RoundedBox, Text, OrbitControls, Float, MeshDistortMaterial, Environment, ContactShadows, Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
+import confetti from 'canvas-confetti'
+
+function CelebrationOverlay({ active, title = "Perfect Score!" }) {
+  useEffect(() => {
+    if (active) {
+      const duration = 5000;
+      const end = Date.now() + duration;
+
+      const frame = () => {
+        confetti({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+          colors: ['#00f5d4', '#7b2ff7', '#86ffb7', '#ff9a5c']
+        });
+        confetti({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+          colors: ['#00f5d4', '#7b2ff7', '#86ffb7', '#ff9a5c']
+        });
+
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      };
+      frame();
+    }
+  }, [active]);
+
+  if (!active) return null;
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999, pointerEvents: 'none',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      background: 'rgba(4, 13, 20, 0.4)', backdropFilter: 'blur(3px)',
+      animation: 'fadeIn 0.5s ease-out'
+    }}>
+      <div style={{
+        background: 'rgba(134, 255, 183, 0.15)', border: '2px solid #86ffb7',
+        padding: '2rem 4rem', borderRadius: '24px', textAlign: 'center',
+        boxShadow: '0 20px 60px rgba(134, 255, 183, 0.2)',
+        animation: 'jamBounceIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1.2)'
+      }}>
+        <div style={{ fontSize: '3.5rem', marginBottom: '1rem' }}>🎉</div>
+        <div style={{ color: '#fff', fontSize: '2.5rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}>
+          {title}
+        </div>
+        <div style={{ color: '#86ffb7', fontSize: '1.2rem', fontWeight: 600, marginTop: '0.5rem' }}>
+          Activity Completed Successfully!
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function useCelebration(isSuccess, resetFn) {
+  const [showCelebration, setShowCelebration] = useState(false);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setShowCelebration(true);
+      const timer = setTimeout(() => {
+        setShowCelebration(false);
+        if (resetFn) resetFn();
+      }, 6000);
+      return () => clearTimeout(timer);
+    } else {
+      setShowCelebration(false);
+    }
+  }, [isSuccess, resetFn]);
+
+  return showCelebration;
+}
 
 const activityVisuals = {
   audit: { accent: '#61a8ff', label: 'REVIEW' },
@@ -789,7 +866,8 @@ function QuizActivity({ activity, accent }) {
     setSubmitted(false)
   }
 
-  return (
+  const showCelebration = useCelebration(submitted, reset);
+return (
     <div>
       {submitted && <ResultBanner score={score} total={activity.questions.length} successText={activity.success} />}
 
@@ -898,7 +976,9 @@ function QuizActivity({ activity, accent }) {
                 {selected[questionIndex] !== question.correct && (
                   <div style={{ marginTop: '0.45rem', color: '#fff', fontWeight: 700 }}>
                     Correct answer: {question.options[question.correct]}
-                  </div>
+                  
+      <CelebrationOverlay active={showCelebration} />
+</div>
                 )}
               </div>
             )}
@@ -928,7 +1008,8 @@ function SortActivity({ activity, accent }) {
     setSubmitted(false)
   }
 
-  return (
+  const showCelebration = useCelebration(submitted, reset);
+return (
     <div>
       {submitted && <ResultBanner score={score} total={activity.items.length} successText={activity.success} />}
 
@@ -986,7 +1067,9 @@ function SortActivity({ activity, accent }) {
               {submitted && selectedCategory && (
                 <div style={{ marginTop: '0.8rem', color: isCorrect ? '#86ffb7' : '#ffb4a8', fontSize: '0.92rem', lineHeight: 1.6 }}>
                   {isCorrect ? 'Correct placement.' : `Correct bucket: ${item.correct}`}
-                </div>
+                
+      <CelebrationOverlay active={showCelebration} />
+</div>
               )}
             </div>
           )
@@ -1046,7 +1129,8 @@ function MatchUpActivity({ activity, accent }) {
 
   const activePair = activity.pairs.find((pair) => pair.id === activePromptId)
 
-  return (
+  const showCelebration = useCelebration(submitted, reset);
+return (
     <div>
       {submitted && <ResultBanner score={score} total={activity.pairs.length} successText={activity.success} />}
 
@@ -1152,7 +1236,9 @@ function MatchUpActivity({ activity, accent }) {
                   {submitted && (
                     <div style={{ marginTop: '0.8rem', color: isCorrect ? '#86ffb7' : '#ffb4a8', fontSize: '0.92rem', lineHeight: 1.6 }}>
                       {isCorrect ? 'Correct match.' : `Correct match: ${pair.answer}`}
-                    </div>
+                    
+      <CelebrationOverlay active={showCelebration} />
+</div>
                   )}
                 </div>
               )
@@ -1258,7 +1344,8 @@ function DragDropActivity({ activity, accent }) {
     const isCorrect = submitted && placedCategory === item.correct
     const isWrong = submitted && placedCategory && placedCategory !== item.correct
 
-    return (
+  const showCelebration = useCelebration(submitted, reset);
+return (
       <div
         key={item.id}
         draggable
@@ -1288,7 +1375,9 @@ function DragDropActivity({ activity, accent }) {
         {submitted && isWrong && (
           <div style={{ marginTop: '0.35rem', color: '#ffb4a8', fontSize: '0.82rem' }}>
             Correct zone: {item.correct}
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
     )
@@ -1410,7 +1499,8 @@ function SequenceActivity({ activity, accent }) {
     setSubmitted(false)
   }
 
-  return (
+  const showCelebration = useCelebration(submitted, reset);
+return (
     <div>
       {submitted && <ResultBanner score={score} total={activity.correctOrder.length} successText={activity.success} />}
 
@@ -1492,7 +1582,9 @@ function SequenceActivity({ activity, accent }) {
                   <MoveIcon direction="down" />
                 </button>
               </div>
-            </div>
+            
+      <CelebrationOverlay active={showCelebration} />
+</div>
           )
         })}
       </div>
@@ -1572,7 +1664,8 @@ function WheelActivity({ activity, accent }) {
     setSubmitted(false)
   }
 
-  return (
+  const showCelebration = useCelebration(submitted, reset);
+return (
     <div>
       <div style={{ display: 'grid', gap: '1.2rem', justifyItems: 'center', marginBottom: '1.4rem' }}>
         <div style={{ position: 'relative', width: '260px', height: '260px' }}>
@@ -1748,7 +1841,9 @@ function WheelActivity({ activity, accent }) {
                 {selectedOption !== currentQuestion.correct && (
                   <div style={{ marginTop: '0.45rem', color: '#fff', fontWeight: 700 }}>
                     Correct answer: {currentQuestion.options[currentQuestion.correct]}
-                  </div>
+                  
+      <CelebrationOverlay active={showCelebration} />
+</div>
                 )}
               </div>
             )}
@@ -1789,7 +1884,8 @@ function PipelineActivity3D({ activity, accent }) {
     return [x, 0, z]
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, null);
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
         <Canvas camera={{ position: [0, 5, 5], fov: 45 }}>
@@ -1869,7 +1965,9 @@ function PipelineActivity3D({ activity, accent }) {
               <div style={{ fontWeight: 700 }}>{station.label} {isCompleted && <span style={{ float: 'right', color: '#86ffb7' }}>Running</span>}</div>
               <div style={{ fontSize: '0.8rem', color: '#6f7890', marginTop: '0.2rem' }}>{station.desc}</div>
               {isError && station.warning && (
-                <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.4rem', fontWeight: 600 }}>WARNING: {station.warning}</div>
+                <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.4rem', fontWeight: 600 }}>WARNING: {station.warning}
+      <CelebrationOverlay active={showCelebration} />
+</div>
               )}
             </button>
           )
@@ -1913,7 +2011,8 @@ function XRayActivity3D({ activity, accent }) {
     return [0, (1 - index) * spacing, 0]
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, () => { setAnswers({}) });
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', position: 'relative' }}>
         <button 
@@ -1999,7 +2098,9 @@ function XRayActivity3D({ activity, accent }) {
                   Click 3D layer to assign...
                 </div>
               ) : null}
-            </div>
+            
+      <CelebrationOverlay active={showCelebration} />
+</div>
           )
         })}
 
@@ -2051,7 +2152,8 @@ function JourneyActivity3D({ activity, accent }) {
     return [x, 0, z]
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, null);
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
         <Canvas camera={{ position: [0, 4, 6], fov: 45 }}>
@@ -2145,7 +2247,9 @@ function JourneyActivity3D({ activity, accent }) {
               <div>
                 <div style={{ fontWeight: 700 }}>{step.label}</div>
                 {isError && step.warning && (
-                  <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.3rem', fontWeight: 600 }}>Dropped: {step.warning}</div>
+                  <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.3rem', fontWeight: 600 }}>Dropped: {step.warning}
+      <CelebrationOverlay active={showCelebration} />
+</div>
                 )}
               </div>
             </button>
@@ -2184,7 +2288,8 @@ function DashboardActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(false, null);
+return (
     <div style={{ marginTop: '1.5rem' }}>
       <div style={{
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
@@ -2259,7 +2364,9 @@ function DashboardActivity({ activity, accent }) {
             }}>
               {activity.success}
             </div>
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
 
@@ -2300,7 +2407,8 @@ function CircuitActivity({ activity, accent }) {
 
   const isDone = sequence.length === activity.correctSequence.length
 
-  return (
+  const showCelebration = useCelebration(isDone, () => { setSequence([]) });
+return (
     <div style={{ marginTop: '1.5rem' }}>
       <div style={{
         position: 'relative', width: '100%', height: '400px',
@@ -2366,7 +2474,9 @@ function CircuitActivity({ activity, accent }) {
             }}>
               Circuit Complete! {activity.success}
             </div>
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
     </div>
@@ -2395,7 +2505,8 @@ function ToolbarActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(false, null);
+return (
     <div style={{ marginTop: '1.5rem' }}>
       <div style={{
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
@@ -2450,7 +2561,9 @@ function ToolbarActivity({ activity, accent }) {
           padding: '1.5rem', borderRadius: '16px', textAlign: 'center', color: accent, fontWeight: 700
         }}>
           {activity.success}
-        </div>
+        
+      <CelebrationOverlay active={showCelebration} />
+</div>
       )}
     </div>
   )
@@ -2472,6 +2585,7 @@ function WireframeActivity({ activity, accent }) {
   }
 
   const isDone = stepIndex === activity.steps.length
+  const showCelebration = useCelebration(isDone, () => setStepIndex(0))
 
   return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
@@ -2482,6 +2596,11 @@ function WireframeActivity({ activity, accent }) {
           const isCurrent = i === stepIndex
           const isCompleted = i < stepIndex
           const isError = errorIndex === i
+          // Using #22c55e for green color on correct completed options
+          const itemColor = isError ? '#ff2d55' : isCompleted ? '#22c55e' : isCurrent ? accent : '#c8c8e0'
+          const itemBg = isError ? 'rgba(255,45,85,0.1)' : isCompleted ? 'rgba(34, 197, 94, 0.08)' : isCurrent ? hexToRgba(accent, 0.15) : 'rgba(255,255,255,0.03)'
+          const itemBorder = isError ? '#ff2d55' : isCompleted ? 'rgba(34, 197, 94, 0.4)' : isCurrent ? accent : 'rgba(255,255,255,0.1)'
+
           return (
             <button
               key={step.id}
@@ -2490,18 +2609,20 @@ function WireframeActivity({ activity, accent }) {
               disabled={isCompleted}
               style={{
                 display: 'flex', alignItems: 'center', gap: '1rem',
-                padding: '1rem', borderRadius: '12px', border: '1px solid',
-                background: isError ? 'rgba(255,45,85,0.1)' : isCompleted ? 'rgba(255,255,255,0.02)' : isCurrent ? hexToRgba(accent, 0.1) : 'rgba(255,255,255,0.05)',
-                borderColor: isError ? '#ff2d55' : isCompleted ? 'rgba(255,255,255,0.05)' : isCurrent ? accent : 'rgba(255,255,255,0.1)',
-                color: isError ? '#ff2d55' : isCompleted ? '#6f7890' : isCurrent ? accent : '#c8c8e0',
+                padding: '1.1rem', borderRadius: '16px', border: '1px solid',
+                background: itemBg, borderColor: itemBorder, color: itemColor,
                 cursor: isCompleted ? 'default' : 'pointer',
-                textAlign: 'left', transition: 'all 0.2s', fontWeight: 600
+                textAlign: 'left', transition: 'all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1)', fontWeight: 600,
+                boxShadow: isCurrent ? `0 0 20px ${hexToRgba(accent, 0.2)}` : 'none',
+                transform: isCurrent ? 'scale(1.02)' : 'none'
               }}
             >
               <div style={{
-                width: '28px', height: '28px', borderRadius: '50%',
-                background: isCompleted ? 'transparent' : 'rgba(255,255,255,0.1)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.8rem'
+                width: '32px', height: '32px', borderRadius: '50%',
+                background: isCompleted ? '#22c55e' : 'rgba(255,255,255,0.1)',
+                color: isCompleted ? '#000' : 'inherit',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.9rem', fontWeight: 800,
+                boxShadow: isCompleted ? '0 0 10px rgba(34, 197, 94, 0.5)' : 'none'
               }}>
                 {isCompleted ? '✓' : step.icon}
               </div>
@@ -2513,57 +2634,64 @@ function WireframeActivity({ activity, accent }) {
 
       {/* Wireframe Canvas */}
       <div style={{
-        flex: '1 1 300px', minHeight: '340px', background: '#0a0f18',
-        borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)',
+        flex: '1 1 300px', minHeight: '380px', background: '#070b12',
+        borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem',
-        position: 'relative', overflow: 'hidden'
+        position: 'relative', overflow: 'hidden', boxShadow: 'inset 0 0 50px rgba(0,0,0,0.5)'
       }}>
-        {/* Background Grid Pattern */}
-        <div style={{ position: 'absolute', inset: 0, backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '20px 20px', zIndex: 0 }} />
+        {/* Animated Grid Pattern */}
+        <div style={{ position: 'absolute', inset: 0, backgroundImage: `linear-gradient(${hexToRgba(accent, 0.05)} 1px, transparent 1px), linear-gradient(90deg, ${hexToRgba(accent, 0.05)} 1px, transparent 1px)`, backgroundSize: '30px 30px', zIndex: 0, animation: 'panGrid 20s linear infinite' }} />
+        
+        {/* Glassmorphic Phone Frame Mockup */}
         <div style={{
           position: 'relative', zIndex: 1,
-          width: '240px', height: '100%', minHeight: '280px', border: stepIndex > 0 ? `2px solid ${hexToRgba(accent, 0.5)}` : '2px dashed rgba(255,255,255,0.15)',
-          background: stepIndex > 0 ? 'rgba(255,255,255,0.03)' : 'transparent',
-          borderRadius: '24px', transition: 'all 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
+          width: '240px', height: '100%', minHeight: '320px', 
+          border: stepIndex > 0 ? `2px solid ${hexToRgba(accent, 0.6)}` : '2px dashed rgba(255,255,255,0.15)',
+          background: stepIndex > 0 ? 'rgba(20, 25, 35, 0.6)' : 'transparent',
+          backdropFilter: stepIndex > 0 ? 'blur(10px)' : 'none',
+          borderRadius: '30px', transition: 'all 0.6s cubic-bezier(0.22, 1, 0.36, 1)',
           display: 'flex', flexDirection: 'column',
-          padding: '1rem',
-          transform: `scale(${stepIndex > 3 ? 0.95 : 1})`,
-          boxShadow: stepIndex > 0 ? `0 0 40px ${hexToRgba(accent, 0.1)}` : 'none',
+          padding: '1.25rem',
+          transform: `scale(${stepIndex > 3 ? 0.95 : 1}) translateY(${stepIndex > 0 ? '0' : '10px'})`,
+          boxShadow: stepIndex > 0 ? `0 20px 50px ${hexToRgba(accent, 0.15)}, inset 0 2px 10px rgba(255,255,255,0.05)` : 'none',
           opacity: stepIndex > 0 ? 1 : 0.4
         }}>
           {/* Header */}
           {stepIndex > 1 && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', animation: 'fadeIn 0.5s ease' }}>
-              <div style={{ width: '40px', height: '12px', background: 'rgba(255,255,255,0.2)', borderRadius: '6px' }} />
-              <div style={{ width: '24px', height: '24px', background: 'rgba(255,255,255,0.2)', borderRadius: '50%' }} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', animation: 'fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)' }}>
+              <div style={{ width: '40px', height: '12px', background: 'linear-gradient(90deg, rgba(255,255,255,0.3), rgba(255,255,255,0.1))', borderRadius: '6px' }} />
+              <div style={{ width: '28px', height: '28px', background: 'rgba(255,255,255,0.15)', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.1)' }} />
             </div>
           )}
           {/* Main Content Area */}
           {stepIndex > 2 && (
-            <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginBottom: '1rem', animation: 'fadeIn 0.5s ease', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-               <div style={{ width: '60px', height: '60px', background: 'rgba(255,255,255,0.1)', borderRadius: '50%' }} />
+            <div style={{ flex: 1, background: 'rgba(255,255,255,0.05)', borderRadius: '16px', marginBottom: '1rem', animation: 'fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+               <div style={{ width: '80px', height: '80px', background: 'rgba(255,255,255,0.08)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.1)' }}>
+                 <div style={{ width: '40px', height: '40px', background: 'rgba(255,255,255,0.15)', borderRadius: '50%' }} />
+               </div>
             </div>
           )}
           {/* Bottom Tabs/List */}
           {stepIndex > 3 && (
-            <div style={{ display: 'flex', gap: '0.8rem', animation: 'fadeIn 0.5s ease', justifyContent: 'space-around', alignItems: 'flex-end', paddingBottom: '0.5rem' }}>
-              <div style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-              <div style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
-              <div style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.1)', borderRadius: '8px' }} />
+            <div style={{ display: 'flex', gap: '0.8rem', animation: 'fadeIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1)', justifyContent: 'space-around', alignItems: 'flex-end', paddingBottom: '0.5rem' }}>
+              {[1, 2, 3].map(n => (
+                <div key={n} style={{ flex: 1, height: '40px', background: 'rgba(255,255,255,0.08)', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }} />
+              ))}
             </div>
           )}
         </div>
       </div>
 
-      {isDone && (
-        <div style={{ width: '100%', marginTop: '1rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
-          {activity.success}
-        </div>
-      )}
+      <CelebrationOverlay active={showCelebration} />
+
       <style>{`
         @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(10px); }
-          to { opacity: 1; transform: translateY(0); }
+          from { opacity: 0; transform: translateY(15px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes panGrid {
+          form { background-position: 0 0; }
+          to { background-position: 30px 30px; }
         }
       `}</style>
     </div>
@@ -2589,9 +2717,16 @@ function MapperActivity({ activity, accent }) {
   }
 
   const isDone = fixedProblems.length === activity.problems.length
+  const showCelebration = useCelebration(isDone, () => {
+    setFixedProblems([])
+    setSelectedTool(null)
+  })
 
   return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap', flexDirection: 'column' }}>
+      <div style={{ textAlign: 'center', color: '#6f7890', fontSize: '0.9rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+        Match the right options
+      </div>
       <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
         {activity.tools.map(tool => (
           <button
@@ -2620,13 +2755,13 @@ function MapperActivity({ activity, accent }) {
               onClick={() => handleProblemClick(prob.id, prob.solution)}
               className={isError ? 'jam-shake' : ''}
               style={{
-                background: isFixed ? hexToRgba(accent, 0.1) : '#0a0f18',
-                border: isFixed ? `1px solid ${accent}` : isError ? '1px solid #ff2d55' : '1px dashed rgba(255,255,255,0.2)',
+                background: isFixed ? 'rgba(34, 197, 94, 0.1)' : '#0a0f18',
+                border: isFixed ? '1px solid #22c55e' : isError ? '1px solid #ff2d55' : '1px dashed rgba(255,255,255,0.2)',
                 borderRadius: '16px', padding: '1.5rem', cursor: isFixed ? 'default' : selectedTool ? 'pointer' : 'default',
                 transition: 'all 0.3s'
               }}
             >
-              <div style={{ color: isFixed ? accent : isError ? '#ff2d55' : '#ff9a5c', fontSize: '1.5rem', marginBottom: '0.5rem' }}>
+              <div style={{ color: isFixed ? '#22c55e' : isError ? '#ff2d55' : '#ff9a5c', fontSize: '1.5rem', marginBottom: '0.5rem' }}>
                 {isFixed ? '✓ Fixed' : '⚠️ Missing'}
               </div>
               <div style={{ color: isFixed ? '#fff' : '#c8c8e0', fontWeight: 500, lineHeight: 1.5 }}>
@@ -2638,10 +2773,12 @@ function MapperActivity({ activity, accent }) {
       </div>
 
       {isDone && (
-        <div style={{ width: '100%', marginTop: '1rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1.5rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
+        <div style={{ width: '100%', marginTop: '1rem', background: 'rgba(34, 197, 94, 0.1)', border: '1px solid #22c55e', padding: '1.5rem', borderRadius: '12px', textAlign: 'center', color: '#22c55e', fontWeight: 700 }}>
           {activity.success}
         </div>
       )}
+      
+      <CelebrationOverlay active={showCelebration} />
     </div>
   )
 }
@@ -2654,6 +2791,7 @@ function SorterActivity({ activity, accent }) {
   const pendingItems = activity.items.filter(item => !sorted.includes(item))
   const currentItem = pendingItems[0]
   const isDone = pendingItems.length === 0
+  const showCelebration = useCelebration(isDone, () => setSorted([]))
 
   const handleBucketClick = (bucketId) => {
     if (isDone || !currentItem) return
@@ -2684,14 +2822,14 @@ function SorterActivity({ activity, accent }) {
             display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem',
             animation: 'jamBounceIn 0.6s ease-out'
           }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
               <polyline points="22 4 12 14.01 9 11.01"></polyline>
             </svg>
             <div style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 600, letterSpacing: '0.02em', marginTop: '0.5rem' }}>
               Completion Verified
             </div>
-            <div style={{ color: '#8892b0', fontSize: '1rem' }}>
+            <div style={{ color: '#22c55e', fontSize: '1rem' }}>
               {activity.success}
             </div>
           </div>
@@ -2734,6 +2872,8 @@ function SorterActivity({ activity, accent }) {
         })}
       </div>
 
+      <CelebrationOverlay active={showCelebration} />
+
       <style>{`
         @keyframes jamBounceIn {
           0% { transform: scale(0.8) translateY(20px); opacity: 0; }
@@ -2764,7 +2904,8 @@ function DistributorActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, () => { setRouted([]) });
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* Belt/Arrival */}
@@ -2777,7 +2918,9 @@ function DistributorActivity({ activity, accent }) {
             "{current.label}"
           </div>
         ) : (
-          <div style={{ color: accent, fontSize: '1.5rem', fontWeight: 700 }}>{activity.success}</div>
+          <div style={{ color: accent, fontSize: '1.5rem', fontWeight: 700 }}>{activity.success}
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
 
@@ -2834,7 +2977,8 @@ function ElevatorActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, () => { setPlaced([]) });
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap-reverse' }}>
       
       {/* Elevator Panel */}
@@ -2849,7 +2993,9 @@ function ElevatorActivity({ activity, accent }) {
         ) : (
           <div style={{ textAlign: 'center', color: accent, fontSize: '1.25rem', fontWeight: 700, padding: '2rem' }}>
             {activity.success}
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
 
@@ -2909,7 +3055,8 @@ function SetupConsoleActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, () => { setLogs(['$ flutterflow init', 'Waiting for system command...']) });
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap-reverse' }}>
       
       {/* Console Output */}
@@ -2926,7 +3073,9 @@ function SetupConsoleActivity({ activity, accent }) {
         {isDone && (
           <div style={{ color: accent, marginTop: '1rem', fontWeight: 700, padding: '1rem', background: hexToRgba(accent, 0.1), borderRadius: '8px' }}>
             {activity.success}
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
 
@@ -2975,6 +3124,7 @@ function ScopeRingsActivity({ activity, accent }) {
   const pending = activity.items.filter(i => !placed.includes(i))
   const currentItem = pending[0]
   const isDone = pending.length === 0
+  const showCelebration = useCelebration(isDone, () => setPlaced([]))
 
   const handleRingClick = (ringId) => {
     if (isDone || !currentItem) return
@@ -3000,7 +3150,7 @@ function ScopeRingsActivity({ activity, accent }) {
             {currentItem.label}
           </div>
         ) : (
-          <div style={{ color: accent, fontSize: '1.25rem', fontWeight: 700, textAlign: 'center' }}>
+          <div style={{ color: '#22c55e', fontSize: '1.25rem', fontWeight: 700, textAlign: 'center' }}>
             {activity.success}
           </div>
         )}
@@ -3018,10 +3168,11 @@ function ScopeRingsActivity({ activity, accent }) {
               className={isError ? 'jam-shake' : ''}
               style={{
                 position: 'absolute', width: `${ring.radius}%`, height: `${ring.radius}%`,
-                borderRadius: '50%', border: isError ? '3px solid #ff2d55' : hasItem ? `3px solid ${accent}` : '2px dashed rgba(255,255,255,0.2)',
-                background: isError ? 'rgba(255,45,85,0.05)' : hasItem ? hexToRgba(accent, 0.05) : 'transparent',
+                borderRadius: '50%', border: isError ? '3px solid #ff2d55' : hasItem ? `3px solid #22c55e` : '2px dashed rgba(255,255,255,0.2)',
+                background: isError ? 'rgba(255,45,85,0.05)' : hasItem ? 'rgba(34, 197, 94, 0.1)' : 'transparent',
                 cursor: currentItem ? 'pointer' : 'default', transition: 'all 0.3s',
-                display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '1%'
+                display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '1%',
+                boxShadow: hasItem ? '0 0 30px rgba(34, 197, 94, 0.2) inset' : 'none'
               }}
               onMouseEnter={(e) => {
                 if (!isDone && !isError) {
@@ -3031,13 +3182,13 @@ function ScopeRingsActivity({ activity, accent }) {
               }}
               onMouseLeave={(e) => {
                 if (!isDone && !isError) {
-                  e.currentTarget.style.background = hasItem ? hexToRgba(accent, 0.05) : 'transparent'
+                  e.currentTarget.style.background = hasItem ? 'rgba(34, 197, 94, 0.1)' : 'transparent'
                   e.currentTarget.style.borderStyle = hasItem ? 'solid' : 'dashed'
                 }
               }}
             >
               <div style={{
-                background: hasItem ? accent : '#1a2235', color: hasItem ? '#000' : '#c8c8e0', padding: '0.2rem 0.8rem',
+                background: hasItem ? '#22c55e' : '#1a2235', color: hasItem ? '#000' : '#c8c8e0', padding: '0.2rem 0.8rem',
                 borderRadius: '99px', fontSize: '0.8rem', fontWeight: 700, marginTop: '-12px', pointerEvents: 'none'
               }}>
                 {ring.label}
@@ -3046,6 +3197,8 @@ function ScopeRingsActivity({ activity, accent }) {
           )
         })}
       </div>
+
+      <CelebrationOverlay active={showCelebration} />
     </div>
   )
 }
@@ -3072,7 +3225,8 @@ function ToolbeltActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(false, null);
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2rem' }}>
       
       {/* Workbench Ticket */}
@@ -3121,7 +3275,9 @@ function ToolbeltActivity({ activity, accent }) {
       {isDone && (
         <div style={{ width: '100%', maxWidth: '600px', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1.5rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
           {activity.success}
-        </div>
+        
+      <CelebrationOverlay active={showCelebration} />
+</div>
       )}
     </div>
   )
@@ -3294,7 +3450,8 @@ function BranchGraphActivity({ activity, accent }) {
   const mainNodes = [[-2.5, 0, 0], [-1, 0, 0], [1, 0, 0], [2.5, 0, 0]]
   const branchNodes = [[-0.5, 1.2, 0], [1, 1.2, 0]]
 
-  return (
+  const showCelebration = useCelebration(isDone, null);
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
         <Canvas camera={{ position: [0, 0.5, 5], fov: 45 }}>
@@ -3371,7 +3528,9 @@ function BranchGraphActivity({ activity, accent }) {
         {isDone && (
           <div style={{ marginTop: '0.5rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
             {activity.success}
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
     </div>
@@ -3400,7 +3559,8 @@ function TimeMachineActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(false, null);
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
         <Canvas camera={{ position: [0, 0, 4.5], fov: 50 }}>
@@ -3488,7 +3648,9 @@ function TimeMachineActivity({ activity, accent }) {
         {isDone && (
           <div style={{ background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
             {activity.success}
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
     </div>
@@ -3514,7 +3676,8 @@ function ServerDeployActivity({ activity, accent }) {
     }
   }
 
-  return (
+  const showCelebration = useCelebration(isDone, () => { setRouted([]) });
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <div style={{
         background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
@@ -3526,7 +3689,9 @@ function ServerDeployActivity({ activity, accent }) {
         {current ? (
           <div style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 500 }}>"{current.label}"</div>
         ) : (
-          <div style={{ color: accent, fontSize: '1.25rem', fontWeight: 700 }}>{activity.success}</div>
+          <div style={{ color: accent, fontSize: '1.25rem', fontWeight: 700 }}>{activity.success}
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
 
@@ -3593,7 +3758,8 @@ function LaunchpadActivity({ activity, accent }) {
 
   const modeColors = { preview: '#86ffb7', test: '#ffd166', run: '#61a8ff', local: '#ff9a5c' }
 
-  return (
+  const showCelebration = useCelebration(false, null);
+return (
     <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
       <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
         <Canvas camera={{ position: [0, 2.5, 7], fov: 45 }}>
@@ -3700,7 +3866,9 @@ function LaunchpadActivity({ activity, accent }) {
         {isDone && (
           <div style={{ background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
             {activity.success}
-          </div>
+          
+      <CelebrationOverlay active={showCelebration} />
+</div>
         )}
       </div>
     </div>
