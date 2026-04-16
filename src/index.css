@@ -889,6 +889,19 @@ code {
   transition: transform 0.45s var(--ease), box-shadow 0.45s var(--ease), border-color 0.45s var(--ease);
 }
 
+.module1-static .bento-card {
+  isolation: isolate;
+}
+
+.module1-static .bento-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.module1-static .bento-card::before {
+  content: none;
+}
+
 .module1-static .hero-card:hover,
 .module1-static .step-media:hover,
 .module1-static .bento-card:hover,
@@ -903,7 +916,7 @@ code {
 }
 
 .module1-static .bento-card:hover::before {
-  opacity: 1 !important;
+  opacity: 0 !important;
 }
 
 .module1-static .bento-card:hover::after {
@@ -914,6 +927,7 @@ code {
   background: radial-gradient(circle at 30% 20%, rgba(0, 245, 212, 0.15), transparent 60%),
               radial-gradient(circle at 80% 80%, rgba(123, 47, 247, 0.12), transparent 55%);
   pointer-events: none;
+  z-index: 0;
   opacity: 1;
 }
 
