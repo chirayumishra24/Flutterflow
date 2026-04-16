@@ -936,6 +936,35 @@ code {
   box-shadow: none;
 }
 
+/* Module 3 Chapter 3.1 — Project Orbit */
+.project-orbit-grid {
+  grid-template-columns: minmax(320px, 0.95fr) minmax(360px, 1.2fr);
+}
+
+.project-orbit-story,
+.project-orbit-stage {
+  min-width: 0;
+}
+
+.project-orbit-inline-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.project-orbit-inline-links button {
+  appearance: none;
+  border: 0;
+}
+
+.project-orbit-constellation {
+  justify-content: center;
+}
+
+.project-orbit-meta {
+  align-items: stretch;
+}
+
 /* ══════════════════════════════════
    TIMELINE STEPS
    ══════════════════════════════════ */
@@ -1942,6 +1971,14 @@ code {
     grid-template-columns: 1fr !important;
   }
 
+  .project-orbit-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .project-orbit-meta {
+    grid-template-columns: 1fr !important;
+  }
+
   .chapter-steps .chapter-card {
     max-width: 100%;
     margin-left: 0;
@@ -2014,6 +2051,15 @@ code {
 
   .chapter-stack .chapter-card {
     margin-left: 0;
+  }
+
+  .project-orbit-inline-links a {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .project-orbit-constellation {
+    flex-direction: column;
   }
 
   .marquee-strip {

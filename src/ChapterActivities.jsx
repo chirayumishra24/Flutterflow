@@ -3,6 +3,7 @@ import { Canvas, useFrame } from '@react-three/fiber'
 import { RoundedBox, Text, OrbitControls, Float, MeshDistortMaterial, Environment, ContactShadows, Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import confetti from 'canvas-confetti'
+import { AnimatePresence, motion } from 'framer-motion'
 
 function CelebrationOverlay({ active, title = "Perfect Score!" }) {
   useEffect(() => {
@@ -789,6 +790,75 @@ function shuffleArray(items) {
   }
 
   return next
+}
+
+function getCrisisToolIcon(toolId) {
+  if (toolId === 'peek') return 'VIEW'
+  if (toolId === 'commit') return 'LOG'
+  if (toolId === 'deprecated') return 'OLD'
+  if (toolId === 'restore') return 'REST'
+  return 'TOOL'
+}
+
+function getEnvironmentHeuristics(label, rackId) {
+  const lower = label.toLowerCase()
+
+  if (rackId === 'dev') {
+    return [
+      'Built for local iteration, experiments, or mock systems.',
+      lower.includes('localhost') || lower.includes('mock') ? 'The wording points to temporary or local-only usage.' : 'This target exists before QA or customer exposure.',
+    ]
+  }
+
+  if (rackId === 'staging') {
+    return [
+      'Used for realistic validation before a public release.',
+      lower.includes('sandbox') || lower.includes('qa') || lower.includes('prelaunch')
+        ? 'Sandbox, QA, and prelaunch clues usually mean production-like but still safe.'
+        : 'It mirrors production without serving live customers.',
+    ]
+  }
+
+  return [
+    'Used by real customers or connected to real money/live traffic.',
+    lower.includes('live') || lower.includes('customer') || lower.includes('ssl')
+      ? 'Live payments, final domains, and customer-facing systems are production signals.'
+      : 'This one affects actual users, not internal testing.',
+  ]
+}
+
+function getEnvironmentSignal(label) {
+  const lower = (label || '').toLowerCase()
+
+  if (lower.includes('localhost') || lower.includes('mock') || lower.includes('experimental') || lower.includes('debug')) {
+    return {
+      tag: 'Sandbox',
+      summary: 'Experimental, mock, and local-only infrastructure belongs in Development.',
+      spectrum: ['local', 'mocked', 'in-progress'],
+    }
+  }
+
+  if (lower.includes('qa') || lower.includes('prelaunch') || lower.includes('sandbox') || lower.includes('mirror')) {
+    return {
+      tag: 'Dress Rehearsal',
+      summary: 'Production-like systems used for sign-off or QA belong in Staging.',
+      spectrum: ['near-real', 'preflight', 'safe validation'],
+    }
+  }
+
+  if (lower.includes('live') || lower.includes('real money') || lower.includes('customer') || lower.includes('ssl') || lower.includes('cdn')) {
+    return {
+      tag: 'Live Traffic',
+      summary: 'Anything serving customers, money, or public delivery belongs in Production.',
+      spectrum: ['real users', 'payments', 'public web'],
+    }
+  }
+
+  return {
+    tag: 'Classify',
+    summary: 'Decide whether the clue sounds experimental, rehearsal-grade, or customer-facing.',
+    spectrum: ['experimental', 'pre-release', 'live'],
+  }
 }
 
 function ActionButtons({ onCheck, onReset, canCheck, accent }) {
@@ -2143,126 +2213,370 @@ function JourneyActivity3D({ activity, accent }) {
     }
   }
 
-  // Frontend is left (-1.5), Backend is right (1.5)
-  const getPos = (step, index) => {
-    const isFrontend = step.label.toLowerCase().includes('frontend')
-    const x = isFrontend ? -1.5 : 1.5
-    // Z spacing
-    const z = (index * 0.8) - 1.5
-    return [x, 0, z]
+  const getStepRole = (step) => {
+    const label = step.label.toLowerCase()
+    if (step.decoy) return 'decoy'
+    if (label.includes('token')) return 'token'
+    if (label.includes('database')) return 'database'
+    if (label.includes('send') || label.includes('post') || label.includes('api')) return 'request'
+    if (label.includes('frontend') || label.includes('store') || label.includes('tap')) return 'frontend'
+    return 'backend'
   }
 
-  const showCelebration = useCelebration(isDone, null);
-return (
-    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-      <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <Canvas camera={{ position: [0, 4, 6], fov: 45 }}>
-          <Environment preset="city" />
-          <ambientLight intensity={0.4} />
-          <pointLight position={[2, 4, 3]} intensity={1.5} color="#fff" />
-          
-          <group position={[0, -0.5, 0]}>
-            {/* Frontend Node */}
-            <mesh position={[-1.5, 0, -2.5]}>
-              <cylinderGeometry args={[0.5, 0.5, 0.2]} />
-              <meshPhysicalMaterial color="#00f5d4" roughness={0.2} metalness={0.8} />
-            </mesh>
-            <Text position={[-1.5, 0.3, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Client App (Frontend)</Text>
-            
-            {/* Backend Node */}
-            <mesh position={[1.5, 0, -2.5]}>
-              <boxGeometry args={[0.8, 0.8, 0.8]} />
-              <meshPhysicalMaterial color="#7b2ff7" roughness={0.2} metalness={0.8} />
-            </mesh>
-            <Text position={[1.5, 0.6, -2.5]} fontSize={0.2} color="#fff" font={undefined}>Server Data (Backend)</Text>
+  const getStepColor = (step) => {
+    const role = getStepRole(step)
+    if (role === 'frontend') return '#00f5d4'
+    if (role === 'request') return '#61a8ff'
+    if (role === 'database') return '#ffd166'
+    if (role === 'token') return '#86ffb7'
+    if (role === 'decoy') return '#ff9a5c'
+    return '#7b2ff7'
+  }
 
-            {/* Connecting wire */}
-            <group position={[0, 0, -2.5]}>
-              <Text position={[0, 0.3, 0]} fontSize={0.15} color="#c8c8e0" font={undefined}>Internet / API</Text>
-              <Text position={[-0.5, 0.1, 0]} fontSize={0.12} color="#00f5d4" font={undefined}>Request →</Text>
-              <Text position={[0.5, -0.1, 0]} fontSize={0.12} color="#7b2ff7" font={undefined}>← Response</Text>
-              <mesh rotation={[0, 0, Math.PI/2]}>
-                <cylinderGeometry args={[0.02, 0.02, 3]} />
-                <meshBasicMaterial color="rgba(255,255,255,0.1)" />
-              </mesh>
-            </group>
+  const getCompactLabel = (step) => (
+    step.label
+      .replace(/^Frontend:\s*/i, '')
+      .replace(/^Backend:\s*/i, '')
+      .replace('Taps "Login"', 'Tap Login')
+      .replace('Sends Auth API Post', 'Send API')
+      .replace('Validates Database', 'Validate DB')
+      .replace('Returns JWT Token', 'Return JWT')
+      .replace('Stores Token & Navigates', 'Store + Route')
+      .replace('Immediately redirect', 'Instant Redirect')
+      .replace('Generates Auth Token', 'Frontend JWT')
+  )
 
-            {path.map((step, i) => {
-              const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
-              const isCompleted = !step.decoy && expectedIdx < stepIndex
-              const isNext = !step.decoy && expectedIdx === stepIndex
-              
-              const pos = getPos(step, i)
-              const color = isCompleted ? '#86ffb7' : isNext ? accent : (step.decoy && errorId === step.id) ? '#ff2d55' : '#4f5973'
-              
-              // Only draw valid/completed path nodes
-              if (!isCompleted && !isNext && !step.decoy) return null
-              if (step.decoy && errorId !== step.id) return null
+  const laidOutSteps = useMemo(() => {
+    const mainRoute = path.filter(step => !step.decoy)
+    const totalMain = Math.max(mainRoute.length - 1, 1)
+    let validSeen = 0
+    let decoySeen = 0
 
-              return (
-                <Float key={step.id} speed={isCompleted ? 0 : 4} floatIntensity={0.2}>
-                  <group position={pos}>
+    return path.map((step) => {
+      if (!step.decoy) {
+        const progress = mainRoute.length === 1 ? 0.5 : validSeen / totalMain
+        const x = -3.6 + (progress * 7.2)
+        const z = 0
+        const layout = {
+          step,
+          position: [x, 0, z],
+          socket: [x, 0.36, z],
+          correctIndex: validSeen,
+          branchFrom: null,
+        }
+        validSeen += 1
+        return layout
+      }
+
+      const anchorIndex = Math.max(0, validSeen - 1)
+      const anchorProgress = mainRoute.length === 1 ? 0.5 : anchorIndex / totalMain
+      const anchorX = -3.6 + (anchorProgress * 7.2)
+      const side = decoySeen % 2 === 0 ? 1 : -1
+      const z = side * 1.45
+      const position = [anchorX + 0.45, 0.36, z]
+
+      decoySeen += 1
+
+      return {
+        step,
+        position,
+        socket: [position[0], position[1] + 0.18, position[2]],
+        correctIndex: -1,
+        branchFrom: [anchorX, 0.36, 0],
+      }
+    })
+  }, [path])
+
+  const mainRouteLayouts = laidOutSteps.filter(item => !item.step.decoy)
+  const activeLayout =
+    mainRouteLayouts.find(item => item.correctIndex === Math.min(stepIndex, mainRouteLayouts.length - 1)) ||
+    mainRouteLayouts[0]
+
+  const showCelebration = useCelebration(isDone, null)
+
+  return (
+    <>
+      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+        <div style={{ flex: '1 1 420px', height: '460px', borderRadius: '18px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
+          <Canvas camera={{ position: [0, 4.8, 8.6], fov: 34 }}>
+            <Environment preset="city" />
+            <ambientLight intensity={0.55} />
+            <pointLight position={[-4, 4, 3]} intensity={1.1} color="#00f5d4" />
+            <pointLight position={[4, 5, 2]} intensity={1.25} color="#7b2ff7" />
+            <spotLight position={[0, 8, 4]} angle={0.42} intensity={18} penumbra={1} color="#ffffff" />
+
+            <group position={[0, -0.85, 0]}>
+              <RoundedBox args={[8.8, 0.22, 1.45]} radius={0.09} smoothness={4} position={[0, -0.02, 0]}>
+                <meshPhysicalMaterial color="#0d1321" roughness={0.38} metalness={0.9} clearcoat={0.4} />
+              </RoundedBox>
+
+              <RoundedBox args={[8.5, 0.06, 0.82]} radius={0.06} smoothness={4} position={[0, 0.11, 0]}>
+                <meshPhysicalMaterial color="#111b2f" roughness={0.2} metalness={0.95} />
+              </RoundedBox>
+
+              {[-3.2, -1.6, 0, 1.6, 3.2].map((x, i) => (
+                <mesh key={i} position={[x, 0.15, 0]}>
+                  <cylinderGeometry args={[0.18, 0.18, 0.88, 24]} />
+                  <meshPhysicalMaterial color="#18233b" roughness={0.16} metalness={0.96} />
+                </mesh>
+              ))}
+
+              {mainRouteLayouts.slice(0, -1).map((item, index) => (
+                <PipeSegment3D
+                  key={`pipe-${item.step.id}`}
+                  start={item.socket}
+                  end={mainRouteLayouts[index + 1].socket}
+                  color={hexToRgba(accent, 0.95)}
+                  radius={0.07}
+                  opacity={0.9}
+                />
+              ))}
+
+              {laidOutSteps.filter(item => item.step.decoy).map((item) => (
+                <PipeSegment3D
+                  key={`branch-${item.step.id}`}
+                  start={item.branchFrom}
+                  end={item.socket}
+                  color={errorId === item.step.id ? '#ff2d55' : 'rgba(255,154,92,0.8)'}
+                  radius={0.045}
+                  opacity={errorId === item.step.id ? 0.95 : 0.4}
+                />
+              ))}
+
+              {laidOutSteps.map((item) => {
+                const { step, position } = item
+                const role = getStepRole(step)
+                const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
+                const isCompleted = !step.decoy && expectedIdx < stepIndex
+                const isNext = !step.decoy && expectedIdx === stepIndex
+                const isError = errorId === step.id
+                const tone = isError ? '#ff2d55' : isCompleted ? '#86ffb7' : isNext ? accent : getStepColor(step)
+                const idleOpacity = step.decoy ? 0.42 : 0.78
+
+                return (
+                  <group key={step.id} position={position} onClick={() => handleStepClick(step)}>
+                    <RoundedBox args={[1.02, 0.18, 0.82]} radius={0.06} smoothness={4}>
+                      <meshPhysicalMaterial
+                        color="#101725"
+                        roughness={0.32}
+                        metalness={0.88}
+                        clearcoat={0.6}
+                      />
+                    </RoundedBox>
+
+                    {role === 'frontend' && (
+                      <RoundedBox args={[0.62, 0.44, 0.12]} radius={0.05} smoothness={4} position={[0, 0.3, 0]}>
+                        <meshPhysicalMaterial color={tone} emissive={tone} emissiveIntensity={isNext ? 0.8 : 0.18} roughness={0.16} metalness={0.55} transparent opacity={isCompleted || isNext ? 1 : idleOpacity} />
+                      </RoundedBox>
+                    )}
+
+                    {role === 'request' && (
+                      <mesh position={[0, 0.28, 0]} rotation={[0, 0, Math.PI / 2]}>
+                        <cylinderGeometry args={[0.16, 0.16, 0.76, 28]} />
+                        <meshPhysicalMaterial color={tone} emissive={tone} emissiveIntensity={isNext ? 0.75 : 0.15} roughness={0.14} metalness={0.9} transparent opacity={isCompleted || isNext ? 1 : idleOpacity} />
+                      </mesh>
+                    )}
+
+                    {role === 'backend' && (
+                      <>
+                        <RoundedBox args={[0.66, 0.5, 0.52]} radius={0.05} smoothness={4} position={[0, 0.34, 0]}>
+                          <meshPhysicalMaterial color={tone} emissive={tone} emissiveIntensity={isNext ? 0.8 : 0.2} roughness={0.2} metalness={0.8} transparent opacity={isCompleted || isNext ? 1 : idleOpacity} />
+                        </RoundedBox>
+                        <mesh position={[0, 0.58, 0.18]}>
+                          <sphereGeometry args={[0.05, 18, 18]} />
+                          <meshBasicMaterial color="#dff8ff" />
+                        </mesh>
+                      </>
+                    )}
+
+                    {role === 'database' && (
+                      <>
+                        {[0.2, 0.34, 0.48].map((y, i) => (
+                          <mesh key={i} position={[0, y, 0]}>
+                            <cylinderGeometry args={[0.28, 0.28, 0.1, 28]} />
+                            <meshPhysicalMaterial color={tone} emissive={tone} emissiveIntensity={isNext ? 0.75 : 0.18} roughness={0.14} metalness={0.82} transparent opacity={isCompleted || isNext ? 1 : idleOpacity} />
+                          </mesh>
+                        ))}
+                      </>
+                    )}
+
+                    {role === 'token' && (
+                      <mesh position={[0, 0.38, 0]}>
+                        <octahedronGeometry args={[0.28, 0]} />
+                        <meshPhysicalMaterial color={tone} emissive={tone} emissiveIntensity={isNext ? 1.1 : 0.25} roughness={0.04} transmission={0.9} thickness={0.35} transparent opacity={isCompleted || isNext ? 1 : idleOpacity} />
+                      </mesh>
+                    )}
+
+                    {role === 'decoy' && (
+                      <RoundedBox args={[0.72, 0.3, 0.54]} radius={0.05} smoothness={4} position={[0, 0.24, 0]} rotation={[0, 0.18, step.id === 'd1' ? -0.28 : 0.28]}>
+                        <meshPhysicalMaterial color={tone} emissive={tone} emissiveIntensity={isError ? 0.95 : 0.08} roughness={0.2} metalness={0.75} transparent opacity={isError ? 1 : 0.5} />
+                      </RoundedBox>
+                    )}
+
+                    {(isCompleted || isNext) && (
+                      <GlowSphere
+                        position={[0, 0.82, 0]}
+                        color={tone}
+                        scale={isNext ? 0.12 : 0.08}
+                        pulse={isNext}
+                        withSparkles={isNext}
+                      />
+                    )}
+
+                    <Text
+                      position={[0, 1.08, 0]}
+                      fontSize={0.12}
+                      maxWidth={1.45}
+                      lineHeight={1.1}
+                      anchorX="center"
+                      anchorY="middle"
+                      color={isError ? '#ff8a9a' : '#ffffff'}
+                    >
+                      {getCompactLabel(step)}
+                    </Text>
+                  </group>
+                )
+              })}
+
+              {activeLayout && (
+                <Float speed={3} floatIntensity={0.35} rotationIntensity={0.2}>
+                  <group position={[activeLayout.position[0], 1.28, activeLayout.position[2]]}>
                     <mesh>
-                      <sphereGeometry args={[isNext ? 0.15 : 0.1]} />
-                      <meshPhysicalMaterial color={color} emissive={color} emissiveIntensity={isNext ? 1.5 : 0.5} roughness={0.1} transmission={0.9} thickness={0.5} />
+                      <sphereGeometry args={[0.16, 28, 28]} />
+                      <meshPhysicalMaterial color={accent} emissive={accent} emissiveIntensity={1.4} roughness={0.05} transmission={0.85} thickness={0.45} />
                     </mesh>
-                    {isNext && <Sparkles count={10} scale={0.5} size={1} color={color} speed={2} />}
+                    <Sparkles count={18} scale={0.85} size={1.6} color={accent} speed={2} />
                   </group>
                 </Float>
-              )
-            })}
-          </group>
+              )}
 
-          <ContactShadows position={[0, -1, 0]} opacity={0.6} scale={10} blur={2} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} />
-        </Canvas>
-      </div>
+              <Text position={[-3.65, 1.7, -0.95]} fontSize={0.18} color="#00f5d4" anchorX="left">
+                Client
+              </Text>
+              <Text position={[0, 1.7, -0.95]} fontSize={0.18} color="#61a8ff" anchorX="center">
+                API Tunnel
+              </Text>
+              <Text position={[3.65, 1.7, -0.95]} fontSize={0.18} color="#7b2ff7" anchorX="right">
+                Backend
+              </Text>
+            </group>
 
-      <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '0.65rem' }}>
-        <div style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 700, marginBottom: '0.5rem' }}>
-          Journey: {scenario.title}
+            <ContactShadows position={[0, -1.1, 0]} opacity={0.7} scale={13} blur={2.4} />
+            <OrbitControls
+              enableZoom={false}
+              enablePan={false}
+              autoRotate={false}
+              minPolarAngle={Math.PI / 3.2}
+              maxPolarAngle={Math.PI / 2.4}
+            />
+          </Canvas>
         </div>
-        
-        {path.map((step) => {
-          const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
-          const isCompleted = !step.decoy && expectedIdx < stepIndex
-          const isError = errorId === step.id
-          
-          return (
-            <button
-              key={step.id}
-              onClick={() => handleStepClick(step)}
-              disabled={isCompleted}
-              className={isError ? 'jam-shake' : ''}
-              style={{
-                padding: '0.85rem 1rem', borderRadius: '12px', textAlign: 'left',
-                background: isError ? 'rgba(255,45,85,0.1)' : isCompleted ? 'rgba(255,255,255,0.02)' : 'rgba(255,255,255,0.05)',
-                border: isError ? '1px solid #ff2d55' : isCompleted ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.15)',
-                color: isError ? '#ff2d55' : isCompleted ? '#6f7890' : '#fff',
-                cursor: isCompleted ? 'default' : 'pointer', transition: 'all 0.2s',
-                display: 'flex', gap: '0.75rem', alignItems: 'center'
-              }}
-            >
-              <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: step.label.toLowerCase().includes('frontend') ? '#00f5d4' : '#7b2ff7', flexShrink: 0 }} />
-              <div>
-                <div style={{ fontWeight: 700 }}>{step.label}</div>
-                {isError && step.warning && (
-                  <div style={{ fontSize: '0.78rem', color: '#ff2d55', marginTop: '0.3rem', fontWeight: 600 }}>Dropped: {step.warning}
-      <CelebrationOverlay active={showCelebration} />
-</div>
-                )}
-              </div>
-            </button>
-          )
-        })}
 
-        {isDone && (
-          <div style={{ marginTop: '0.5rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
-            {activity.success}
+        <div style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+          <div style={{
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '16px',
+            padding: '1.2rem 1.25rem'
+          }}>
+            <div style={{ color: '#6f7890', fontSize: '0.82rem', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700, marginBottom: '0.45rem' }}>
+              Request Flow
+            </div>
+            <div style={{ color: '#fff', fontSize: '1.08rem', fontWeight: 700, marginBottom: '0.45rem' }}>
+              {scenario.title}
+            </div>
+            <div style={{ color: '#c8c8e0', lineHeight: 1.6, fontSize: '0.92rem' }}>
+              Build the real pipeline in order. The main route is correct; side branches are traps that drop the packet.
+            </div>
           </div>
-        )}
+
+          {path.map((step) => {
+            const expectedIdx = correctSteps.findIndex(s => s.id === step.id)
+            const isCompleted = !step.decoy && expectedIdx < stepIndex
+            const isNext = !step.decoy && expectedIdx === stepIndex
+            const isError = errorId === step.id
+            const role = getStepRole(step)
+            const chipColor = step.decoy ? '#ff9a5c' : getStepColor(step)
+
+            return (
+              <button
+                key={step.id}
+                onClick={() => handleStepClick(step)}
+                disabled={isCompleted}
+                className={isError ? 'jam-shake' : ''}
+                style={{
+                  padding: '0.9rem 1rem',
+                  borderRadius: '14px',
+                  textAlign: 'left',
+                  background: isError
+                    ? 'rgba(255,45,85,0.1)'
+                    : isCompleted
+                      ? 'rgba(255,255,255,0.02)'
+                      : isNext
+                        ? hexToRgba(accent, 0.12)
+                        : 'rgba(255,255,255,0.05)',
+                  border: isError
+                    ? '1px solid #ff2d55'
+                    : isCompleted
+                      ? '1px solid rgba(255,255,255,0.05)'
+                      : isNext
+                        ? `1px solid ${hexToRgba(accent, 0.5)}`
+                        : '1px solid rgba(255,255,255,0.15)',
+                  color: isError ? '#ff808f' : isCompleted ? '#6f7890' : '#fff',
+                  cursor: isCompleted ? 'default' : 'pointer',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.55rem', flexWrap: 'wrap' }}>
+                  <span style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    background: chipColor,
+                    boxShadow: `0 0 14px ${hexToRgba(chipColor, 0.65)}`,
+                    flexShrink: 0
+                  }} />
+                  <span style={{ fontWeight: 700, flex: 1 }}>{step.label}</span>
+                  <span style={{
+                    padding: '0.18rem 0.48rem',
+                    borderRadius: '999px',
+                    fontSize: '0.68rem',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    border: `1px solid ${hexToRgba(chipColor, 0.35)}`,
+                    color: chipColor,
+                    background: hexToRgba(chipColor, 0.08),
+                    fontWeight: 700,
+                  }}>
+                    {role === 'decoy' ? 'Trap' : role}
+                  </span>
+                </div>
+
+                {isError && step.warning && (
+                  <div style={{ fontSize: '0.8rem', color: '#ff8a9a', marginTop: '0.45rem', fontWeight: 600 }}>
+                    Dropped packet: {step.warning}
+                  </div>
+                )}
+
+                {isNext && !isError && (
+                  <div style={{ fontSize: '0.78rem', color: accent, marginTop: '0.42rem', fontWeight: 700 }}>
+                    Next pipeline stage
+                  </div>
+                )}
+              </button>
+            )
+          })}
+
+          {isDone && (
+            <div style={{ marginTop: '0.2rem', background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
+              {activity.success}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+
+      <CelebrationOverlay active={showCelebration} />
+    </>
   )
 }
 
@@ -3322,6 +3636,41 @@ function GitPipe({ start, end, color }) {
   )
 }
 
+function PipeSegment3D({ start, end, color, radius = 0.07, opacity = 0.8 }) {
+  const { midpoint, quaternion, length } = useMemo(() => {
+    const from = new THREE.Vector3(...start)
+    const to = new THREE.Vector3(...end)
+    const direction = new THREE.Vector3().subVectors(to, from)
+    const mid = new THREE.Vector3().addVectors(from, to).multiplyScalar(0.5)
+    const quat = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      direction.clone().normalize()
+    )
+
+    return {
+      midpoint: mid.toArray(),
+      quaternion: quat,
+      length: direction.length(),
+    }
+  }, [start, end])
+
+  return (
+    <mesh position={midpoint} quaternion={quaternion}>
+      <cylinderGeometry args={[radius, radius, length, 20]} />
+      <meshPhysicalMaterial
+        color={color}
+        emissive={color}
+        emissiveIntensity={0.35}
+        roughness={0.18}
+        metalness={0.85}
+        clearcoat={1}
+        transparent
+        opacity={opacity}
+      />
+    </mesh>
+  )
+}
+
 function GlowingDataDisk({ position, color, speed = 2 }) {
   const ref = useRef()
   useFrame((_, delta) => {
@@ -3542,14 +3891,34 @@ function TimeMachineActivity({ activity, accent }) {
   const [currentCrisis, setCurrentCrisis] = useState(0)
   const [isDone, setIsDone] = useState(false)
   const [errorTool, setErrorTool] = useState(null)
+  const [resolvedTool, setResolvedTool] = useState(null)
 
   const crisis = activity.crises[currentCrisis]
+  const resolvedCount = isDone ? activity.crises.length : currentCrisis
+  const activeAnswer = crisis?.answer
+  const toolThemes = {
+    peek: { tint: '#61a8ff', mode: 'Inspect without changing history' },
+    commit: { tint: '#86ffb7', mode: 'Create a shared checkpoint' },
+    deprecated: { tint: '#ffd166', mode: 'Explain the legacy workflow shift' },
+    restore: { tint: '#ff7d6b', mode: 'Replace the present with a prior state' },
+  }
+
+  const resetActivity = () => {
+    setCurrentCrisis(0)
+    setIsDone(false)
+    setErrorTool(null)
+    setResolvedTool(null)
+  }
 
   const handleToolClick = (toolId) => {
     if (isDone) return
     if (toolId === crisis.answer) {
+      setResolvedTool(toolId)
       if (currentCrisis < activity.crises.length - 1) {
-        setCurrentCrisis(prev => prev + 1)
+        setTimeout(() => {
+          setCurrentCrisis(prev => prev + 1)
+          setResolvedTool(null)
+        }, 380)
       } else {
         setIsDone(true)
       }
@@ -3559,100 +3928,344 @@ function TimeMachineActivity({ activity, accent }) {
     }
   }
 
-  const showCelebration = useCelebration(false, null);
-return (
-    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
-      <div style={{ flex: '1 1 350px', height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <Canvas camera={{ position: [0, 0, 4.5], fov: 50 }}>
-          <Environment preset="city" />
-          <ambientLight intensity={0.4} />
-          <pointLight position={[2, 4, 3]} intensity={1.5} color="#fff" />
-          <pointLight position={[-2, -2, 2]} intensity={1} color={accent} />
+  const showCelebration = useCelebration(isDone, resetActivity)
 
-          {/* Timeline spine */}
-          <group position={[0, -0.5, 0]}>
-            <GitPipe start={[-3, 0, 0]} end={[3, 0, 0]} color="#4f5973" />
-            
-            {/* Timeline nodes */}
-            {[-2, -0.7, 0.7, 2].map((x, i) => {
-              const isActive = i <= (isDone ? 4 : currentCrisis % 4)
+  return (
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.35rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
+          gap: '0.8rem',
+        }}
+      >
+        {activity.crises.map((item, index) => {
+          const isActive = index === currentCrisis && !isDone
+          const isSolved = index < currentCrisis || isDone
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.04 }}
+              style={{
+                position: 'relative',
+                overflow: 'hidden',
+                minHeight: '110px',
+                padding: '0.95rem 1rem',
+                borderRadius: '20px',
+                background: isSolved
+                  ? 'linear-gradient(135deg, rgba(134,255,183,0.12), rgba(134,255,183,0.03))'
+                  : isActive
+                    ? `linear-gradient(135deg, ${hexToRgba(accent, 0.18)}, rgba(255,255,255,0.03))`
+                    : 'rgba(255,255,255,0.03)',
+                border: `1px solid ${isSolved ? 'rgba(134,255,183,0.28)' : isActive ? hexToRgba(accent, 0.48) : 'rgba(255,255,255,0.08)'}`,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.8rem', marginBottom: '0.45rem' }}>
+                <div style={{ color: isSolved ? '#86ffb7' : isActive ? accent : '#8ba0c4', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+                  {isSolved ? 'Locked' : isActive ? 'Live feed' : `Queued ${index + 1}`}
+                </div>
+                <div style={{ color: '#fff', fontWeight: 800 }}>{String(index + 1).padStart(2, '0')}</div>
+              </div>
+              <div style={{ color: '#dce5f8', fontSize: '0.86rem', lineHeight: 1.5 }}>{item.prompt}</div>
+            </motion.div>
+          )
+        })}
+      </div>
+
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(340px, 1.25fr) minmax(300px, 0.95fr)',
+          gap: '1.35rem',
+          alignItems: 'start',
+        }}
+      >
+        <div
+          style={{
+            minHeight: '560px',
+            borderRadius: '28px',
+            overflow: 'hidden',
+            position: 'relative',
+            border: `1px solid ${hexToRgba(accent, 0.24)}`,
+            background: 'radial-gradient(circle at 50% 22%, rgba(255,255,255,0.08), rgba(5,8,18,0.96) 58%)',
+            boxShadow: `0 34px 80px ${hexToRgba(accent, 0.12)}`,
+          }}
+        >
+        <div style={{ position: 'absolute', inset: '1rem 1rem auto 1rem', zIndex: 2, display: 'flex', justifyContent: 'space-between', gap: '1rem', pointerEvents: 'none' }}>
+          <div style={{ padding: '0.75rem 0.95rem', borderRadius: '16px', background: 'rgba(5,9,18,0.72)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(14px)' }}>
+            <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
+              Chronology Engine
+            </div>
+            <div style={{ color: '#fff', fontSize: '0.96rem', fontWeight: 700 }}>
+              Crisis {currentCrisis + 1} / {activity.crises.length}
+            </div>
+          </div>
+          <div style={{ padding: '0.75rem 0.95rem', borderRadius: '16px', background: 'rgba(5,9,18,0.72)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(14px)', textAlign: 'right' }}>
+            <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
+              Active operator lens
+            </div>
+            <div style={{ color: activeAnswer ? toolThemes[activeAnswer].tint : '#fff', fontSize: '0.96rem', fontWeight: 800 }}>
+              {activeAnswer ? toolThemes[activeAnswer].mode : 'Mission cleared'}
+            </div>
+          </div>
+        </div>
+        <Canvas camera={{ position: [0, 1.25, 7.2], fov: 42 }}>
+          <Environment preset="city" />
+          <ambientLight intensity={0.42} />
+          <pointLight position={[4, 5, 4]} intensity={1.35} color="#ffffff" />
+          <pointLight position={[-4, 3, 2]} intensity={1.25} color={accent} />
+          <spotLight position={[0, 8, 0]} angle={0.42} penumbra={1} intensity={18} color="#e1f7ff" />
+
+          <group position={[0, -0.55, 0]}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.18, 0]}>
+              <cylinderGeometry args={[4.45, 5.1, 0.38, 72]} />
+              <meshPhysicalMaterial color="#0a0f1b" metalness={0.8} roughness={0.18} clearcoat={1} />
+            </mesh>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.95, 0]}>
+              <ringGeometry args={[2.25, 4.15, 72]} />
+              <meshBasicMaterial color={accent} transparent opacity={0.16} side={THREE.DoubleSide} />
+            </mesh>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.94, 0]}>
+              <ringGeometry args={[0.8, 1.55, 72]} />
+              <meshBasicMaterial color="#86ffb7" transparent opacity={0.2} side={THREE.DoubleSide} />
+            </mesh>
+
+            {[0, 1, 2].map((ring) => (
+              <Float key={ring} speed={1.5 + ring * 0.45} rotationIntensity={0.25} floatIntensity={0.18}>
+                <mesh rotation={[Math.PI / (2.8 + ring * 0.2), ring * 0.65, ring * 0.2]} position={[0, 0.55 + ring * 0.4, 0]}>
+                  <torusGeometry args={[1.15 + ring * 0.35, 0.028 + ring * 0.006, 32, 140]} />
+                  <meshPhysicalMaterial color={ring === 1 ? '#86ffb7' : accent} emissive={ring === 1 ? '#86ffb7' : accent} emissiveIntensity={0.4 + ring * 0.15} roughness={0.06} metalness={0.86} transparent opacity={0.72 - ring * 0.12} />
+                </mesh>
+              </Float>
+            ))}
+
+            <Float speed={2.2} rotationIntensity={0.45} floatIntensity={0.45}>
+              <group position={[0, 1.55, 0]}>
+                <mesh>
+                  <octahedronGeometry args={[0.64, 1]} />
+                  <meshPhysicalMaterial color={accent} emissive={accent} emissiveIntensity={1.2} transmission={0.85} thickness={0.72} roughness={0.03} />
+                </mesh>
+                <mesh scale={1.25}>
+                  <icosahedronGeometry args={[0.62, 0]} />
+                  <meshBasicMaterial color="#dff8ff" wireframe transparent opacity={0.3} />
+                </mesh>
+                <Sparkles count={isDone ? 64 : 30} scale={3.4} size={2.2} color={isDone ? '#86ffb7' : accent} speed={1.9} />
+                <Text position={[0, 0, 0]} fontSize={0.16} color="#f3fbff" anchorX="center" anchorY="middle">
+                  {isDone ? 'SYNC' : `C${currentCrisis + 1}`}
+                </Text>
+              </group>
+            </Float>
+
+            {activity.tools.map((tool, index) => {
+              const angle = (index / activity.tools.length) * Math.PI * 2 - Math.PI / 4
+              const x = Math.cos(angle) * 2.95
+              const z = Math.sin(angle) * 2.25
+              const theme = toolThemes[tool.id]
+              const isError = errorTool === tool.id
+              const isResolved = resolvedTool === tool.id
+              const isCurrent = activeAnswer === tool.id && !isDone
+              const tint = isError ? '#ff7d8f' : isResolved ? '#86ffb7' : isCurrent ? theme.tint : '#4f5973'
+
               return (
-                <Float key={i} speed={2} rotationIntensity={0} floatIntensity={0.3}>
-                  <GlowSphere position={[x, 0, 0]} color={isActive ? accent : '#4f5973'} scale={0.12 + (i === currentCrisis ? 0.05 : 0)} pulse={i === currentCrisis} withSparkles={isActive} />
-                </Float>
+                <group key={tool.id}>
+                  <PipeSegment3D start={[0, -0.25, 0]} end={[x, -0.05, z]} color={tint} radius={0.03} opacity={isCurrent ? 0.95 : 0.35} />
+                  <group position={[x, -0.02, z]} onClick={() => handleToolClick(tool.id)}>
+                    <mesh>
+                      <cylinderGeometry args={[0.52, 0.76, 0.28, 36]} />
+                      <meshPhysicalMaterial color="#111827" metalness={0.88} roughness={0.12} clearcoat={1} />
+                    </mesh>
+                    <mesh position={[0, 0.55, 0]}>
+                      <boxGeometry args={[0.5, 1.05, 0.5]} />
+                      <meshPhysicalMaterial color="#131f33" metalness={0.82} roughness={0.16} />
+                    </mesh>
+                    <mesh position={[0, 0.95, 0]}>
+                      <octahedronGeometry args={[0.24, 0]} />
+                      <meshPhysicalMaterial color={tint} emissive={tint} emissiveIntensity={isCurrent ? 1.2 : 0.35} transmission={0.75} roughness={0.05} />
+                    </mesh>
+                    <Text position={[0, 0.56, 0.27]} fontSize={0.1} color="#f5fbff" anchorX="center" anchorY="middle">
+                      {getCrisisToolIcon(tool.id)}
+                    </Text>
+                    <Text position={[0, -0.46, 0]} fontSize={0.12} maxWidth={1.5} color={tint} anchorX="center" anchorY="middle">
+                      {tool.label}
+                    </Text>
+                    {(isResolved || isCurrent) && (
+                      <GlowSphere position={[0, 1.36, 0]} color={isResolved ? '#86ffb7' : tint} scale={0.09} pulse={isCurrent && !resolvedTool} withSparkles={isResolved} />
+                    )}
+                  </group>
+                </group>
+              )
+            })}
+
+            {activity.crises.map((item, index) => {
+              const x = -2.7 + index * 1.35
+              const solved = index < resolvedCount || isDone
+              const activeNode = index === currentCrisis && !isDone
+
+              return (
+                <group key={item.id} position={[x, -0.92, -2.45]}>
+                  <mesh>
+                    <sphereGeometry args={[0.12, 24, 24]} />
+                    <meshPhysicalMaterial color={solved ? '#86ffb7' : activeNode ? accent : '#2e3a56'} emissive={solved ? '#86ffb7' : activeNode ? accent : '#2e3a56'} emissiveIntensity={activeNode ? 0.95 : 0.25} />
+                  </mesh>
+                </group>
               )
             })}
           </group>
 
-          {/* Majestic Time Crystal */}
-          <Float speed={2} rotationIntensity={0.8} floatIntensity={0.8}>
-            <group position={[0, 1.2, 0]}>
-              <mesh>
-                <torusKnotGeometry args={[0.5, 0.1, 100, 16]} />
-                <meshPhysicalMaterial 
-                  color={'#fff'} 
-                  transmission={1} 
-                  roughness={0} 
-                  thickness={1.5} 
-                  ior={1.5} 
-                  clearcoat={1}
-                />
-              </mesh>
-              <mesh>
-                <sphereGeometry args={[0.3, 32, 32]} />
-                <meshPhysicalMaterial color={accent} emissive={accent} emissiveIntensity={isDone ? 2 : 0.8} roughness={0} transmission={0.5} />
-              </mesh>
-              {isDone && <Sparkles count={40} scale={2.5} size={2} color={accent} speed={2} />}
-            </group>
-          </Float>
-
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={1} />
+          <ContactShadows position={[0, -1.25, 0]} opacity={0.78} scale={14} blur={2.8} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.55} />
         </Canvas>
       </div>
 
-      <div style={{ flex: '1 1 250px', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{
-          background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '12px', padding: '1.5rem'
-        }}>
-          <div style={{ color: '#6f7890', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: '0.5rem' }}>
-            Crisis {currentCrisis + 1} of {activity.crises.length}
-          </div>
-          <div style={{ color: '#fff', fontSize: '1.05rem', fontWeight: 500, lineHeight: 1.5 }}>
-            {crisis.prompt}
-          </div>
-        </div>
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          <motion.div
+            key={currentCrisis}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              position: 'relative',
+              overflow: 'hidden',
+              borderRadius: '26px',
+              padding: '1.35rem',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+              border: `1px solid ${hexToRgba(accent, 0.22)}`,
+            }}
+          >
+            <div style={{ color: '#8ca0c4', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 800, marginBottom: '0.6rem' }}>
+              Situation brief
+            </div>
+            <div style={{ color: '#fff', fontSize: '1.12rem', fontWeight: 700, lineHeight: 1.6 }}>
+              {crisis.prompt}
+            </div>
+            <div style={{ marginTop: '1rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
+              {['inspect', 'checkpoint', 'rollback', 'explain legacy'].map((label, index) => (
+                <span
+                  key={label}
+                  style={{
+                    padding: '0.38rem 0.72rem',
+                    borderRadius: '999px',
+                    background: index === 0 ? hexToRgba(accent, 0.12) : 'rgba(255,255,255,0.04)',
+                    border: `1px solid ${index === 0 ? hexToRgba(accent, 0.3) : 'rgba(255,255,255,0.08)'}`,
+                    color: index === 0 ? accent : '#b9c7e3',
+                    fontSize: '0.72rem',
+                    letterSpacing: '0.08em',
+                    textTransform: 'uppercase',
+                    fontWeight: 800,
+                  }}
+                >
+                  {label}
+                </span>
+              ))}
+            </div>
+          </motion.div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
-          {activity.tools.map(tool => {
-            const isError = errorTool === tool.id
-            return (
-              <button
-                key={tool.id}
-                onClick={() => handleToolClick(tool.id)}
-                className={isError ? 'jam-shake' : ''}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.9rem' }}>
+            {activity.tools.map((tool, index) => {
+              const theme = toolThemes[tool.id]
+              const isError = errorTool === tool.id
+              const isResolved = resolvedTool === tool.id
+              const isCurrent = activeAnswer === tool.id && !isDone
+
+              return (
+                <motion.button
+                  key={tool.id}
+                  type="button"
+                  onClick={() => handleToolClick(tool.id)}
+                  whileHover={{ y: -6, rotateX: -4, rotateY: index % 2 === 0 ? -3 : 3 }}
+                  whileTap={{ scale: 0.985 }}
+                  className={isError ? 'jam-shake' : ''}
+                  style={{
+                    minHeight: '195px',
+                    padding: '1rem',
+                    borderRadius: '24px',
+                    textAlign: 'left',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    cursor: 'pointer',
+                    background: isResolved
+                      ? 'linear-gradient(155deg, rgba(134,255,183,0.14), rgba(255,255,255,0.04))'
+                      : isError
+                        ? 'linear-gradient(155deg, rgba(255,45,85,0.14), rgba(255,255,255,0.03))'
+                        : isCurrent
+                          ? `linear-gradient(155deg, ${hexToRgba(theme.tint, 0.18)}, rgba(255,255,255,0.04))`
+                          : 'linear-gradient(155deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))',
+                    border: `1px solid ${isResolved ? 'rgba(134,255,183,0.35)' : isError ? 'rgba(255,45,85,0.34)' : isCurrent ? hexToRgba(theme.tint, 0.44) : 'rgba(255,255,255,0.08)'}`,
+                    boxShadow: isCurrent ? `0 22px 48px ${hexToRgba(theme.tint, 0.14)}` : 'none',
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', alignItems: 'start' }}>
+                    <div style={{
+                      width: '56px',
+                      height: '56px',
+                      borderRadius: '18px',
+                      display: 'grid',
+                      placeItems: 'center',
+                      color: theme.tint,
+                      background: hexToRgba(theme.tint, 0.12),
+                      border: `1px solid ${hexToRgba(theme.tint, 0.22)}`,
+                      fontSize: '0.88rem',
+                      fontWeight: 900,
+                      letterSpacing: '0.08em',
+                    }}>
+                      {getCrisisToolIcon(tool.id)}
+                    </div>
+                    <div style={{ padding: '0.35rem 0.6rem', borderRadius: '999px', fontSize: '0.68rem', color: theme.tint, background: hexToRgba(theme.tint, 0.1), letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                      {theme.mode.split(' ')[0]}
+                    </div>
+                  </div>
+                  <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.4rem' }}>{tool.label}</div>
+                  <div style={{ color: '#95a8cb', fontSize: '0.84rem', lineHeight: 1.6 }}>{tool.desc}</div>
+                  <div style={{ position: 'absolute', left: '1rem', right: '1rem', bottom: '1rem', color: isResolved ? '#86ffb7' : isError ? '#ff8ca0' : isCurrent ? theme.tint : '#6f829f', fontSize: '0.76rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                    {isResolved ? 'Resolved' : isError ? 'Unsafe fit' : isCurrent ? 'Best match now' : 'Standby'}
+                  </div>
+                </motion.button>
+              )
+            })}
+          </div>
+
+          <AnimatePresence mode="wait">
+            {!isDone && (
+              <motion.div
+                key={`${crisis.id}-${resolvedTool || errorTool || 'idle'}`}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 style={{
-                  padding: '0.85rem 1rem', borderRadius: '10px', textAlign: 'left',
-                  background: isError ? 'rgba(255,45,85,0.1)' : 'rgba(255,255,255,0.05)',
-                  border: isError ? '1px solid #ff2d55' : '1px solid rgba(255,255,255,0.12)',
-                  color: isError ? '#ff2d55' : '#fff', cursor: 'pointer', transition: 'all 0.2s'
+                  borderRadius: '22px',
+                  padding: '1.1rem 1.15rem',
+                  background: resolvedTool
+                    ? 'rgba(134,255,183,0.08)'
+                    : errorTool
+                      ? 'rgba(255,45,85,0.08)'
+                      : 'rgba(255,255,255,0.03)',
+                  border: `1px solid ${resolvedTool ? 'rgba(134,255,183,0.28)' : errorTool ? 'rgba(255,45,85,0.28)' : 'rgba(255,255,255,0.08)'}`,
                 }}
               >
-                <div style={{ fontWeight: 700 }}>{tool.label}</div>
-                <div style={{ fontSize: '0.78rem', color: '#6f7890', marginTop: '0.2rem' }}>{tool.desc}</div>
-              </button>
-            )
-          })}
-        </div>
+                <div style={{ color: resolvedTool ? '#86ffb7' : errorTool ? '#ff95a4' : '#96a8ca', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.14em', fontWeight: 800, marginBottom: '0.5rem' }}>
+                  {resolvedTool ? 'Why this was correct' : errorTool ? 'Why that failed' : 'Decision rule'}
+                </div>
+                <div style={{ color: '#dce5f8', fontSize: '0.92rem', lineHeight: 1.68 }}>
+                  {resolvedTool
+                    ? `"${activity.tools.find((tool) => tool.id === resolvedTool)?.label}" fits because the request is about ${toolThemes[resolvedTool].mode.toLowerCase()}, not a different kind of timeline change.`
+                    : errorTool
+                      ? 'Separate the intent first: inspect old work, create a checkpoint, explain the legacy workflow, or truly replace the current state. The wrong choice means the intent and the action do not match.'
+                      : 'Start by asking one question: do you need to look, save, explain, or replace? Once that intent is clear, the right tool becomes obvious.'}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-        {isDone && (
-          <div style={{ background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '12px', textAlign: 'center', color: accent, fontWeight: 700 }}>
-            {activity.success}
-          
-      <CelebrationOverlay active={showCelebration} />
-</div>
-        )}
+          {isDone && (
+            <div style={{ background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '20px', textAlign: 'center', color: accent, fontWeight: 800 }}>
+              {activity.success}
+            </div>
+          )}
+        </div>
       </div>
+
+      <CelebrationOverlay active={showCelebration} />
     </div>
   )
 }
@@ -3665,6 +4278,7 @@ function ServerDeployActivity({ activity, accent }) {
   const pending = activity.disks.filter(d => !routed.includes(d))
   const current = pending[0]
   const isDone = pending.length === 0
+  const currentSignal = current ? getEnvironmentSignal(current.label) : null
 
   const handleRackClick = (rackId) => {
     if (isDone || !current) return
@@ -3676,60 +4290,257 @@ function ServerDeployActivity({ activity, accent }) {
     }
   }
 
-  const showCelebration = useCelebration(isDone, () => { setRouted([]) });
-return (
-    <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div style={{
-        background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '16px', padding: '1.5rem', textAlign: 'center'
-      }}>
-        <div style={{ color: '#6f7890', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, fontSize: '0.85rem', marginBottom: '0.5rem' }}>
-          Deploy Config Target
+  const showCelebration = useCelebration(isDone, () => {
+    setRouted([])
+    setErrorRack(null)
+  })
+
+  return (
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.25rem' }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(280px, 1.1fr) minmax(220px, 0.9fr)',
+          gap: '1rem',
+        }}
+      >
+        <div
+          style={{
+            borderRadius: '24px',
+            padding: '1.2rem 1.25rem',
+            background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+            border: `1px solid ${hexToRgba(accent, 0.22)}`,
+          }}
+        >
+          <div style={{ color: '#91a6cb', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 800, marginBottom: '0.55rem' }}>
+            Packet to classify
+          </div>
+          <div style={{ color: '#fff', fontSize: '1.08rem', fontWeight: 700, lineHeight: 1.6 }}>
+            {current ? current.label : activity.success}
+          </div>
+          {currentSignal && (
+            <div style={{ marginTop: '0.95rem', display: 'flex', gap: '0.7rem', flexWrap: 'wrap' }}>
+              <span style={{ padding: '0.4rem 0.72rem', borderRadius: '999px', background: hexToRgba(accent, 0.12), border: `1px solid ${hexToRgba(accent, 0.22)}`, color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                {currentSignal.tag}
+              </span>
+              {currentSignal.spectrum.map((token) => (
+                <span key={token} style={{ padding: '0.4rem 0.7rem', borderRadius: '999px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#bfd0eb', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700 }}>
+                  {token}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        {current ? (
-          <div style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 500 }}>"{current.label}"</div>
-        ) : (
-          <div style={{ color: accent, fontSize: '1.25rem', fontWeight: 700 }}>{activity.success}
-      <CelebrationOverlay active={showCelebration} />
-</div>
-        )}
+
+        <div
+          style={{
+            borderRadius: '24px',
+            padding: '1.2rem 1.25rem',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
+        >
+          <div style={{ color: '#91a6cb', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 800, marginBottom: '0.55rem' }}>
+            Throughput
+          </div>
+          <div style={{ color: '#fff', fontSize: '2rem', fontWeight: 900, lineHeight: 1 }}>
+            {routed.length}
+            <span style={{ color: '#6f83a9', fontSize: '1rem', fontWeight: 700 }}> / {activity.disks.length}</span>
+          </div>
+          <div style={{ marginTop: '0.7rem', height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+            <motion.div
+              initial={false}
+              animate={{ width: `${(routed.length / activity.disks.length) * 100}%` }}
+              style={{ height: '100%', borderRadius: '999px', background: `linear-gradient(90deg, ${accent}, #86ffb7)` }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div style={{ height: '420px', borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.08)', cursor: current ? 'crosshair' : 'default' }}>
-        <Canvas camera={{ position: [0, 1.5, 6.5], fov: 45 }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(340px, 1.2fr) minmax(300px, 0.98fr)',
+          gap: '1.35rem',
+          alignItems: 'start',
+        }}
+      >
+      <div style={{ minHeight: '560px', borderRadius: '28px', overflow: 'hidden', position: 'relative', border: `1px solid ${hexToRgba(accent, 0.24)}`, background: 'radial-gradient(circle at 50% 15%, rgba(255,255,255,0.1), rgba(5,8,18,0.97) 60%)', boxShadow: `0 36px 82px ${hexToRgba(accent, 0.1)}`, cursor: current ? 'crosshair' : 'default' }}>
+        <div style={{ position: 'absolute', inset: '1rem 1rem auto 1rem', zIndex: 2, display: 'flex', justifyContent: 'space-between', gap: '0.8rem', pointerEvents: 'none' }}>
+          <div style={{ padding: '0.72rem 0.95rem', borderRadius: '16px', background: 'rgba(5,9,18,0.72)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(14px)' }}>
+            <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
+              Deployment chamber
+            </div>
+            <div style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 700 }}>
+              Route the incoming config to the correct environment lane
+            </div>
+          </div>
+        </div>
+        <Canvas camera={{ position: [0, 2.2, 8.2], fov: 42 }}>
           <Environment preset="city" />
-          <ambientLight intensity={0.4} />
-          <pointLight position={[3, 5, 4]} intensity={2} color="#fff" />
-          <pointLight position={[-3, -2, 2]} intensity={1} color={accent} />
+          <ambientLight intensity={0.42} />
+          <pointLight position={[4, 6, 4]} intensity={1.65} color="#ffffff" />
+          <pointLight position={[-4, 2, 3]} intensity={1.15} color={accent} />
+          <spotLight position={[0, 8, 0]} angle={0.5} penumbra={1} intensity={16} color="#d8efff" />
 
-          <group position={[0, -0.5, 0]}>
-            {activity.racks.map((rack, i) => {
-              const x = (i - 1) * 2.4
-              const filled = routed.filter(r => r.rackId === rack.id).length
+          <group position={[0, -0.72, 0]}>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.12, 0]}>
+              <cylinderGeometry args={[4.8, 5.2, 0.34, 72]} />
+              <meshPhysicalMaterial color="#0a111d" metalness={0.82} roughness={0.16} clearcoat={1} />
+            </mesh>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.94, 0]}>
+              <ringGeometry args={[0.75, 1.45, 72]} />
+              <meshBasicMaterial color={accent} transparent opacity={0.22} side={THREE.DoubleSide} />
+            </mesh>
+
+            {activity.racks.map((rack, index) => {
+              const x = (index - 1) * 3
+              const z = index === 1 ? 0.95 : -0.65
+              const stackCount = routed.filter((item) => item.rackId === rack.id).length
+              const selectedWrong = errorRack === rack.id
               return (
-                <ServerRack3D
-                  key={rack.id}
-                  position={[x, 0, 0]}
-                  color={rack.color}
-                  label={rack.label}
-                  filled={filled > 0}
-                  onClick={() => handleRackClick(rack.id)}
-                />
+                <group key={rack.id}>
+                  <PipeSegment3D start={[0, -0.1, 0]} end={[x, -0.1, z]} color={selectedWrong ? '#ff7d8f' : rack.color} radius={0.045} opacity={0.62} />
+                  <mesh position={[x, -0.1, z]}>
+                    <cylinderGeometry args={[0.42, 0.42, 0.18, 32]} />
+                    <meshPhysicalMaterial color={rack.color} emissive={rack.color} emissiveIntensity={0.35} roughness={0.18} metalness={0.82} />
+                  </mesh>
+                  <ServerRack3D
+                    position={[x, 0.7, z]}
+                    color={selectedWrong ? '#ff7d8f' : rack.color}
+                    label={rack.label}
+                    filled={stackCount > 0}
+                    onClick={() => handleRackClick(rack.id)}
+                  />
+                  {stackCount > 0 && (
+                    <Text position={[x, 1.95, z]} fontSize={0.16} color={rack.color} anchorX="center" anchorY="middle">
+                      +{stackCount}
+                    </Text>
+                  )}
+                </group>
               )
             })}
+
+            <Float speed={3.2} rotationIntensity={0.6} floatIntensity={0.5}>
+              <group position={[0, 2.55, 0]}>
+                <mesh>
+                  <octahedronGeometry args={[0.46, 0]} />
+                  <meshPhysicalMaterial color={current ? accent : '#86ffb7'} emissive={current ? accent : '#86ffb7'} emissiveIntensity={1.15} roughness={0.04} transmission={0.82} thickness={0.45} />
+                </mesh>
+                <mesh scale={1.26}>
+                  <icosahedronGeometry args={[0.42, 0]} />
+                  <meshBasicMaterial color="#dff8ff" wireframe transparent opacity={0.3} />
+                </mesh>
+                <Sparkles count={current ? 22 : 50} scale={2.5} size={2} color={current ? accent : '#86ffb7'} speed={1.8} />
+              </group>
+            </Float>
           </group>
 
-          {/* Floating glowing disk */}
-          {current && (
-            <Float speed={4} rotationIntensity={0.8} floatIntensity={0.6}>
-              <GlowingDataDisk position={[0, 2.5, 0]} color={accent} speed={3} />
-            </Float>
-          )}
-
-          <ContactShadows position={[0, -1.8, 0]} opacity={0.6} scale={12} blur={2.5} far={4} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.6} />
+          <ContactShadows position={[0, -1.6, 0]} opacity={0.76} scale={13} blur={2.6} far={5} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.52} />
         </Canvas>
       </div>
+
+      <div style={{ display: 'grid', gap: '1rem' }}>
+        {current && (
+          <motion.div
+            key={current.id}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              borderRadius: '24px',
+              padding: '1.15rem 1.2rem',
+              background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+              border: `1px solid ${hexToRgba(accent, 0.2)}`,
+            }}
+          >
+            <div style={{ color: '#8fa6ce', fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 800, marginBottom: '0.55rem' }}>
+              Environment decoding rule
+            </div>
+            <div style={{ color: '#fff', fontSize: '1rem', lineHeight: 1.65, fontWeight: 600 }}>
+              {currentSignal?.summary}
+            </div>
+          </motion.div>
+        )}
+
+        <div style={{ display: 'grid', gap: '0.9rem' }}>
+          {activity.racks.map((rack, index) => {
+            const heuristics = current ? getEnvironmentHeuristics(current.label, rack.id) : []
+            const isError = errorRack === rack.id
+            const routedCount = routed.filter((item) => item.rackId === rack.id).length
+
+            return (
+              <motion.button
+                key={rack.id}
+                type="button"
+                onClick={() => handleRackClick(rack.id)}
+                whileHover={{ y: -5, x: index === 1 ? 0 : index === 0 ? -3 : 3 }}
+                whileTap={{ scale: 0.99 }}
+                className={isError ? 'jam-shake' : ''}
+                style={{
+                  padding: '1rem 1.05rem',
+                  borderRadius: '24px',
+                  textAlign: 'left',
+                  cursor: current ? 'pointer' : 'default',
+                  background: isError
+                    ? 'linear-gradient(145deg, rgba(255,45,85,0.13), rgba(255,255,255,0.03))'
+                    : `linear-gradient(145deg, ${hexToRgba(rack.color, 0.12)}, rgba(255,255,255,0.03))`,
+                  border: `1px solid ${isError ? 'rgba(255,45,85,0.36)' : hexToRgba(rack.color, 0.34)}`,
+                  opacity: current ? 1 : 0.7,
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                  <div>
+                    <div style={{ color: rack.color, fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 800, marginBottom: '0.3rem' }}>
+                      {rack.label}
+                    </div>
+                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800 }}>
+                      {rack.id === 'dev' ? 'Build + experiment' : rack.id === 'staging' ? 'Mirror + verify' : 'Serve + protect'}
+                    </div>
+                  </div>
+                  <div style={{ minWidth: '42px', height: '42px', borderRadius: '14px', display: 'grid', placeItems: 'center', background: hexToRgba(rack.color, 0.14), color: rack.color, fontWeight: 900 }}>
+                    {routedCount}
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gap: '0.45rem' }}>
+                  {heuristics.map((line) => (
+                    <div key={line} style={{ color: '#c8d5ec', fontSize: '0.84rem', lineHeight: 1.55 }}>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              </motion.button>
+            )
+          })}
+        </div>
+
+        {current && (
+          <div
+            style={{
+              borderRadius: '20px',
+              padding: '1rem 1.05rem',
+              background: errorRack ? 'rgba(255,45,85,0.08)' : 'rgba(255,255,255,0.03)',
+              border: `1px solid ${errorRack ? 'rgba(255,45,85,0.24)' : 'rgba(255,255,255,0.08)'}`,
+            }}
+          >
+            <div style={{ color: errorRack ? '#ff95a4' : '#94a8cb', fontSize: '0.73rem', textTransform: 'uppercase', letterSpacing: '0.14em', fontWeight: 800, marginBottom: '0.45rem' }}>
+              Routing thought process
+            </div>
+            <div style={{ color: '#dce5f8', fontSize: '0.9rem', lineHeight: 1.66 }}>
+              Ask in order: Is it local or experimental? Then it is Development. Does it mimic production for QA or sign-off? Then it is Staging. Does it touch live customers, money, or the public domain? Then it is Production.
+            </div>
+          </div>
+        )}
+
+        {isDone && (
+          <div style={{ background: hexToRgba(accent, 0.1), border: `1px solid ${accent}`, padding: '1rem', borderRadius: '20px', textAlign: 'center', color: accent, fontWeight: 800 }}>
+            {activity.success}
+          </div>
+        )}
+      </div>
+      </div>
+
+      <CelebrationOverlay active={showCelebration} />
     </div>
   )
 }

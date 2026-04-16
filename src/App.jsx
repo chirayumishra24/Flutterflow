@@ -208,6 +208,235 @@ function MotionReveal({ children, className = '', delay = 0 }) {
   )
 }
 
+function usePageStepScroll(currentStep) {
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [currentStep])
+}
+
+const EMBED_ALLOW =
+  'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share'
+
+function getEmbedUrl(rawUrl) {
+  if (!rawUrl) return null
+
+  try {
+    const url = new URL(rawUrl)
+    const host = url.hostname.replace(/^www\./, '')
+
+    if (host === 'youtu.be') {
+      const videoId = url.pathname.replace('/', '')
+      if (!videoId) return null
+      const params = new URLSearchParams()
+      const list = url.searchParams.get('list')
+      const start = url.searchParams.get('t') || url.searchParams.get('start')
+      if (list) params.set('list', list)
+      if (start) params.set('start', String(start).replace(/s$/, ''))
+      const query = params.toString()
+      return `https://www.youtube.com/embed/${videoId}${query ? `?${query}` : ''}`
+    }
+
+    if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (url.pathname === '/playlist') {
+        const list = url.searchParams.get('list')
+        return list ? `https://www.youtube.com/embed/videoseries?list=${list}` : null
+      }
+
+      if (url.pathname === '/watch') {
+        const videoId = url.searchParams.get('v')
+        const list = url.searchParams.get('list')
+        if (!videoId && list) {
+          return `https://www.youtube.com/embed/videoseries?list=${list}`
+        }
+        if (!videoId) return null
+        const params = new URLSearchParams()
+        if (list) params.set('list', list)
+        const start = url.searchParams.get('t') || url.searchParams.get('start')
+        if (start) params.set('start', String(start).replace(/s$/, ''))
+        const query = params.toString()
+        return `https://www.youtube.com/embed/${videoId}${query ? `?${query}` : ''}`
+      }
+
+      if (url.pathname.startsWith('/embed/')) return rawUrl
+      return null
+    }
+
+    if (host === 'loom.com') {
+      if (url.pathname.startsWith('/embed/')) return rawUrl
+      if (url.pathname.startsWith('/share/')) {
+        return `https://www.loom.com/embed/${url.pathname.split('/').pop()}`
+      }
+    }
+
+    if (host === 'demo.arcade.software') {
+      if (url.search.includes('embed')) return rawUrl
+      return `${url.origin}${url.pathname}?embed&show_copy_link=true`
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
+function getYouTubeThumbnail(rawUrl) {
+  if (!rawUrl) return null
+
+  try {
+    const url = new URL(rawUrl)
+    const host = url.hostname.replace(/^www\./, '')
+    let videoId = null
+
+    if (host === 'youtu.be') {
+      videoId = url.pathname.replace('/', '')
+    } else if (host === 'youtube.com' || host === 'm.youtube.com') {
+      if (url.pathname === '/watch') {
+        videoId = url.searchParams.get('v')
+      } else if (url.pathname.startsWith('/embed/')) {
+        videoId = url.pathname.split('/').pop()
+      }
+    }
+
+    return videoId ? `https://img.youtube.com/vi/${videoId}/hqdefault.jpg` : null
+  } catch {
+    return null
+  }
+}
+
+function EmbedGallery({
+  items = [],
+  compact = false,
+  minWidth = 260,
+  style = {},
+  cardStyle = {},
+}) {
+  const embeddableItems = items
+    .map((item) => ({
+      ...item,
+      embedUrl: item.embedSrc || getEmbedUrl(item.href || item.src),
+      thumbnailSrc: item.thumbnailSrc || getYouTubeThumbnail(item.href || item.src),
+    }))
+    .filter((item) => item.embedUrl || (item.forceLinkCard && (item.href || item.src)))
+
+  if (!embeddableItems.length) return null
+
+  return (
+    <div
+      style={{
+        marginTop: compact ? '1rem' : '1.35rem',
+        display: 'grid',
+        gridTemplateColumns: `repeat(auto-fit, minmax(${minWidth}px, 1fr))`,
+        gap: compact ? '0.85rem' : '1rem',
+        ...style,
+      }}
+    >
+      {embeddableItems.map((item, index) => (
+        <div
+          key={`${item.title || item.label || item.href || item.src}-${index}`}
+          style={{
+            borderRadius: compact ? '16px' : '18px',
+            overflow: 'hidden',
+            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(5,8,18,0.88) 100%)',
+            boxShadow: '0 18px 40px rgba(0,0,0,0.22)',
+            ...cardStyle,
+          }}
+        >
+          <div
+            style={{
+              padding: compact ? '0.75rem 0.9rem' : '0.9rem 1rem',
+              borderBottom: '1px solid rgba(255,255,255,0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '0.75rem',
+            }}
+          >
+            <div style={{ minWidth: 0 }}>
+              <div style={{ color: '#fff', fontWeight: 700, fontSize: compact ? '0.9rem' : '0.95rem' }}>
+                {item.title || item.label || 'Embedded media'}
+              </div>
+              {item.meta ? (
+                <div style={{ color: '#8ea0bf', fontSize: '0.78rem', marginTop: '0.15rem' }}>{item.meta}</div>
+              ) : null}
+            </div>
+            <a
+              href={item.href || item.src}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="arrow-link"
+              style={{ fontSize: '0.8rem', whiteSpace: 'nowrap' }}
+            >
+              Open <span>→</span>
+            </a>
+          </div>
+          {item.forceLinkCard ? (
+            <a
+              href={item.href || item.src}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'block',
+                position: 'relative',
+                aspectRatio: item.aspectRatio || '16 / 9',
+                background: '#060812',
+                textDecoration: 'none',
+                overflow: 'hidden',
+              }}
+            >
+              {item.thumbnailSrc ? (
+                <img
+                  src={item.thumbnailSrc}
+                  alt={item.title || item.label || 'Media preview'}
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                />
+              ) : null}
+              <div style={{
+                position: 'absolute',
+                inset: 0,
+                background: 'linear-gradient(180deg, rgba(4,7,18,0.18) 0%, rgba(4,7,18,0.72) 100%)',
+                display: 'flex',
+                alignItems: 'flex-end',
+                justifyContent: 'space-between',
+                padding: '1rem',
+              }}>
+                <div style={{ color: '#e6ecff', fontSize: '0.86rem', lineHeight: 1.5, maxWidth: '70%' }}>
+                  {item.previewText || 'Open this guide directly on YouTube'}
+                </div>
+                <div style={{
+                  width: '54px',
+                  height: '54px',
+                  borderRadius: '999px',
+                  background: 'rgba(255,255,255,0.92)',
+                  color: '#0d1220',
+                  display: 'grid',
+                  placeItems: 'center',
+                  fontWeight: 800,
+                  fontSize: '0.8rem',
+                  boxShadow: '0 12px 24px rgba(0,0,0,0.22)',
+                }}>
+                  GO
+                </div>
+              </div>
+            </a>
+          ) : (
+            <div style={{ aspectRatio: item.aspectRatio || '16 / 9', background: '#060812' }}>
+              <iframe
+                src={item.embedUrl}
+                title={item.title || item.label || 'Embedded media'}
+                frameBorder="0"
+                allow={EMBED_ALLOW}
+                allowFullScreen
+                style={{ width: '100%', height: '100%', display: 'block' }}
+              />
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  )
+}
+
 function SectionHeroBackdrop({ height = 380, opacity = 1 }) {
   return (
     <div
@@ -555,6 +784,7 @@ function NavigationMenuSection() {
           <p style={{ color: '#b0b0cc', fontSize: '0.98rem', marginTop: '0.5rem' }}>
             Here is a list of all the features accessible from the Navigation Menu.
           </p>
+          <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=moP9VtkoyjY&list=PLsUp7t2vRqx-xMe6gucpfjeDgIj0tJRIm', title: 'Navigation menu intro' }]} compact minWidth={280} />
         </MotionReveal>
 
         <div className="h-scroll-rail" style={{ marginTop: '2rem' }}>
@@ -624,18 +854,31 @@ function WidgetPaletteSection() {
             <a href="https://www.youtube.com/watch?v=2TGhJEUA0uY&list=PLsUp7t2vRqx-xMe6gucpfjeDgIj0tJRIm&index=15&pp=iAQB0gcJCcUKAYcqIYzv" className="text-link" target="_blank" rel="noopener noreferrer">
               Intro to Widgets | FlutterFlow University
             </a>
+            <div style={{
+              marginTop: '1.5rem',
+              position: 'relative',
+              width: '100%',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
+            }}>
+              <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161648-17.png" alt="Widget Palette" style={{ width: '100%', display: 'block' }} />
+            </div>
           </div>
         </MotionReveal>
 
         <MotionReveal>
-          <div style={{
-            position: 'relative', width: '100%',
-            borderRadius: '20px', overflow: 'hidden',
-            border: '1px solid rgba(255,255,255,0.08)',
-            boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
-          }}>
-            <img src="https://login.skillizee.io/s/articles/69b3e86a3be109fef8751088/images/image-20260313161648-17.png" alt="Widget Palette" style={{ width: '100%', display: 'block' }} />
-          </div>
+          <EmbedGallery
+            items={[{ href: 'https://www.youtube.com/watch?v=2TGhJEUA0uY&list=PLsUp7t2vRqx-xMe6gucpfjeDgIj0tJRIm&index=15&pp=iAQB0gcJCcUKAYcqIYzv', title: 'Intro to widgets' }]}
+            minWidth={320}
+            style={{ marginTop: 0 }}
+            cardStyle={{
+              borderRadius: '20px',
+              border: '1px solid rgba(255,255,255,0.08)',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.4)'
+            }}
+          />
         </MotionReveal>
       </div>
 
@@ -832,6 +1075,7 @@ function StoryboardSection() {
           }}>
             <strong style={{ color: '#00f5d4' }}>Video guide:</strong> <a href="https://youtu.be/ukBii81pwm4" className="text-link" target="_blank" rel="noopener noreferrer">Navigating Pages &amp; Storyboard | FlutterFlow University</a>
           </div>
+          <EmbedGallery items={[{ href: 'https://youtu.be/ukBii81pwm4', title: 'Navigating pages and storyboard' }]} compact minWidth={320} />
         </MotionReveal>
 
         <MotionReveal>
@@ -1211,6 +1455,9 @@ function CanvasSection() {
       title: 'Multi-Language Preview',
       short: 'ML',
       layout: 'wide',
+      embeds: [
+        { href: 'https://demo.arcade.software/E6otMpbcKewMYCfkjl9d?embed&show_copy_link=true', title: 'Interactive demo' }
+      ],
       desc: (
         <>
           <p style={{ margin: 0 }}>
@@ -1254,6 +1501,9 @@ function CanvasSection() {
       title: 'Handle Bars',
       short: 'HB',
       layout: 'wide',
+      embeds: [
+        { href: 'https://www.youtube.com/watch?v=kWvWa5PSWhw&list=PLsUp7t2vRqx-xMe6gucpfjeDgIj0tJRIm&index=3', title: 'Figma Import | FlutterFlow University' }
+      ],
       desc: (
         <>
           <p style={{ margin: 0 }}>
@@ -1280,6 +1530,10 @@ function CanvasSection() {
       id: 'larger-font',
       title: 'Larger Font Visualization',
       short: 'LF',
+      layout: 'wide',
+      embeds: [
+        { href: 'https://www.youtube.com/watch?v=NsR7f1OZeSY&list=PLsUp7t2vRqx-xMe6gucpfjeDgIj0tJRIm&index=5', title: 'Typography | FlutterFlow University' }
+      ],
       desc: (
         <>
           <p style={{ margin: 0 }}>
@@ -1296,6 +1550,9 @@ function CanvasSection() {
       title: 'Canvas Settings',
       short: 'CS',
       layout: 'wide',
+      embeds: [
+        { href: 'https://demo.arcade.software/1IOtwXpNus8W4dLgdHsm?embed&show_copy_link=true', title: 'Resize snapping demo' }
+      ],
       desc: (
         <>
           <p style={{ margin: 0 }}>
@@ -1326,6 +1583,10 @@ function CanvasSection() {
       id: 'video-guide',
       title: 'Video Guide',
       short: 'VG',
+      layout: 'wide',
+      embeds: [
+        { href: 'https://youtu.be/NDrte4nOXYc', title: 'The Canvas | FlutterFlow University' }
+      ],
       desc: (
         <p style={{ margin: 0 }}>
           Watch the full video guide: <a href="https://youtu.be/NDrte4nOXYc" className="text-link" target="_blank" rel="noopener noreferrer">The Canvas | FlutterFlow University</a>.
@@ -1454,10 +1715,11 @@ function CanvasSection() {
                     </div>
                     <h3 style={{ color: '#fff', fontSize: '1.4rem', fontWeight: 600, margin: 0, letterSpacing: '0.5px' }}>{item.title}</h3>
                   </div>
-                  <div className="canvas-item-desc" style={{ color: '#b8c2d4', fontSize: '1.05rem', lineHeight: 1.8, fontWeight: 400 }}>
+                  <div className="canvas-item-desc" style={{ color: '#b8c2d4', fontSize: '1.05rem', lineHeight: 1.8, fontWeight: 400, overflowWrap: 'anywhere', wordBreak: 'break-word' }}>
                     {item.desc}
                   </div>
-                </div>
+                <EmbedGallery items={item.embeds || []} compact minWidth={isWide ? 300 : 240} />
+              </div>
 
                 {item.image && (
                   <div style={{
@@ -1570,6 +1832,9 @@ function OrganizationSection() {
       title: 'Team Code',
       short: 'TC',
       layout: 'wide',
+      embeds: [
+        { href: 'https://demo.arcade.software/ZBQK4f3KhcR0wA5vvJ7f?embed&show_copy_link=true', title: 'Team code demo' }
+      ],
       desc: (
         <>
           <div style={{
@@ -1653,6 +1918,10 @@ function OrganizationSection() {
       title: 'Team Design Library',
       short: 'DL',
       layout: 'wide',
+      embeds: [
+        { href: 'https://demo.arcade.software/wKuA4fKRkxiNXCkESJJt?embed&show_copy_link=true', title: 'Create design system demo' },
+        { href: 'https://demo.arcade.software/JvWQRp2yZHIAJqHu4Lfm?embed&show_copy_link=true', title: 'Apply design system demo' }
+      ],
       desc: (
         <>
           <p style={{ margin: 0 }}>
@@ -1686,6 +1955,10 @@ function OrganizationSection() {
       title: 'Team API Library',
       short: 'API',
       layout: 'wide',
+      embeds: [
+        { href: 'https://demo.arcade.software/2ALaTBUoWnyeZHAqi5wR?embed&show_copy_link=true', title: 'Team API demo 1' },
+        { href: 'https://demo.arcade.software/mT2NXzQoIYcsRP0XBVdG?embed&show_copy_link=true', title: 'Team API demo 2' }
+      ],
       desc: (
         <>
           <div style={{
@@ -1814,6 +2087,7 @@ function OrganizationSection() {
                 <div style={{ color: '#c8c8e0', fontSize: '0.98rem', lineHeight: 1.7 }}>
                   {item.desc}
                 </div>
+                <EmbedGallery items={item.embeds || []} compact minWidth={260} />
               </NeumorphicCard>
             )
           })}
@@ -2600,6 +2874,112 @@ function BulletList({ items, dense = false }) {
   )
 }
 
+function TexturedMaskText({
+  text = 'Explore',
+  imageUrl = 'https://images.unsplash.com/photo-1501630834273-4b5604d2ee31?q=80&w=2070&auto=format&fit=crop',
+  className = '',
+  style = {},
+}) {
+  return (
+    <motion.h2
+      className={className}
+      style={{
+        textTransform: 'uppercase',
+        color: 'transparent',
+        backgroundImage: `url(${imageUrl})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        WebkitBackgroundClip: 'text',
+        backgroundClip: 'text',
+        ...style,
+      }}
+      initial={{ scale: 1.12 }}
+      animate={{ scale: 1 }}
+      transition={{ duration: 8, ease: 'linear', repeat: Infinity, repeatType: 'reverse' }}
+    >
+      {text}
+    </motion.h2>
+  )
+}
+
+function TypewriterText({
+  text = 'Building the future, one line at a time...',
+  speed = 70,
+  deleteSpeed = 36,
+  pauseDuration = 1800,
+  loop = true,
+  className = '',
+  showCursor = true,
+  textStyle = {},
+  cursorStyle = {},
+}) {
+  const [displayText, setDisplayText] = useState('')
+  const [isDeleting, setIsDeleting] = useState(false)
+  const [isPaused, setIsPaused] = useState(false)
+
+  useEffect(() => {
+    let timeout
+
+    if (isPaused) {
+      timeout = setTimeout(() => {
+        setIsPaused(false)
+        if (loop) setIsDeleting(true)
+      }, pauseDuration)
+    } else if (isDeleting) {
+      if (displayText.length > 0) {
+        timeout = setTimeout(() => {
+          setDisplayText(text.substring(0, displayText.length - 1))
+        }, deleteSpeed)
+      } else {
+        setIsDeleting(false)
+      }
+    } else if (displayText.length < text.length) {
+      timeout = setTimeout(() => {
+        setDisplayText(text.substring(0, displayText.length + 1))
+      }, speed)
+    } else if (loop) {
+      setIsPaused(true)
+    }
+
+    return () => clearTimeout(timeout)
+  }, [deleteSpeed, displayText, isDeleting, isPaused, loop, pauseDuration, speed, text])
+
+  return (
+    <div className={className} style={{ fontFamily: 'var(--font-mono)' }}>
+      <span style={textStyle}>
+        {displayText}
+        {showCursor ? (
+          <motion.span
+            animate={{ opacity: [1, 0] }}
+            transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+            style={cursorStyle}
+          >
+            |
+          </motion.span>
+        ) : null}
+      </span>
+    </div>
+  )
+}
+
+function SlideInText({ text = 'Simplicity is the ultimate sophistication.', className = '', style = {} }) {
+  return (
+    <h2 className={className} style={style}>
+      {text.split('').map((char, i) => (
+        <motion.span
+          key={`${char}-${i}`}
+          initial={{ x: -30, opacity: 0 }}
+          animate={{ x: 0, opacity: 1 }}
+          transition={{ delay: i * 0.028, ease: 'easeOut' }}
+          style={{ display: 'inline-block' }}
+        >
+          {char === ' ' ? '\u00A0' : char}
+        </motion.span>
+      ))}
+    </h2>
+  )
+}
+
 function FeatureCard({ title, desc, accent = '#00f5d4', icon }) {
   return (
     <div style={{
@@ -2630,6 +3010,7 @@ function FeatureCard({ title, desc, accent = '#00f5d4', icon }) {
 function Module3Section() {
   const [currentPage, setCurrentPage] = useState(0)
   const totalPages = 6
+  usePageStepScroll(currentPage)
 
   const pages = [
     <PageListProjects />,
@@ -2714,6 +3095,7 @@ function Module3Section() {
 function Module3_2Section() {
   const [currentPage, setCurrentPage] = useState(0)
   const totalPages = 2
+  usePageStepScroll(currentPage)
 
   const pages = [
     <PageDesignSystem />,
@@ -2794,6 +3176,7 @@ function Module3_2Section() {
 function Module3_3Section() {
   const [currentPage, setCurrentPage] = useState(0)
   const totalPages = 1
+  usePageStepScroll(currentPage)
 
   const pages = [
     <PageFileHandling />
@@ -2870,15 +3253,442 @@ function Module3_3Section() {
   )
 }
 
+function ProjectOrbitShowcase({ projects }) {
+  const [activeProjectIndex, setActiveProjectIndex] = useState(0)
+  const [activeGuideIndex, setActiveGuideIndex] = useState(0)
+  const shellRef = useRef(null)
+  const ctaRef = useRef(null)
+  const stageRef = useRef(null)
+  const activeProject = projects[activeProjectIndex]
+  const uniqueLinks = useMemo(() => {
+    const seen = new Set()
+    return (activeProject.links || []).filter((link) => {
+      const key = link?.href?.trim()
+      if (!key || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  }, [activeProject])
+  const activeGuide = uniqueLinks[activeGuideIndex] || uniqueLinks[0]
+  const thumbnailSrc = getYouTubeThumbnail(activeGuide?.href)
+
+  useGsapReveal(shellRef, '.project-orbit-node')
+  useMagneticHover(ctaRef)
+
+  useEffect(() => {
+    if (!stageRef.current) return
+
+    gsap.fromTo(
+      stageRef.current.querySelectorAll('.orbit-scanline, .orbit-float-card'),
+      { y: 24, opacity: 0, scale: 0.96 },
+      {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 0.75,
+        stagger: 0.08,
+        ease: 'power3.out',
+      }
+    )
+  }, [activeProjectIndex, activeGuideIndex])
+
+  useEffect(() => {
+    setActiveGuideIndex(0)
+  }, [activeProjectIndex])
+
+  useEffect(() => {
+    if (activeGuideIndex >= uniqueLinks.length) {
+      setActiveGuideIndex(0)
+    }
+  }, [activeGuideIndex, uniqueLinks.length])
+
+  return (
+    <MotionReveal>
+      <div
+        ref={shellRef}
+        className="relative overflow-hidden rounded-[42px] border border-white/10 backdrop-blur-xl"
+        style={{
+          position: 'relative',
+          borderRadius: '42px',
+          overflow: 'hidden',
+          padding: '1.4rem',
+          border: `1px solid ${activeProject.accent}30`,
+          background: 'linear-gradient(180deg, rgba(5,8,20,0.98) 0%, rgba(8,12,24,0.98) 100%)',
+          boxShadow: `0 40px 120px ${activeProject.accent}12`,
+        }}
+      >
+        <motion.div
+          animate={{ x: [0, 36, -18, 0], y: [0, -22, 14, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            top: '-18%',
+            right: '-8%',
+            width: '420px',
+            height: '420px',
+            borderRadius: '999px',
+            background: activeProject.tone,
+            filter: 'blur(34px)',
+            opacity: 0.9,
+            pointerEvents: 'none',
+          }}
+        />
+        <motion.div
+          animate={{ x: [0, -22, 16, 0], y: [0, 18, -10, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+          style={{
+            position: 'absolute',
+            left: '-10%',
+            bottom: '-20%',
+            width: '360px',
+            height: '360px',
+            borderRadius: '999px',
+            background: `radial-gradient(circle, ${activeProject.accent}22 0%, transparent 68%)`,
+            filter: 'blur(24px)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            display: 'grid',
+            gap: '1.2rem',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: '1rem',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div>
+              <div style={{ color: activeProject.accent, fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase', marginBottom: '0.55rem' }}>
+                Project Orbit
+              </div>
+              <h3 style={{ margin: 0, color: '#fff', fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', lineHeight: 1.02, fontWeight: 800 }}>
+                Beginner ideas, re-imagined as a live studio deck
+              </h3>
+            </div>
+            <div style={{ padding: '0.55rem 0.9rem', borderRadius: '999px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#d9e2f8', fontSize: '0.74rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>
+              Click a shard to switch projects
+            </div>
+          </div>
+
+          <div
+            className="project-orbit-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'minmax(300px, 0.95fr) minmax(340px, 1.2fr)',
+              gap: '1.2rem',
+              alignItems: 'stretch',
+            }}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeProject.title}
+                initial={{ opacity: 0, x: -28, rotateY: -8 }}
+                animate={{ opacity: 1, x: 0, rotateY: 0 }}
+                exit={{ opacity: 0, x: 28, rotateY: 8 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="project-orbit-story min-w-0"
+                style={{
+                  display: 'grid',
+                  gap: '1rem',
+                  padding: '1.3rem',
+                  borderRadius: '34px',
+                  background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                  border: `1px solid ${activeProject.accent}26`,
+                  minHeight: '100%',
+                }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                    <div style={{ width: '62px', height: '62px', borderRadius: '20px', display: 'grid', placeItems: 'center', background: 'rgba(7,10,22,0.72)', border: `1px solid ${activeProject.accent}40`, color: activeProject.accent, fontWeight: 900, letterSpacing: '0.12em', boxShadow: `0 18px 34px ${activeProject.accent}18` }}>
+                      {activeProject.badge}
+                  </div>
+                  <div style={{ padding: '0.48rem 0.8rem', borderRadius: '999px', background: `${activeProject.accent}16`, border: `1px solid ${activeProject.accent}2c`, color: activeProject.accent, fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' }}>
+                    Focus project
+                  </div>
+                </div>
+
+                <div>
+                  <h4 style={{ margin: '0 0 0.75rem', color: '#fff', fontSize: 'clamp(1.55rem, 2vw, 2.35rem)', lineHeight: 1.05, fontWeight: 800 }}>
+                    {activeProject.title}
+                  </h4>
+                  <p style={{ margin: 0, color: '#cdd7ee', fontSize: '1rem', lineHeight: 1.78 }}>
+                    {activeProject.desc}
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gap: '0.7rem', padding: '0.9rem 1rem', borderRadius: '24px', background: 'rgba(255,255,255,0.035)', border: `1px solid ${activeProject.accent}20` }}>
+                  <div style={{ color: activeProject.accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>
+                    Guide selector
+                  </div>
+                  <div className="project-orbit-inline-links">
+                    {uniqueLinks.map((link, index) => (
+                      <button
+                        key={link.href}
+                        type="button"
+                        onMouseEnter={() => setActiveGuideIndex(index)}
+                        onClick={() => setActiveGuideIndex(index)}
+                        style={{
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '0.45rem',
+                          padding: '0.6rem 0.8rem',
+                          borderRadius: '999px',
+                          textDecoration: 'none',
+                          color: index === activeGuideIndex ? '#07101c' : '#e5eeff',
+                          background: index === activeGuideIndex ? activeProject.accent : 'rgba(255,255,255,0.05)',
+                          border: `1px solid ${index === activeGuideIndex ? activeProject.accent : 'rgba(255,255,255,0.08)'}`,
+                          fontSize: '0.78rem',
+                          fontWeight: 700,
+                          lineHeight: 1.35,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <span>{index + 1}</span>
+                        <span>{link.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gap: '0.7rem' }}>
+                  {uniqueLinks.map((link, index) => {
+                    const isActive = index === activeGuideIndex
+                    return (
+                      <motion.button
+                        key={link.href}
+                        type="button"
+                        onClick={() => setActiveGuideIndex(index)}
+                        whileHover={{ x: 8, scale: 1.01 }}
+                        whileTap={{ scale: 0.985 }}
+                        style={{
+                          display: 'grid',
+                          gridTemplateColumns: '42px 1fr auto',
+                          alignItems: 'center',
+                          gap: '0.85rem',
+                          padding: '0.95rem 1rem',
+                          borderRadius: '20px',
+                          border: `1px solid ${isActive ? `${activeProject.accent}55` : 'rgba(255,255,255,0.08)'}`,
+                          background: isActive ? `${activeProject.accent}18` : 'rgba(255,255,255,0.03)',
+                          color: '#fff',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          appearance: 'none',
+                        }}
+                      >
+                        <span style={{ width: '42px', height: '42px', borderRadius: '14px', display: 'grid', placeItems: 'center', background: isActive ? activeProject.accent : 'rgba(255,255,255,0.08)', color: isActive ? '#08111f' : '#dfe8fb', fontWeight: 900 }}>
+                          {index + 1}
+                        </span>
+                        <span style={{ fontSize: '0.94rem', lineHeight: 1.45, fontWeight: isActive ? 800 : 600 }}>
+                          {link.label}
+                        </span>
+                        <span style={{ color: activeProject.accent, fontWeight: 800 }}>→</span>
+                      </motion.button>
+                    )
+                  })}
+                </div>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
+                  {['UI flow', 'Navigation', 'Data display', 'Beginner-safe'].map((tag) => (
+                    <span key={tag} style={{ padding: '0.42rem 0.72rem', borderRadius: '999px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', color: '#b9c9e6', fontSize: '0.72rem', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 700 }}>
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeGuide.href}
+                initial={{ opacity: 0, x: 30, rotateX: -6 }}
+                animate={{ opacity: 1, x: 0, rotateX: 0 }}
+                exit={{ opacity: 0, x: -30, rotateX: 6 }}
+                transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                ref={stageRef}
+                className="project-orbit-stage min-w-0"
+                style={{
+                  position: 'relative',
+                  padding: '1.15rem',
+                  borderRadius: '36px',
+                  background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
+                  border: `1px solid ${activeProject.accent}26`,
+                  minHeight: '100%',
+                  transformStyle: 'preserve-3d',
+                }}
+              >
+                <div className="orbit-float-card" style={{ position: 'absolute', inset: 'auto 12% 6% auto', width: '140px', height: '140px', borderRadius: '28px', border: `1px solid ${activeProject.accent}26`, background: `${activeProject.accent}12`, transform: 'rotate(14deg)', pointerEvents: 'none' }} />
+                <div className="orbit-float-card" style={{ position: 'absolute', inset: '10% auto auto 8%', width: '110px', height: '110px', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)', transform: 'rotate(-10deg)', pointerEvents: 'none' }} />
+                <div style={{ position: 'relative', zIndex: 2, display: 'grid', gap: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <div>
+                      <div style={{ color: activeProject.accent, fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.45rem' }}>
+                        Active walkthrough
+                      </div>
+                      <div style={{ color: '#fff', fontSize: '1.15rem', lineHeight: 1.5, fontWeight: 800, maxWidth: '32ch' }}>
+                        {activeGuide.label}
+                      </div>
+                    </div>
+                    <a
+                      ref={ctaRef}
+                      href={activeGuide.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.65rem',
+                        padding: '0.95rem 1.15rem',
+                        borderRadius: '18px',
+                        textDecoration: 'none',
+                        background: activeProject.accent,
+                        color: '#08111f',
+                        fontWeight: 900,
+                        boxShadow: `0 18px 36px ${activeProject.accent}36`,
+                      }}
+                    >
+                      Open Guide <span>↗</span>
+                    </a>
+                  </div>
+
+                  <div
+                    style={{
+                      display: 'block',
+                      borderRadius: '28px',
+                      overflow: 'hidden',
+                      border: `1px solid ${activeProject.accent}30`,
+                      background: 'rgba(255,255,255,0.03)',
+                      position: 'relative',
+                      transform: 'perspective(1600px) rotateY(-8deg) rotateX(4deg)',
+                      boxShadow: `0 28px 80px ${activeProject.accent}18`,
+                    }}
+                  >
+                      <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(8,10,22,0.08) 0%, rgba(8,10,22,0.76) 100%)', zIndex: 1 }} />
+                      {thumbnailSrc ? (
+                        <img src={thumbnailSrc} alt={activeGuide.label} style={{ width: '100%', aspectRatio: '16 / 9', objectFit: 'cover', display: 'block' }} />
+                      ) : (
+                        <div style={{ aspectRatio: '16 / 9', background: 'linear-gradient(135deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))' }} />
+                      )}
+
+                      <div style={{ position: 'absolute', inset: 'auto 1rem 1rem 1rem', zIndex: 2, display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-end' }}>
+                      <div>
+                        <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.25rem' }}>Launch preview</div>
+                        <div style={{ color: '#ccd7f1', fontSize: '0.84rem', lineHeight: 1.5 }}>Switch shards on the left, then use the single guide button above when you want to leave the chapter.</div>
+                      </div>
+                      <div style={{ width: '72px', height: '72px', borderRadius: '999px', background: 'rgba(255,255,255,0.95)', color: '#07101c', display: 'grid', placeItems: 'center', fontWeight: 900, boxShadow: '0 18px 36px rgba(0,0,0,0.28)', flexShrink: 0 }}>
+                        PLAY
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="project-orbit-meta" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '0.8rem' }}>
+                    <div
+                      className="orbit-float-card"
+                      style={{
+                        padding: '0.95rem 1rem',
+                        borderRadius: '20px',
+                        background: 'rgba(255,255,255,0.04)',
+                        border: `1px solid ${activeProject.accent}1f`,
+                      }}
+                    >
+                      <div style={{ color: activeProject.accent, fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
+                        Chapter note
+                      </div>
+                      <div style={{ color: '#edf3ff', fontSize: '0.9rem', fontWeight: 700, lineHeight: 1.5 }}>
+                        One active guide per project, one clear exit point, and a quieter preview so the shard stays readable.
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          <div
+            className="project-orbit-constellation"
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.9rem',
+              alignItems: 'stretch',
+              paddingTop: '0.2rem',
+            }}
+          >
+            {projects.map((project, index) => {
+              const isActive = index === activeProjectIndex
+              const thumbnail = getYouTubeThumbnail(project.links[0]?.href)
+              return (
+                <motion.button
+                  key={project.title}
+                  type="button"
+                  className="project-orbit-node"
+                  onClick={() => setActiveProjectIndex(index)}
+                  whileHover={{ y: -10, rotate: index % 2 === 0 ? -2 : 2, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  style={{
+                    flex: project.title.includes('Basic App') ? '1 1 320px' : '1 1 240px',
+                    minHeight: '150px',
+                    padding: '0.95rem',
+                    borderRadius: '26px',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    background: isActive ? `${project.accent}16` : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${isActive ? `${project.accent}55` : 'rgba(255,255,255,0.08)'}`,
+                    transform: `rotate(${index % 2 === 0 ? '-1.4deg' : '1.2deg'}) translateY(${index % 3 === 1 ? '16px' : '0px'})`,
+                    boxShadow: isActive ? `0 24px 48px ${project.accent}1f` : '0 14px 28px rgba(0,0,0,0.16)',
+                  }}
+                >
+                  <div style={{ position: 'absolute', inset: 0, background: project.tone, opacity: isActive ? 0.9 : 0.55, pointerEvents: 'none' }} />
+                  <div style={{ position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '82px 1fr', gap: '0.9rem', alignItems: 'center' }}>
+                    <div style={{ borderRadius: '18px', overflow: 'hidden', border: `1px solid ${project.accent}2c`, background: 'rgba(255,255,255,0.04)' }}>
+                      {thumbnail ? (
+                        <img src={thumbnail} alt={project.title} style={{ width: '100%', aspectRatio: '1 / 1', objectFit: 'cover', display: 'block' }} />
+                      ) : (
+                        <div style={{ aspectRatio: '1 / 1', background: 'rgba(255,255,255,0.04)' }} />
+                      )}
+                    </div>
+                    <div>
+                      <div style={{ color: project.accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase', marginBottom: '0.3rem' }}>
+                        {project.badge} · shard {index + 1}
+                      </div>
+                      <div style={{ color: '#fff', fontSize: '1rem', lineHeight: 1.32, fontWeight: 800, marginBottom: '0.35rem' }}>
+                        {project.title}
+                      </div>
+                      <div style={{ color: '#ccd7ee', fontSize: '0.82rem', lineHeight: 1.5 }}>
+                        {project.desc}
+                      </div>
+                    </div>
+                  </div>
+                </motion.button>
+              )
+            })}
+          </div>
+        </div>
+      </div>
+    </MotionReveal>
+  )
+}
+
 function PageListProjects() {
   const projectIdeas = [
     {
-      title: 'AirBnB',
-      desc: 'Follow a full walkthrough to recreate a booking-style marketplace app.',
-      icon: '🏠',
+      title: 'Homestay Booking',
+      desc: 'Build a cozy stay-booking experience with listing cards, date flow, and reservation-style screens.',
+      badge: 'HB',
+      accent: '#ff8a65',
+      tone: 'linear-gradient(135deg, rgba(255,138,101,0.2), rgba(123,47,247,0.08))',
       links: [
         {
-          label: 'YouTube Tutorial',
+          label: 'Booking app tutorial',
           href: 'https://www.youtube.com/watch?v=XCWnZ4_KAC4&list=PLfLZisr0-a4T3sZwY-eorcGcY-1Km9Gm2&index=23'
         }
       ]
@@ -2886,7 +3696,9 @@ function PageListProjects() {
     {
       title: 'Simple To-Do App',
       desc: 'A classic beginner project: Create a task list with add, edit, delete, and perhaps basic persistence.',
-      icon: '✅',
+      badge: 'TD',
+      accent: '#86ffb7',
+      tone: 'linear-gradient(135deg, rgba(134,255,183,0.2), rgba(97,168,255,0.08))',
       links: [
         {
           label: 'How to build an app in FlutterFlow: step-by-step tutorial for beginners (2025) — No Code MBA / Doc Williams',
@@ -2897,7 +3709,9 @@ function PageListProjects() {
     {
       title: 'Your First Basic App / Hello World Style Project',
       desc: 'Set up a new project, explore the interface, add widgets, navigation, and simple actions.',
-      icon: '🚀',
+      badge: 'FF',
+      accent: '#61a8ff',
+      tone: 'linear-gradient(135deg, rgba(97,168,255,0.22), rgba(0,245,212,0.08))',
       links: [
         {
           label: 'Create Your First FlutterFlow Project - Step by Step',
@@ -2912,7 +3726,9 @@ function PageListProjects() {
     {
       title: 'Real Estate Listing App (Property Marketplace)',
       desc: 'Build listing pages, display items (like properties), and create a simple marketplace feel—great for learning data display and layouts.',
-      icon: '🏢',
+      badge: 'RE',
+      accent: '#9c88ff',
+      tone: 'linear-gradient(135deg, rgba(156,136,255,0.22), rgba(97,168,255,0.08))',
       links: [
         {
           label: 'FlutterFlow Tutorial: Build Your First Real Estate Listing App | Beginner Friendly Guide',
@@ -2926,7 +3742,10 @@ function PageListProjects() {
     {
       title: 'FlutterFlow University (official)',
       desc: 'Full courses from beginner to advanced, including intro projects. Look for the “FlutterFlow University” playlist.',
-      link: 'https://www.youtube.com/flutterflow'
+      link: 'https://www.youtube.com/flutterflow',
+      forceLinkCard: true,
+      thumbnailSrc: 'https://img.youtube.com/vi/moP9VtkoyjY/hqdefault.jpg',
+      previewText: 'Open the official FlutterFlow channel directly on YouTube for the full university playlist and latest uploads.'
     },
     {
       title: 'FlutterFlow Tutorials for Beginners Playlist',
@@ -2968,42 +3787,8 @@ function PageListProjects() {
         </div>
       </MotionReveal>
 
-      <div className="h-scroll-rail" style={{ marginTop: '2rem' }}>
-        {projectIdeas.map((project, i) => {
-          const hue = (i * 40 + 50) % 360
-          const accent = `hsl(${hue}, 75%, 55%)`
-          return (
-            <MotionReveal key={project.title} delay={i * 0.05}>
-              <TiltCard
-                accent={accent}
-                className="gsap-child"
-                style={{
-                  width: '300px',
-                  minHeight: '220px',
-                  scrollSnapAlign: 'start',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between'
-                }}
-              >
-                <div>
-                  <div style={{ fontSize: '2.1rem', marginBottom: '1.1rem' }}>{project.icon}</div>
-                  <h3 style={{ color: '#fff', fontSize: '1.25rem', marginBottom: '0.7rem', fontWeight: 700 }}>{project.title}</h3>
-                  <p style={{ color: '#c8c8e0', fontSize: '0.98rem', lineHeight: 1.6 }}>{project.desc}</p>
-                </div>
-                {project.links?.length ? (
-                  <div style={{ marginTop: '1.2rem', display: 'grid', gap: '0.5rem' }}>
-                    {project.links.map((link) => (
-                      <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="arrow-link" style={{ fontSize: '0.9rem' }}>
-                        {link.label} <span>→</span>
-                      </a>
-                    ))}
-                  </div>
-                ) : null}
-              </TiltCard>
-            </MotionReveal>
-          )
-        })}
+      <div style={{ marginTop: '2.5rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.8rem', alignItems: 'stretch' }}>
+        <ProjectOrbitShowcase projects={projectIdeas} />
       </div>
 
       <div style={{ marginTop: '4rem' }}>
@@ -3033,6 +3818,18 @@ function PageListProjects() {
                     Open Playlist <span>→</span>
                   </a>
                 </div>
+                <EmbedGallery
+                  items={[{
+                    href: item.link,
+                    title: item.title,
+                    embedSrc: item.embedSrc,
+                    forceLinkCard: item.forceLinkCard,
+                    thumbnailSrc: item.thumbnailSrc,
+                    previewText: item.previewText,
+                  }]}
+                  compact
+                  minWidth={240}
+                />
               </NeumorphicCard>
             </MotionReveal>
           ))}
@@ -3099,21 +3896,6 @@ function PageListProjects() {
             </div>
           </MotionReveal>
           
-          {/* Showcase 4 */}
-          <MotionReveal delay={0.4}>
-            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>Otto App</h3>
-                <a href="https://ottoapp.net/" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
-                  Open App <span>→</span>
-                </a>
-              </div>
-              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <iframe src="https://ottoapp.net/" title="Otto App" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
-              </div>
-            </div>
-          </MotionReveal>
-
           {/* Showcase 5 */}
           <MotionReveal delay={0.5}>
             <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
@@ -3155,21 +3937,6 @@ function PageListProjects() {
               </div>
               <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
                 <iframe src="https://lumochat.flutterflow.app/" title="LumoChat" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
-              </div>
-            </div>
-          </MotionReveal>
-
-          {/* Showcase 8 */}
-          <MotionReveal delay={0.8}>
-            <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px', padding: '1.6rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: '1rem' }}>
-                <h3 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 700 }}>FlutterFlow Showcase</h3>
-                <a href="https://www.flutterflow.io/showcase" target="_blank" rel="noopener noreferrer" className="btn-sunset" style={{ padding: '10px 20px', borderRadius: '8px', fontSize: '0.9rem', color: '#fff', textDecoration: 'none', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', border: 'none', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '0.5rem', boxShadow: '0 4px 15px rgba(255,45,85,0.2)' }}>
-                  Open Showcase <span>→</span>
-                </a>
-              </div>
-              <div style={{ width: '100%', height: '550px', borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
-                <iframe src="https://www.flutterflow.io/showcase" title="FlutterFlow Showcase" style={{ width: '100%', height: '100%', border: 'none', background: '#fff' }}></iframe>
               </div>
             </div>
           </MotionReveal>
@@ -3528,7 +4295,36 @@ function PageHowToCreate() {
       {/* Vertical Interactive Timeline */}
       <div style={{ marginTop: '5rem', display: 'flex', flexDirection: 'column', gap: '3rem' }}>
         <MotionReveal>
-          <h2 style={{ fontSize: '1.8rem', color: '#fff', textAlign: 'center', marginBottom: '3rem' }}>Project Genesis Timeline</h2>
+          <div style={{ display: 'grid', gap: '1rem', justifyItems: 'center', marginBottom: '3rem' }}>
+            <h2 style={{ fontSize: '1.8rem', color: '#fff', textAlign: 'center', marginBottom: 0 }}>Project Genesis Timeline</h2>
+            <div style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.65rem',
+              padding: '0.8rem 1rem',
+              borderRadius: '999px',
+              background: 'rgba(0, 204, 255, 0.08)',
+              border: '1px solid rgba(0, 204, 255, 0.22)',
+              color: '#d9efff',
+              fontSize: '0.92rem',
+              fontWeight: 600,
+              textAlign: 'center'
+            }}>
+              <span style={{
+                width: '30px',
+                height: '30px',
+                borderRadius: '999px',
+                display: 'grid',
+                placeItems: 'center',
+                background: 'rgba(0, 204, 255, 0.18)',
+                color: '#00ccff',
+                fontWeight: 800
+              }}>
+                1
+              </span>
+              Click the numbered nodes to move through each instruction step.
+            </div>
+          </div>
         </MotionReveal>
         
         <div className="timeline-container" style={{ position: 'relative', maxWidth: '900px', margin: '0 auto', display: 'grid', gridTemplateColumns: '40px 1fr', gap: '2rem' }}>
@@ -3553,6 +4349,8 @@ function PageHowToCreate() {
                       transition: 'all 0.3s ease',
                       boxShadow: isActive ? `0 0 20px ${step.accent}44` : 'none'
                     }}
+                    title={`Open instruction ${i + 1}: ${step.title}`}
+                    aria-label={`Open instruction ${i + 1}: ${step.title}`}
                   >
                     {i+1}
                   </button>
@@ -3618,6 +4416,11 @@ function PageHowToCreate() {
                <div style={{ marginTop: '2rem' }}>
                  <a href="https://demo.arcade.software/INHhbP1PuCupUSWW3aTG?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">Filter Demo <span>→</span></a>
                </div>
+               <EmbedGallery
+                 items={[{ href: 'https://demo.arcade.software/INHhbP1PuCupUSWW3aTG?embed&show_copy_link=true', title: 'Directory filter demo' }]}
+                 compact
+                 minWidth={260}
+               />
             </div>
           </MotionReveal>
 
@@ -3633,6 +4436,11 @@ function PageHowToCreate() {
                  Quickly locate specific architectural spikes or production apps by name across thousands of isolated resources.
                </p>
                <a href="https://demo.arcade.software/KWGdRdptt18rissIt8SQ?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">Search Demo <span>→</span></a>
+               <EmbedGallery
+                 items={[{ href: 'https://demo.arcade.software/KWGdRdptt18rissIt8SQ?embed&show_copy_link=true', title: 'Global search demo' }]}
+                 compact
+                 minWidth={260}
+               />
             </div>
           </MotionReveal>
         </div>
@@ -4193,6 +5001,7 @@ function PageProjectSetup() {
                        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: '#4361ee', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800 }}>{stage.id}</div>
                        <h3 style={{ color: '#fff', fontSize: '1.5rem', margin: 0 }}>{stage.title}</h3>
                      </div>
+                     <EmbedGallery items={[{ href: stage.link, title: stage.title }]} compact minWidth={280} />
                      <a href={stage.link} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', padding: '0.8rem 1.5rem', borderRadius: '12px', background: 'rgba(255,255,255,0.05)', color: '#fff', textDecoration: 'none', border: '1px solid rgba(255,255,255,0.1)', transition: 'background 0.2s', fontWeight: 600 }}>Watch Workflow <span>↗</span></a>
                    </div>
                 </div>
@@ -4232,6 +5041,10 @@ function PageProjectSetup() {
 }
 
 function PageDesignSystem() {
+  const [activeFoundation, setActiveFoundation] = useState(0)
+  const [activeColorSource, setActiveColorSource] = useState(0)
+  const [activeWidgetFlow, setActiveWidgetFlow] = useState(0)
+
   const useCases = [
     'Enterprise Applications: Build a centralized design system for cohesive internal apps and brand consistency.',
     'Startup MVPs: Speed up MVP delivery by leveraging a pre-built design system library like shadcn.',
@@ -4253,86 +5066,242 @@ function PageDesignSystem() {
     'Customize project typography using the imported text styles.',
   ]
 
+  const foundationModes = [
+    {
+      eyebrow: 'Internal libraries',
+      title: 'Publish a reusable design system library',
+      desc: 'Build once, publish once, then let every other project inherit the same design DNA through imported libraries.',
+      accent: '#00f5d4',
+      bullets: useCases,
+      steps: addDesignSystemSteps,
+      links: [{ href: 'https://demo.arcade.software/G3PekDcZNsWYrKoz3xnE?embed&show_copy_link=true', title: 'Design system setup demo' }],
+    },
+    {
+      eyebrow: 'External sync',
+      title: 'Connect Figma and import your visual language',
+      desc: 'Use Figma as the upstream source of truth, then map its colors and typography directly into FlutterFlow variables.',
+      accent: '#ffd700',
+      bullets: [
+        'Ideal when design and implementation happen in parallel.',
+        'Great for importing typography scales and palette tokens fast.',
+        'Useful when you want a true handoff workflow instead of rebuilding styles manually.',
+      ],
+      steps: figmaSteps,
+      links: [
+        { href: 'https://demo.arcade.software/84lqVC1ZDkq7EFFnCusm?embed&show_copy_link=true', title: 'Import Figma demo' },
+        { href: 'https://youtu.be/kWvWa5PSWhw', title: 'Figma import video guide' },
+      ],
+    },
+  ]
+
+  const colorSources = [
+    {
+      title: 'Direct token editing',
+      accent: '#ff2d55',
+      desc: 'Tweak semantic colors and keep every surface aligned to one naming system.',
+      links: [
+        { href: 'https://demo.arcade.software/TM3a3VZXOAqip3SiayYS?embed&show_copy_link=true', title: 'Add Color' },
+        { href: 'https://demo.arcade.software/l7w7ZcWyULeWPZ3isSSf?embed&show_copy_link=true', title: 'Update Color' },
+      ]
+    },
+    {
+      title: 'Image extraction',
+      accent: '#00f5d4',
+      desc: 'Pull a palette from hero photography, moodboards, or brand visuals to generate atmospheric tokens.',
+      links: [{ href: 'https://demo.arcade.software/ASEzke6PpaugRWSqRh3X?embed&show_copy_link=true', title: 'Extract palette' }]
+    },
+    {
+      title: 'AI palette synthesis',
+      accent: '#a67cff',
+      desc: 'Describe the mood and let AI propose a ready-made palette for dark and light surfaces.',
+      links: [{ href: 'https://www.loom.com/embed/629f5ee88e26466eaa07b956a7c8a963?sid=38a0ec79-0fa6-4de6-a5fe-58a016f40921', title: 'AI palette guide' }]
+    },
+  ]
+
+  const themeWidgetFlows = [
+    { title: 'Create theme widget', desc: 'Define a reusable primitive from scratch.', href: 'https://demo.arcade.software/Os2t1MTQEeyJ0CfSfpSJ?embed&show_copy_link=true' },
+    { title: 'Save from existing', desc: 'Promote a widget already on the canvas.', href: 'https://demo.arcade.software/2zr01BrhFOXNYpNDhv85?embed&show_copy_link=true' },
+    { title: 'Apply new instance', desc: 'Pull the theme widget from the palette into new screens.', href: 'https://demo.arcade.software/bILuxIsASoJTFyUflxYD?embed&show_copy_link=true' },
+    { title: 'Bind existing widget', desc: 'Link an existing widget to a theme definition later.', href: 'https://demo.arcade.software/JlRWSMnrxi5ehHvkRrVH?embed&show_copy_link=true' },
+  ]
+
   return (
     <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
       <MotionReveal>
-        <span className="chip" style={{ color: '#00f5d4', border: '1px solid rgba(0, 245, 212, 0.3)', background: 'rgba(0, 245, 212, 0.1)' }}>
-          Module 3 — Chapter 3.2 · Page 1
-        </span>
-        <h1 className="sec-title">Design System Redesigned</h1>
-        <p className="sec-desc">
-          A design system is a guideline to create a consistent UI/UX across the app. It includes colors, typography, fonts, icons, app assets, nav bar, app bar, and pre-designed components like buttons and text widgets.
-        </p>
-        <p style={{ color: '#c8c8e0', lineHeight: 1.7, maxWidth: '980px', fontSize: '1.05rem' }}>
-          It is especially helpful in teams when multiple pages and features can drift into inconsistent styles. A shared design system keeps the experience cohesive.
-        </p>
-        <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-          <a href="https://youtu.be/moP9VtkoyjY" className="arrow-link" target="_blank" rel="noopener noreferrer">
-            Intro to Design Systems | FlutterFlow University <span>→</span>
-          </a>
+        <div style={{
+          position: 'relative',
+          overflow: 'hidden',
+          borderRadius: '40px',
+          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'linear-gradient(145deg, rgba(4,10,20,0.98) 0%, rgba(12,16,36,0.94) 52%, rgba(18,10,26,0.96) 100%)',
+          padding: '2rem',
+          boxShadow: '0 40px 120px rgba(0,0,0,0.34)'
+        }}>
+          <motion.div
+            animate={{ x: [0, 26, -16, 0], y: [0, -18, 12, 0] }}
+            transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }}
+            style={{
+              position: 'absolute',
+              width: '420px',
+              height: '420px',
+              right: '-8%',
+              top: '-18%',
+              borderRadius: '999px',
+              background: 'radial-gradient(circle, rgba(0,245,212,0.22) 0%, rgba(0,245,212,0.04) 45%, transparent 72%)',
+              filter: 'blur(18px)',
+              pointerEvents: 'none'
+            }}
+          />
+          <div className="chapter-split" style={{ position: 'relative', zIndex: 2, alignItems: 'stretch', gap: '1.6rem' }}>
+            <div className="split-col" style={{ display: 'grid', gap: '1.1rem' }}>
+              <span className="chip" style={{ width: 'max-content', color: '#00f5d4', border: '1px solid rgba(0, 245, 212, 0.3)', background: 'rgba(0, 245, 212, 0.1)' }}>
+                Module 3 — Chapter 3.2 · Page 1
+              </span>
+              <TexturedMaskText
+                text="Design System"
+                imageUrl="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop"
+                style={{
+                  fontSize: 'clamp(3rem, 5vw, 4.9rem)',
+                  lineHeight: 0.88,
+                  fontWeight: 900,
+                  margin: 0
+                }}
+              />
+              <SlideInText
+                text="Command Center"
+                style={{
+                  fontSize: 'clamp(1.5rem, 2.6vw, 2.5rem)',
+                  lineHeight: 1,
+                  fontWeight: 800,
+                  color: '#eefbff',
+                  marginTop: '-0.35rem'
+                }}
+              />
+              <p style={{ color: '#d6def2', lineHeight: 1.8, fontSize: '1.08rem', maxWidth: '64ch' }}>
+                This page is where your course starts feeling like a real product studio. We are building the visual operating system that every later screen should inherit.
+              </p>
+              <TypewriterText
+                text="Create the visual operating system before you create the screens."
+                speed={42}
+                deleteSpeed={24}
+                pauseDuration={2200}
+                className=""
+                textStyle={{ color: '#9dd8ff', fontSize: '0.98rem', fontWeight: 700 }}
+                cursorStyle={{ color: '#00f5d4', fontWeight: 800 }}
+              />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem' }}>
+                {['Tokens', 'Typography', 'Theme widgets', 'Cross-project consistency'].map((item) => (
+                  <span key={item} style={{ padding: '0.58rem 0.82rem', borderRadius: '999px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#eef4ff', fontSize: '0.76rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.9rem' }}>
+                {[
+                  { label: 'System role', value: 'Brand source of truth' },
+                  { label: 'Best for', value: 'Teams and scaling apps' },
+                  { label: 'Main win', value: 'Faster consistency' },
+                ].map((stat) => (
+                  <div key={stat.label} style={{ padding: '1rem', borderRadius: '22px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div style={{ color: '#86f7e5', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.35rem' }}>{stat.label}</div>
+                    <div style={{ color: '#fff', fontSize: '1rem', lineHeight: 1.45, fontWeight: 700 }}>{stat.value}</div>
+                  </div>
+                ))}
+              </div>
+              <a href="https://youtu.be/moP9VtkoyjY" className="arrow-link" target="_blank" rel="noopener noreferrer">
+                Intro to Design Systems | FlutterFlow University <span>→</span>
+              </a>
+            </div>
+
+            <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
+              <div style={{ borderRadius: '30px', padding: '1.2rem', background: 'linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))', border: '1px solid rgba(255,255,255,0.08)', display: 'grid', gap: '1rem' }}>
+                <div style={{ color: '#9dd8ff', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Live composition</div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '1rem' }}>
+                  <div style={{ borderRadius: '24px', padding: '1rem', background: 'rgba(8,12,24,0.8)', border: '1px solid rgba(0,245,212,0.18)', display: 'grid', gap: '0.9rem' }}>
+                    <div style={{ color: '#00f5d4', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800 }}>Token stack</div>
+                    {[
+                      { label: 'Primary', swatch: '#00f5d4' },
+                      { label: 'Surface', swatch: '#101628' },
+                      { label: 'Accent', swatch: '#ffd700' },
+                      { label: 'Signal', swatch: '#a67cff' },
+                    ].map((token) => (
+                      <div key={token.label} style={{ display: 'grid', gridTemplateColumns: '46px 1fr auto', gap: '0.7rem', alignItems: 'center' }}>
+                        <div style={{ width: '46px', height: '38px', borderRadius: '12px', background: token.swatch, border: '1px solid rgba(255,255,255,0.12)' }} />
+                        <div style={{ color: '#eef4ff', fontWeight: 700 }}>{token.label}</div>
+                        <div style={{ color: '#8fb4db', fontSize: '0.82rem' }}>{token.swatch}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ borderRadius: '24px', padding: '1rem', background: 'rgba(8,12,24,0.8)', border: '1px solid rgba(255,255,255,0.08)', display: 'grid', gap: '0.85rem', alignContent: 'start' }}>
+                    <div style={{ color: '#ffd700', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800 }}>Component rhythm</div>
+                    <div style={{ padding: '0.95rem', borderRadius: '18px', background: 'linear-gradient(135deg, rgba(0,245,212,0.2), rgba(166,124,255,0.22))', color: '#06111f', fontWeight: 900 }}>Primary CTA</div>
+                    <div style={{ padding: '0.95rem', borderRadius: '18px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#eef4ff', fontWeight: 700 }}>Secondary Panel</div>
+                    <div style={{ padding: '0.95rem', borderRadius: '18px', background: 'rgba(255,215,0,0.09)', border: '1px solid rgba(255,215,0,0.18)', color: '#ffe491', fontWeight: 700 }}>Attention State</div>
+                  </div>
+                </div>
+                <EmbedGallery items={[{ href: 'https://youtu.be/moP9VtkoyjY', title: 'Intro to Design Systems' }]} compact minWidth={280} />
+              </div>
+            </div>
+          </div>
         </div>
       </MotionReveal>
 
-      {/* Core Integration Section */}
       <div style={{ marginTop: '5rem' }}>
         <MotionReveal>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>Establishing the Foundation</h2>
+            <h2 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>System Source Switchboard</h2>
             <p style={{ color: '#b0b0cc', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '800px', margin: '0 auto' }}>
-              Import external designs or configure your native FlutterFlow library dependencies to start.
+              Start from an internal reusable library or synchronize from Figma. Click a lane and inspect the workflow in the stage.
             </p>
           </div>
         </MotionReveal>
 
-        <div className="chapter-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '2rem' }}>
-          <MotionReveal delay={0.1}>
-            <NeonCard accent="#00f5d4" style={{ height: '100%' }}>
-              <div style={{ color: '#00f5d4', fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.8rem' }}>
-                Internal Libraries
-              </div>
-              <h3 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '0.8rem' }}>Adding Design System</h3>
-              <p style={{ color: '#c8c8e0', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                Add a design system from Library dependencies to serve as a central repository for design assets, components, and styles.
-              </p>
-              <h4 style={{ color: '#fff', fontSize: '1.05rem', marginBottom: '0.5rem' }}>Use Cases</h4>
-              <BulletList items={useCases} dense />
-              <div style={{ marginTop: '1.5rem' }}>
-                <h4 style={{ color: '#fff', fontSize: '1.05rem', marginBottom: '0.5rem' }}>Implementation</h4>
-                <StepsList steps={addDesignSystemSteps} dense />
-              </div>
-              <div style={{ marginTop: '1.5rem' }}>
-                <a href="https://demo.arcade.software/G3PekDcZNsWYrKoz3xnE?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">
-                  View Setup Demo <span>→</span>
-                </a>
-              </div>
-            </NeonCard>
-          </MotionReveal>
+        <div className="chapter-split" style={{ alignItems: 'stretch', gap: '1.6rem' }}>
+          <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
+            {foundationModes.map((mode, index) => {
+              const isActive = index === activeFoundation
+              return (
+                <motion.button
+                  key={mode.title}
+                  type="button"
+                  onClick={() => setActiveFoundation(index)}
+                  whileHover={{ x: 8, scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  style={{ textAlign: 'left', padding: '1.2rem', borderRadius: '28px', border: `1px solid ${isActive ? `${mode.accent}66` : 'rgba(255,255,255,0.08)'}`, background: isActive ? `${mode.accent}16` : 'rgba(255,255,255,0.03)', color: '#fff', cursor: 'pointer' }}
+                >
+                  <div style={{ color: mode.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.45rem' }}>{mode.eyebrow}</div>
+                  <div style={{ fontSize: '1.15rem', lineHeight: 1.35, fontWeight: 800, marginBottom: '0.5rem' }}>{mode.title}</div>
+                  <div style={{ color: '#c9d5ee', lineHeight: 1.65, fontSize: '0.94rem' }}>{mode.desc}</div>
+                </motion.button>
+              )
+            })}
+          </div>
 
-          <MotionReveal delay={0.2}>
-            <NeonCard accent="#ffd700" style={{ height: '100%' }}>
-              <div style={{ color: '#ffd700', fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.8rem' }}>
-                External Sync
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={foundationModes[activeFoundation].title}
+              initial={{ opacity: 0, x: 22 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -22 }}
+              transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+              className="split-col"
+              style={{ borderRadius: '34px', padding: '1.4rem', border: `1px solid ${foundationModes[activeFoundation].accent}36`, background: 'linear-gradient(150deg, rgba(255,255,255,0.05), rgba(8,12,24,0.92))', display: 'grid', gap: '1.2rem' }}
+            >
+              <div style={{ color: foundationModes[activeFoundation].accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Active lane</div>
+              <div style={{ color: '#fff', fontSize: '1.55rem', lineHeight: 1.2, fontWeight: 800 }}>{foundationModes[activeFoundation].title}</div>
+              <div className="chapter-grid tight" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                <div style={{ padding: '1rem', borderRadius: '24px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.75rem' }}>Why use it</div>
+                  <BulletList items={foundationModes[activeFoundation].bullets} dense />
+                </div>
+                <div style={{ padding: '1rem', borderRadius: '24px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.75rem' }}>Execution path</div>
+                  <StepsList steps={foundationModes[activeFoundation].steps} dense />
+                </div>
               </div>
-              <h3 style={{ color: '#fff', fontSize: '1.6rem', marginBottom: '0.8rem' }}>Import Figma Theme</h3>
-              <p style={{ color: '#c8c8e0', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>
-                Bring your Figma design system directly into FlutterFlow to automatically import colors and typography variables.
-              </p>
-              <StepsList steps={figmaSteps} dense />
-              <div style={{ marginTop: '1.5rem' }}>
-                <CalloutCard tone="info" title="Global Variables">
-                  All imported colors are automatically integrated and accessible anytime under Colors → Custom Colors.
-                </CalloutCard>
-              </div>
-              <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                <a href="https://demo.arcade.software/84lqVC1ZDkq7EFFnCusm?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">
-                  View Import Demo <span>→</span>
-                </a>
-                <a href="https://youtu.be/kWvWa5PSWhw" className="arrow-link" target="_blank" rel="noopener noreferrer">
-                  Video Guide <span>→</span>
-                </a>
-              </div>
-            </NeonCard>
-          </MotionReveal>
+              <EmbedGallery items={foundationModes[activeFoundation].links} compact minWidth={280} />
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
@@ -4365,6 +5334,13 @@ function PageDesignSystem() {
                   Deep Dive <span>→</span>
                 </a>
               </div>
+              <EmbedGallery
+                items={[
+                  { href: 'https://demo.arcade.software/6OiSlYPiCEY1p3fg0kpG?embed&show_copy_link=true', title: 'Loading indicator demo' },
+                  { href: 'https://youtu.be/3sG-O1lkv0M', title: 'Loading indicators deep dive' },
+                ]}
+                compact
+              />
             </HoloCard>
           </MotionReveal>
 
@@ -4382,6 +5358,7 @@ function PageDesignSystem() {
                   View Demo <span>→</span>
                 </a>
               </div>
+              <EmbedGallery items={[{ href: 'https://demo.arcade.software/KHdvetH4Eg46TfDmZQUJ?embed&show_copy_link=true', title: 'Pull to refresh demo' }]} compact />
             </HoloCard>
           </MotionReveal>
         </div>
@@ -4417,10 +5394,52 @@ function PageDesignSystem() {
       <div style={{ marginTop: '6rem' }}>
         <MotionReveal>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>Color Pipeline</h2>
+            <SlideInText text="Palette Lab" style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem', fontWeight: 800, textAlign: 'center' }} />
             <p style={{ color: '#b0b0cc', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '800px', margin: '0 auto' }}>
               Bring in palettes seamlessly through direct UI, AI generation, or image extraction to craft the perfect atmosphere.
             </p>
+          </div>
+        </MotionReveal>
+
+        <MotionReveal>
+          <div style={{ borderRadius: '32px', padding: '1.4rem', background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(8,10,22,0.95))', border: '1px solid rgba(255,255,255,0.08)', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', marginBottom: '1rem' }}>
+              {colorSources.map((source, index) => {
+                const isActive = index === activeColorSource
+                return (
+                  <button
+                    key={source.title}
+                    type="button"
+                    onClick={() => setActiveColorSource(index)}
+                    style={{ padding: '0.8rem 1rem', borderRadius: '999px', border: `1px solid ${isActive ? source.accent : 'rgba(255,255,255,0.08)'}`, background: isActive ? `${source.accent}16` : 'rgba(255,255,255,0.04)', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
+                  >
+                    {source.title}
+                  </button>
+                )
+              })}
+            </div>
+            <motion.div
+              key={colorSources[activeColorSource].title}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="chapter-split"
+              style={{ alignItems: 'stretch', gap: '1.4rem' }}
+            >
+              <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
+                <div style={{ color: colorSources[activeColorSource].accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Active source</div>
+                <div style={{ color: '#fff', fontSize: '1.6rem', lineHeight: 1.2, fontWeight: 800 }}>{colorSources[activeColorSource].title}</div>
+                <p style={{ color: '#cdd8f0', lineHeight: 1.75, fontSize: '1rem' }}>{colorSources[activeColorSource].desc}</p>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '0.8rem', maxWidth: '520px' }}>
+                  {['#08111f', colorSources[activeColorSource].accent, '#eaf3ff', '#15243d'].map((swatch, i) => (
+                    <div key={`${swatch}-${i}`} style={{ borderRadius: '20px', background: swatch, aspectRatio: '1 / 1', border: '1px solid rgba(255,255,255,0.1)' }} />
+                  ))}
+                </div>
+              </div>
+              <div className="split-col">
+                <EmbedGallery items={colorSources[activeColorSource].links} compact minWidth={280} style={{ marginTop: 0 }} />
+              </div>
+            </motion.div>
           </div>
         </MotionReveal>
 
@@ -4471,6 +5490,7 @@ function PageDesignSystem() {
                     </a>
                   ))}
                 </div>
+                <EmbedGallery items={item.links} compact minWidth={240} />
               </TiltCard>
             </MotionReveal>
           ))}
@@ -4507,6 +5527,7 @@ function PageDesignSystem() {
                       Responsive Text Demo <span>→</span>
                     </a>
                   </div>
+                  <EmbedGallery items={[{ href: 'https://demo.arcade.software/dVqO19q7mZlQZLpkdW9r?embed&show_copy_link=true', title: 'Responsive text demo' }]} compact />
                 </div>
                 <div style={{ flex: 0.8 }}>
                   <div className="step-media" style={{ borderRadius: '20px' }}>
@@ -4528,6 +5549,13 @@ function PageDesignSystem() {
                   <a href="https://demo.arcade.software/Gdq0Nfk15VFWuQT6Evsb?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">Upload Demo <span>→</span></a>
                   <a href="https://youtu.be/NsR7f1OZeSY" className="arrow-link" target="_blank" rel="noopener noreferrer">Video Guide <span>→</span></a>
                 </div>
+                <EmbedGallery
+                  items={[
+                    { href: 'https://demo.arcade.software/Gdq0Nfk15VFWuQT6Evsb?embed&show_copy_link=true', title: 'Custom fonts upload demo' },
+                    { href: 'https://youtu.be/NsR7f1OZeSY', title: 'Typography video guide' },
+                  ]}
+                  compact
+                />
               </div>
             </MotionReveal>
             
@@ -4541,6 +5569,13 @@ function PageDesignSystem() {
                   <a href="https://demo.arcade.software/oMAqsibJi8B9EdLgVanQ?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">Generate Fonts <span>→</span></a>
                   <a href="https://demo.arcade.software/DYKzHIQ27EaCiQArRlCT?embed&show_copy_link=true" className="arrow-link" target="_blank" rel="noopener noreferrer">Import Icons <span>→</span></a>
                 </div>
+                <EmbedGallery
+                  items={[
+                    { href: 'https://demo.arcade.software/oMAqsibJi8B9EdLgVanQ?embed&show_copy_link=true', title: 'Generate icon font demo' },
+                    { href: 'https://demo.arcade.software/DYKzHIQ27EaCiQArRlCT?embed&show_copy_link=true', title: 'Import icons demo' },
+                  ]}
+                  compact
+                />
               </div>
             </MotionReveal>
           </div>
@@ -4557,27 +5592,38 @@ function PageDesignSystem() {
             background: 'linear-gradient(155deg, rgba(0,245,212,0.08) 0%, rgba(8,10,22,0.95) 100%)',
             textAlign: 'center'
           }}>
-            <h2 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>Global Theme Widgets</h2>
+            <h2 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>Theme Widget Assembly Line</h2>
             <p style={{ color: '#b0b0cc', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '800px', margin: '0 auto 2.5rem' }}>
               Theme widgets act like CSS classes. Instantiate standard archetypes like standard buttons, inputs, or cards once, then deploy them throughout your application footprint. When a style parameter changes locally, instances update seamlessly.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', maxWidth: '900px', margin: '0 auto' }}>
-              <a href="https://demo.arcade.software/Os2t1MTQEeyJ0CfSfpSJ?embed&show_copy_link=true" className="chapter-card" style={{ display: 'block', textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
-                <h4 style={{ color: '#fff', marginBottom: '0.4rem' }}>Create Theme Widget</h4>
-                <p style={{ color: '#aeb7cf', fontSize: '0.85rem', margin: 0 }}>Basic setup from scratch</p>
-              </a>
-              <a href="https://demo.arcade.software/2zr01BrhFOXNYpNDhv85?embed&show_copy_link=true" className="chapter-card" style={{ display: 'block', textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
-                <h4 style={{ color: '#00f5d4', marginBottom: '0.4rem' }}>Save from Existing</h4>
-                <p style={{ color: '#aeb7cf', fontSize: '0.85rem', margin: 0 }}>Extract style from canvas</p>
-              </a>
-              <a href="https://demo.arcade.software/bILuxIsASoJTFyUflxYD?embed&show_copy_link=true" className="chapter-card" style={{ display: 'block', textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
-                <h4 style={{ color: '#fff', marginBottom: '0.4rem' }}>Apply New Instance</h4>
-                <p style={{ color: '#aeb7cf', fontSize: '0.85rem', margin: 0 }}>Drag from palette</p>
-              </a>
-              <a href="https://demo.arcade.software/JlRWSMnrxi5ehHvkRrVH?embed&show_copy_link=true" className="chapter-card" style={{ display: 'block', textDecoration: 'none' }} target="_blank" rel="noopener noreferrer">
-                <h4 style={{ color: '#fff', marginBottom: '0.4rem' }}>Bind Existing Widget</h4>
-                <p style={{ color: '#aeb7cf', fontSize: '0.85rem', margin: 0 }}>Link to theme widget</p>
-              </a>
+            <div style={{ display: 'grid', gap: '1.2rem', maxWidth: '980px', margin: '0 auto' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', justifyContent: 'center' }}>
+                {themeWidgetFlows.map((flow, index) => {
+                  const isActive = index === activeWidgetFlow
+                  return (
+                    <button
+                      key={flow.title}
+                      type="button"
+                      onClick={() => setActiveWidgetFlow(index)}
+                      style={{ padding: '0.82rem 1rem', borderRadius: '999px', border: `1px solid ${isActive ? '#00f5d4' : 'rgba(255,255,255,0.08)'}`, background: isActive ? 'rgba(0,245,212,0.14)' : 'rgba(255,255,255,0.04)', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
+                    >
+                      {index + 1}. {flow.title}
+                    </button>
+                  )
+                })}
+              </div>
+              <motion.div
+                key={themeWidgetFlows[activeWidgetFlow].title}
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+                style={{ borderRadius: '26px', padding: '1.2rem', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'left' }}
+              >
+                <div style={{ color: '#00f5d4', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.4rem' }}>Active workflow</div>
+                <h3 style={{ color: '#fff', fontSize: '1.45rem', marginBottom: '0.6rem' }}>{themeWidgetFlows[activeWidgetFlow].title}</h3>
+                <p style={{ color: '#d2ddf2', lineHeight: 1.7, marginBottom: '1rem' }}>{themeWidgetFlows[activeWidgetFlow].desc}</p>
+                <EmbedGallery items={[{ href: themeWidgetFlows[activeWidgetFlow].href, title: themeWidgetFlows[activeWidgetFlow].title }]} compact minWidth={320} style={{ marginTop: 0 }} />
+              </motion.div>
             </div>
           </div>
         </MotionReveal>
@@ -4588,89 +5634,169 @@ function PageDesignSystem() {
 }
 
 function PageStateManagement() {
+  const [activeStateScope, setActiveStateScope] = useState(0)
+  const [activeTrigger, setActiveTrigger] = useState(0)
+  const [activeRebuild, setActiveRebuild] = useState(0)
+
   const stateTypes = [
     {
       title: 'App State',
       desc: 'Global variables stored on device memory or persistent storage (SharedPreferences). Shared across all pages.',
-      icon: '1'
+      icon: '1',
+      accent: '#00f5d4',
+      signal: 'Whole app memory lane',
+      doc: 'https://docs.flutterflow.io/resources/data-representation/app-state'
     },
     {
       title: 'Page State',
       desc: 'Variables specific to a single page. Shared only by widgets within that page configuration.',
-      icon: '2'
+      icon: '2',
+      accent: '#ffd700',
+      signal: 'Single screen control room',
+      doc: 'https://docs.flutterflow.io/resources/ui/pages/page-lifecycle'
     },
     {
       title: 'Component State',
       desc: 'Encapsulated variables for a specific component instance, ensuring logic boundaries.',
-      icon: '3'
+      icon: '3',
+      accent: '#a67cff',
+      signal: 'Reusable isolated module',
+      doc: 'https://docs.flutterflow.io/resources/ui/components/component-lifecycle'
     }
   ]
 
   const rebuildTypes = [
-    { title: 'Rebuild Page', desc: 'Refreshes the entire page interface structure and recalculates all visible bindings.' },
-    { title: 'Rebuild Component', desc: 'Surgically refreshes only selecting components to preserve performance.' },
-    { title: 'Rebuild Parent', desc: 'Refreshes the containing page after interacting with overlay modular dialogs.' },
+    { title: 'Rebuild Page', desc: 'Refreshes the entire page interface structure and recalculates all visible bindings.', accent: '#ffd700' },
+    { title: 'Rebuild Component', desc: 'Surgically refreshes only selecting components to preserve performance.', accent: '#00f5d4' },
+    { title: 'Rebuild Parent', desc: 'Refreshes the containing page after interacting with overlay modular dialogs.', accent: '#ff8a65' },
   ]
 
   const triggers = [
-    { label: 'On Focus Change', desc: 'Fires when input cursor engages or disengages.' },
-    { label: 'On Submit', desc: 'Fires on enter key press or form dispatch.' },
-    { label: 'On Change', desc: 'Fires character-by-character or slider drag.' },
-    { label: 'On Completed', desc: 'Fires when fixed-length inputs (e.g., OTP) are filled.' },
-    { label: 'On Selected', desc: 'Fires upon choice chip, radio, or checkbox toggle.' },
+    { label: 'On Focus Change', desc: 'Fires when input cursor engages or disengages.', accent: '#61a8ff' },
+    { label: 'On Submit', desc: 'Fires on enter key press or form dispatch.', accent: '#00f5d4' },
+    { label: 'On Change', desc: 'Fires character-by-character or slider drag.', accent: '#ff2d55' },
+    { label: 'On Completed', desc: 'Fires when fixed-length inputs (e.g., OTP) are filled.', accent: '#ffd700' },
+    { label: 'On Selected', desc: 'Fires upon choice chip, radio, or checkbox toggle.', accent: '#a67cff' },
   ]
+
+  const activeScope = stateTypes[activeStateScope]
+  const activeTriggerCard = triggers[activeTrigger]
+  const activeRebuildCard = rebuildTypes[activeRebuild]
 
   return (
     <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
-      {/* Header */}
       <MotionReveal>
-        <span className="chip" style={{ color: '#7b2ff7', border: '1px solid rgba(123, 47, 247, 0.3)', background: 'rgba(123, 47, 247, 0.1)' }}>
-          Module 3 — Chapter 3.2 · Page 2
-        </span>
-        <h1 className="sec-title">State Management Redesigned</h1>
-        <p className="sec-desc">
-          State management is the engine of interactivity. It focuses on monitoring data mutations in your application layer and reactively updating the UI to reflect those changes in real-time.
-        </p>
-        <p style={{ color: '#c8c8e0', lineHeight: 1.7, maxWidth: '980px', fontSize: '1.05rem', marginTop: '1rem' }}>
-          By binding Widget properties visually to State variables, you create a responsive loop where the UI dictates exactly what the current local or remote memory contains.
-        </p>
+        <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(145deg, rgba(7,8,24,0.98) 0%, rgba(17,12,33,0.96) 48%, rgba(6,22,34,0.98) 100%)', padding: '2rem', boxShadow: '0 40px 120px rgba(0,0,0,0.34)' }}>
+          <motion.div
+            animate={{ x: [0, 20, -14, 0], y: [0, -20, 12, 0] }}
+            transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ position: 'absolute', width: '400px', height: '400px', right: '-10%', top: '-16%', borderRadius: '999px', background: 'radial-gradient(circle, rgba(123,47,247,0.22) 0%, rgba(123,47,247,0.05) 48%, transparent 74%)', filter: 'blur(20px)', pointerEvents: 'none' }}
+          />
+          <div className="chapter-split" style={{ position: 'relative', zIndex: 2, alignItems: 'stretch', gap: '1.6rem' }}>
+            <div className="split-col" style={{ display: 'grid', gap: '1.2rem' }}>
+              <span className="chip" style={{ width: 'max-content', color: '#7b2ff7', border: '1px solid rgba(123, 47, 247, 0.3)', background: 'rgba(123, 47, 247, 0.1)' }}>
+                Module 3 — Chapter 3.2 · Page 2
+              </span>
+              <TexturedMaskText
+                text="State"
+                imageUrl="https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop"
+                style={{ fontSize: 'clamp(3rem, 5vw, 4.9rem)', lineHeight: 0.88, fontWeight: 900, margin: 0 }}
+              />
+              <SlideInText
+                text="Observatory"
+                style={{ fontSize: 'clamp(1.5rem, 2.6vw, 2.5rem)', lineHeight: 1, fontWeight: 800, color: '#eefbff', marginTop: '-0.35rem' }}
+              />
+              <p style={{ color: '#d7dff2', lineHeight: 1.8, fontSize: '1.08rem', maxWidth: '64ch' }}>
+                State is the hidden force behind every reactive interface. This page frames it like a control system: where data lives, what wakes it up, and how the UI repaints when the system changes.
+              </p>
+              <TypewriterText
+                text="Map where data lives before you wire how the interface reacts."
+                speed={40}
+                deleteSpeed={22}
+                pauseDuration={2200}
+                textStyle={{ color: '#9dd8ff', fontSize: '0.98rem', fontWeight: 700 }}
+                cursorStyle={{ color: '#7b2ff7', fontWeight: 800 }}
+              />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem' }}>
+                {['App scope', 'Page scope', 'Component scope', 'Reactive UI'].map((item) => (
+                  <span key={item} style={{ padding: '0.58rem 0.82rem', borderRadius: '999px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: '#eef4ff', fontSize: '0.76rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                    {item}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
+              <div style={{ borderRadius: '30px', padding: '1.25rem', background: 'linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))', border: '1px solid rgba(255,255,255,0.08)', display: 'grid', gap: '0.9rem' }}>
+                <div style={{ color: '#8fd0ff', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Reactive map</div>
+                {stateTypes.map((type) => (
+                  <div key={type.title} style={{ display: 'grid', gridTemplateColumns: '58px 1fr auto', gap: '0.8rem', alignItems: 'center', padding: '0.9rem', borderRadius: '20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div style={{ width: '58px', height: '58px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: `${type.accent}18`, border: `1px solid ${type.accent}35`, color: type.accent, fontWeight: 900, fontSize: '1.1rem' }}>{type.icon}</div>
+                    <div>
+                      <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.2rem' }}>{type.title}</div>
+                      <div style={{ color: '#bfcbe5', fontSize: '0.88rem' }}>{type.signal}</div>
+                    </div>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '999px', background: type.accent, boxShadow: `0 0 20px ${type.accent}` }} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </MotionReveal>
 
-      {/* State Variable Types Grid */}
       <div style={{ marginTop: '5rem' }}>
         <MotionReveal>
           <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <h2 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem' }}>State Architecture</h2>
+            <SlideInText text="State Architecture" style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem', fontWeight: 800, textAlign: 'center' }} />
             <p style={{ color: '#b0b0cc', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '800px', margin: '0 auto' }}>
               Different data needs different lifespans. FlutterFlow separates memory into three distinct scopes to prevent data pollution.
             </p>
           </div>
         </MotionReveal>
 
-        <div className="chapter-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-          {stateTypes.map((type, i) => (
-            <MotionReveal key={type.title} delay={i * 0.1}>
-              <NeumorphicCard icon={type.icon} style={{ height: '100%' }}>
-                <h3 style={{ color: '#fff', fontSize: '1.25rem', marginBottom: '0.8rem' }}>{type.title}</h3>
-                <p style={{ color: '#c8c8e0', lineHeight: 1.6, fontSize: '0.95rem' }}>{type.desc}</p>
-              </NeumorphicCard>
-            </MotionReveal>
-          ))}
-        </div>
+        <div className="chapter-split" style={{ alignItems: 'stretch', gap: '1.6rem' }}>
+          <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
+            {stateTypes.map((type, index) => {
+              const isActive = index === activeStateScope
+              return (
+                <motion.button
+                  key={type.title}
+                  type="button"
+                  onClick={() => setActiveStateScope(index)}
+                  whileHover={{ x: 8, scale: 1.01 }}
+                  whileTap={{ scale: 0.99 }}
+                  style={{ textAlign: 'left', padding: '1.2rem', borderRadius: '28px', border: `1px solid ${isActive ? `${type.accent}66` : 'rgba(255,255,255,0.08)'}`, background: isActive ? `${type.accent}15` : 'rgba(255,255,255,0.03)', color: '#fff', cursor: 'pointer' }}
+                >
+                  <div style={{ color: type.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.4rem' }}>Memory scope {index + 1}</div>
+                  <div style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '0.45rem' }}>{type.title}</div>
+                  <div style={{ color: '#c6d2ed', lineHeight: 1.6, fontSize: '0.94rem' }}>{type.signal}</div>
+                </motion.button>
+              )
+            })}
+          </div>
 
-        <MotionReveal delay={0.3}>
-          <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="https://docs.flutterflow.io/resources/data-representation/app-state" className="arrow-link" target="_blank" rel="noopener noreferrer">App State Docs <span>→</span></a>
-            <a href="https://docs.flutterflow.io/resources/ui/pages/page-lifecycle" className="arrow-link" target="_blank" rel="noopener noreferrer">Page State Docs <span>→</span></a>
-            <a href="https://docs.flutterflow.io/resources/ui/components/component-lifecycle" className="arrow-link" target="_blank" rel="noopener noreferrer">Component State Docs <span>→</span></a>
-          </div>
-        </MotionReveal>
-        
-        <MotionReveal>
-          <div className="step-media" style={{ marginTop: '3rem', borderRadius: '24px', maxWidth: '800px', margin: '3rem auto 0' }}>
-            <img src="https://login.skillizee.io/s/articles/69b7ca9595ffd50821a3fdcd/images/image-20260316152926-20.png" alt="State Variable Types architecture map" style={{ width: '100%' }} />
-          </div>
-        </MotionReveal>
+          <motion.div
+            key={activeScope.title}
+            initial={{ opacity: 0, x: 22 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.35 }}
+            className="split-col"
+            style={{ borderRadius: '34px', padding: '1.4rem', border: `1px solid ${activeScope.accent}36`, background: 'linear-gradient(150deg, rgba(255,255,255,0.05), rgba(8,12,24,0.92))', display: 'grid', gap: '1.1rem' }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+              <div>
+                <div style={{ color: activeScope.accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.35rem' }}>Selected memory lane</div>
+                <div style={{ color: '#fff', fontSize: '1.6rem', lineHeight: 1.2, fontWeight: 800 }}>{activeScope.title}</div>
+              </div>
+              <a href={activeScope.doc} className="arrow-link" target="_blank" rel="noopener noreferrer">Open docs <span>→</span></a>
+            </div>
+            <p style={{ color: '#d5def2', lineHeight: 1.8, fontSize: '1rem' }}>{activeScope.desc}</p>
+            <div className="step-media" style={{ borderRadius: '24px' }}>
+              <img src="https://login.skillizee.io/s/articles/69b7ca9595ffd50821a3fdcd/images/image-20260316152926-20.png" alt="State Variable Types architecture map" style={{ width: '100%' }} />
+            </div>
+          </motion.div>
+        </div>
       </div>
 
       {/* Interactive Forms & Widget State */}
@@ -4686,42 +5812,129 @@ function PageStateManagement() {
         
         <div className="chapter-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', gap: '2rem' }}>
           <MotionReveal delay={0.1}>
-            <HoloCard>
-              <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '1rem' }}>Reading Widget State</h3>
-              <p style={{ color: '#d3d9ea', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                Text Fields, Radio Buttons, and Checkboxes automatically emit their current evaluation. No need to map `onChange` functions—just read directly from `Widget State -&gt; [your_widget_name]`.
-              </p>
-              <CalloutCard tone="info" title="Scope Limitation">
-                Widget states are local to the canvas where they exist. Inside a Component, the state must be explicitly passed out via Action parameters if the Parent page needs it.
-              </CalloutCard>
-              <div className="step-media" style={{ marginTop: '1.5rem', borderRadius: '16px' }}>
-                <img src="https://login.skillizee.io/s/articles/69b7ca9595ffd50821a3fdcd/images/image-20260316152926-22.png" alt="Widget state map" />
+            <HoloCard style={{ height: '100%' }}>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                  <div>
+                    <div style={{ color: '#00f5d4', fontSize: '0.75rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem' }}>
+                      Signal Reader
+                    </div>
+                    <h3 style={{ color: '#fff', fontSize: '1.55rem', marginBottom: '0.75rem', lineHeight: 1.15 }}>Reading Widget State</h3>
+                  </div>
+                  <div style={{ padding: '0.5rem 0.75rem', borderRadius: '999px', background: 'rgba(0,245,212,0.12)', border: '1px solid rgba(0,245,212,0.22)', color: '#00f5d4', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                    Auto-exposed
+                  </div>
+                </div>
+
+                <p style={{ color: '#d3d9ea', lineHeight: 1.75, margin: 0 }}>
+                  Text Fields, Radio Buttons, and Checkboxes automatically emit their current evaluation. Instead of wiring manual listeners everywhere, read values directly from <code>Widget State -&gt; [your_widget_name]</code>.
+                </p>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.8rem' }}>
+                  {[
+                    { label: 'Inputs', value: 'Text, radio, checkbox' },
+                    { label: 'Read path', value: 'Widget State object' },
+                    { label: 'Best use', value: 'Fast reactive forms' },
+                  ].map((item) => (
+                    <div key={item.label} style={{ padding: '0.9rem', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div style={{ color: '#8fd0ff', fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.35rem' }}>{item.label}</div>
+                      <div style={{ color: '#eef4ff', fontSize: '0.9rem', lineHeight: 1.45, fontWeight: 700 }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ borderRadius: '22px', background: 'linear-gradient(145deg, rgba(0,245,212,0.08), rgba(13,26,40,0.84))', border: '1px solid rgba(0,245,212,0.28)', padding: '1rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', marginBottom: '0.65rem' }}>
+                    <div style={{ color: '#00f5d4', fontSize: '0.74rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 800 }}>Scope Limitation</div>
+                    <div style={{ width: '16px', height: '16px', borderRadius: '999px', background: 'linear-gradient(135deg, #00f5d4, #a67cff)' }} />
+                  </div>
+                  <div style={{ color: '#d9e7f7', lineHeight: 1.7, fontSize: '0.98rem' }}>
+                    Widget states are local to the canvas where they exist. Inside a Component, the state must be explicitly passed out via Action parameters if the Parent page needs it.
+                  </div>
+                </div>
+
+                <div className="step-media" style={{ borderRadius: '20px', overflow: 'hidden', position: 'relative' }}>
+                  <img src="https://login.skillizee.io/s/articles/69b7ca9595ffd50821a3fdcd/images/image-20260316152926-22.png" alt="Widget state map" />
+                  <div style={{ position: 'absolute', inset: 'auto 1rem 1rem auto', padding: '0.55rem 0.8rem', borderRadius: '999px', background: 'rgba(8,12,24,0.82)', border: '1px solid rgba(255,255,255,0.1)', color: '#eef4ff', fontSize: '0.75rem', fontWeight: 700 }}>
+                    Visual state map
+                  </div>
+                </div>
               </div>
             </HoloCard>
           </MotionReveal>
 
           <MotionReveal delay={0.2}>
-            <NeonCard accent="#ff2d55">
-              <div style={{ color: '#ff2d55', fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.8rem' }}>
-                Event Handlers
+            <NeonCard accent={activeTriggerCard.accent} style={{ height: '100%' }}>
+              <div style={{ color: activeTriggerCard.accent, fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.8rem' }}>
+                Trigger Console
               </div>
-              <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '1rem' }}>Form Action Triggers</h3>
-              <p style={{ color: '#d3d9ea', lineHeight: 1.7, marginBottom: '1.5rem' }}>
-                Connect logic pipelines directly to user gestures. Hook into granular form events to fire API requests, form validations, or dynamic animations.
+              <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '0.9rem' }}>Form Action Triggers</h3>
+              <p style={{ color: '#d3d9ea', lineHeight: 1.7, marginBottom: '1.2rem' }}>
+                Connect logic pipelines directly to user gestures. Click a trigger to inspect the moment where validation, API calls, animation, and state updates should attach.
               </p>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                {triggers.map(t => (
-                  <div key={t.label} style={{ background: 'rgba(255,45,85,0.05)', border: '1px solid rgba(255,45,85,0.2)', padding: '1rem', borderRadius: '12px' }}>
-                    <h4 style={{ color: '#fff', fontSize: '1rem', marginBottom: '0.3rem' }}>{t.label}</h4>
-                    <p style={{ color: '#aeb7cf', fontSize: '0.85rem', margin: 0 }}>{t.desc}</p>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.7rem', marginBottom: '1rem' }}>
+                {triggers.map((t, index) => {
+                  const isActive = index === activeTrigger
+                  return (
+                    <button
+                      key={t.label}
+                      type="button"
+                      onClick={() => setActiveTrigger(index)}
+                      style={{
+                        padding: '0.7rem 0.92rem',
+                        borderRadius: '999px',
+                        border: `1px solid ${isActive ? t.accent : 'rgba(255,255,255,0.08)'}`,
+                        background: isActive ? `${t.accent}18` : 'rgba(255,255,255,0.04)',
+                        color: '#fff',
+                        cursor: 'pointer',
+                        fontWeight: 700,
+                      }}
+                    >
+                      {t.label}
+                    </button>
+                  )
+                })}
+              </div>
+
+              <motion.div
+                key={activeTriggerCard.label}
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.25 }}
+                style={{
+                  borderRadius: '22px',
+                  padding: '1.1rem',
+                  background: 'linear-gradient(145deg, rgba(255,255,255,0.05), rgba(10,10,24,0.92))',
+                  border: `1px solid ${activeTriggerCard.accent}30`,
+                  marginBottom: '1rem'
+                }}
+              >
+                <div style={{ color: activeTriggerCard.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.45rem' }}>
+                  Active trigger
+                </div>
+                <h4 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '0.45rem' }}>{activeTriggerCard.label}</h4>
+                <p style={{ color: '#d3deef', fontSize: '0.95rem', lineHeight: 1.65, margin: 0 }}>{activeTriggerCard.desc}</p>
+              </motion.div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.8rem' }}>
+                {[
+                  { label: 'Best for', value: 'Validation and flow logic' },
+                  { label: 'Reaction type', value: 'Event-driven UI updates' },
+                ].map((item) => (
+                  <div key={item.label} style={{ padding: '0.9rem', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div style={{ color: '#9db2d8', fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.35rem' }}>{item.label}</div>
+                    <div style={{ color: '#fff', fontSize: '0.9rem', lineHeight: 1.5, fontWeight: 700 }}>{item.value}</div>
                   </div>
                 ))}
               </div>
+
               <div style={{ marginTop: '1.5rem' }}>
                 <a href="https://youtu.be/jD6L4xjYjJA" className="arrow-link" target="_blank" rel="noopener noreferrer">
                   State Video Guide <span>→</span>
                 </a>
               </div>
+              <EmbedGallery items={[{ href: 'https://youtu.be/jD6L4xjYjJA', title: 'State management video guide' }]} compact />
             </NeonCard>
           </MotionReveal>
         </div>
@@ -4839,6 +6052,7 @@ function PageFileHandling() {
                   <a href="https://www.youtube.com/watch?v=hzHW-3uttCU" className="arrow-link" target="_blank" rel="noopener noreferrer">Video Integration <span>→</span></a>
                   <a href="https://coffeebytez.medium.com/flutter-flow-how-to-screenshot-any-widget-d22a3450dc37" className="arrow-link" target="_blank" rel="noopener noreferrer">Screenshot Guide <span>→</span></a>
                 </div>
+                <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=hzHW-3uttCU', title: 'Uploading assets video integration' }]} compact />
               </NeonCard>
             </MotionReveal>
 
@@ -4854,6 +6068,7 @@ function PageFileHandling() {
                   <a href="https://www.youtube.com/watch?v=vL5pNsxz16s" className="arrow-link" target="_blank" rel="noopener noreferrer">Display Widgets <span>→</span></a>
                   <a href="https://blog.flutterflow.io/improving-the-image-loading-ux-of-your-app/" className="arrow-link" target="_blank" rel="noopener noreferrer">BlurHash UX <span>→</span></a>
                 </div>
+                <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=vL5pNsxz16s', title: 'Displaying media widgets' }]} compact />
               </NeonCard>
             </MotionReveal>
           </div>
@@ -4872,6 +6087,7 @@ function PageFileHandling() {
                 <div style={{ marginTop: '1rem' }}>
                   <a href="https://www.youtube.com/watch?v=gJwpkrGBG2c" className="arrow-link" target="_blank" rel="noopener noreferrer">Video Guide <span>→</span></a>
                 </div>
+                <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=gJwpkrGBG2c', title: 'Download file video guide' }]} compact />
               </HoloCard>
             </MotionReveal>
 
@@ -4886,6 +6102,7 @@ function PageFileHandling() {
                   <a href="https://www.youtube.com/watch?v=y5GfG-eX1QM" className="arrow-link" target="_blank" rel="noopener noreferrer">PDF Cleanup <span>→</span></a>
                   <a href="https://community.flutterflow.io/ask-the-community/post/download-file-action-not-working-KWkDXG3YyMJQdUV" className="arrow-link" target="_blank" rel="noopener noreferrer">Troubleshoot <span>→</span></a>
                 </div>
+                <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=y5GfG-eX1QM', title: 'Cleanup workflow video' }]} compact />
               </HoloCard>
             </MotionReveal>
           </div>
@@ -4944,6 +6161,7 @@ function PageFileHandling() {
                     </a>
                   ))}
                 </div>
+                <EmbedGallery items={card.links} compact minWidth={240} />
               </TiltCard>
             </MotionReveal>
           ))}
@@ -4977,6 +6195,7 @@ function PageFileHandling() {
                     Trigger explicit timeline animations (Fade, Scale, Slide, Rotate) on mount or driven manually by action workflows. Supports staggers and complex curves.
                   </p>
                   <a href="https://www.youtube.com/watch?v=-quxi_t0eWU" className="arrow-link" target="_blank" rel="noopener noreferrer">Animation Video <span>→</span></a>
+                  <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=-quxi_t0eWU', title: 'Explicit widget animation video' }]} compact />
                 </NeumorphicCard>
               </MotionReveal>
               <MotionReveal delay={0.2}>
@@ -4986,6 +6205,15 @@ function PageFileHandling() {
                     Wrap components in an AnimatedContainer. Whenever underlying variables change (e.g. width from 50px to 300px), the engine automatically interpolates the transition.
                   </p>
                   <a href="https://www.youtube.com/watch?v=jOfNuHfuRVc" className="arrow-link" target="_blank" rel="noopener noreferrer">Implicit Demo <span>→</span></a>
+                  <EmbedGallery
+                    items={[{
+                      href: 'https://www.youtube.com/watch?v=jOfNuHfuRVc',
+                      title: 'Implicit animation demo',
+                      forceLinkCard: true,
+                      previewText: 'This guide opens directly on YouTube because embed playback is disabled by the video owner.',
+                    }]}
+                    compact
+                  />
                 </NeumorphicCard>
               </MotionReveal>
               <MotionReveal delay={0.3}>
@@ -4995,6 +6223,7 @@ function PageFileHandling() {
                     Bind the exact same `Hero Tag` to an image on the list page and detail page. When navigating, the element visually floats across the screen boundaries natively.
                   </p>
                   <a href="https://www.youtube.com/watch?v=B0qz4JRYy7U" className="arrow-link" target="_blank" rel="noopener noreferrer">Hero Demo <span>→</span></a>
+                  <EmbedGallery items={[{ href: 'https://www.youtube.com/watch?v=B0qz4JRYy7U', title: 'Hero transitions demo' }]} compact />
                 </NeumorphicCard>
               </MotionReveal>
             </div>
@@ -5085,11 +6314,6 @@ function Module4_1Section() {
 
   const resources = [
     {
-      label: 'Tutorial',
-      title: 'Branching (Version 2) | New Feature Tutorial',
-      href: 'https://www.youtube.com/watch?v=r8BR248HR0U'
-    },
-    {
       label: 'Live demo',
       title: 'Branching - FlutterFlow Live Demo | FFDC 2023',
       href: 'https://www.youtube.com/watch?v=Z4wm1kljF4M'
@@ -5132,12 +6356,9 @@ function Module4_1Section() {
         <div style={{
           marginTop: '2.2rem',
           display: 'grid',
-          gridAutoFlow: 'column',
-          gridAutoColumns: 'minmax(240px, 300px)',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
           gap: '1rem',
-          overflowX: 'auto',
-          paddingBottom: '0.75rem',
-          scrollSnapType: 'x mandatory'
+          paddingBottom: '0.75rem'
         }}>
           {railCards.map((card, i) => (
             <motion.div
@@ -5843,6 +7064,7 @@ function Module4_3Section() {
 
 function Module4_4Section() {
   const [currentPage, setCurrentPage] = useState(0)
+  usePageStepScroll(currentPage)
   const pages = [
     <PageRunYourApp key="run-your-app" />,
     <PageLocalRun key="local-run" />
