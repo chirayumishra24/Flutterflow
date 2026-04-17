@@ -5,7 +5,7 @@
    Deep Space · Neon Cyan · Electric Violet
    ======================================== */
 
-@theme {
+:root {
   --color-bg-primary: #060614;
   --color-bg-secondary: #0b0b22;
   --color-bg-tertiary: #131340;
@@ -2075,4 +2075,31 @@ img:not(.lightbox-overlay img) {
 img:not(.lightbox-overlay img):hover {
   transform: scale(1.01);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+/* ========================================
+   GLOBAL APPS RELIABLE RESPONSIVENESS
+   Enforcing aspect ratios & wrapping
+   ======================================== */
+img, video {
+  max-width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+iframe {
+  max-width: 100%;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+}
+
+.responsive-grid, .responsive-bento, .responsive-split {
+  display: grid;
+}
+
+@media (max-width: 980px) {
+  .responsive-grid, .responsive-bento, .responsive-split {
+    grid-template-columns: 1fr !important;
+  }
 }

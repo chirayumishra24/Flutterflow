@@ -3359,13 +3359,9 @@ function ProjectOrbitShowcase({ projects }) {
           </div>
 
           <div
-            className="project-orbit-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(300px, 0.95fr) minmax(340px, 1.2fr)',
-              gap: '1.2rem',
+            className="project-orbit-grid responsive-grid" style={{ gap: '1.2rem',
               alignItems: 'stretch',
-            }}
+             }}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -3567,7 +3563,7 @@ function ProjectOrbitShowcase({ projects }) {
                     </div>
                   </div>
 
-                  <div className="project-orbit-meta" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '0.8rem' }}>
+                  <div className="project-orbit-meta responsive-grid" style={{ gap: '0.8rem'  }}>
                     <div
                       className="orbit-float-card"
                       style={{
@@ -4499,10 +4495,7 @@ function PageRunAndTest() {
 
       <div style={{ marginTop: '4rem' }}>
         <MotionReveal>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'minmax(280px, 350px) 1fr',
-            gap: '2rem',
+          <div className="responsive-grid" style={{ gap: '2rem',
             background: 'linear-gradient(180deg, rgba(12,14,28,0.8) 0%, rgba(8,10,20,0.95) 100%)',
             border: '1px solid rgba(255,255,255,0.08)',
             borderRadius: '32px',
@@ -4510,7 +4503,7 @@ function PageRunAndTest() {
             boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
             minHeight: '600px',
             alignItems: 'stretch'
-          }}>
+           }}>
             {/* Sidebar Navigation */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem', borderRight: '1px solid rgba(255,255,255,0.05)', paddingRight: '2rem' }}>
               <div style={{ fontSize: '0.75rem', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#8892b0', fontWeight: 700, marginBottom: '1rem', paddingLeft: '1rem' }}>
@@ -4569,7 +4562,7 @@ function PageRunAndTest() {
                     {active.desc}
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem', marginBottom: 'auto' }}>
+                  <div className="responsive-grid" style={{ gap: '1rem', marginBottom: 'auto'  }}>
                     {active.features.map((feat, idx) => (
                       <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', padding: '1rem', background: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
                         <div style={{ color: active.accent, fontSize: '1.2rem' }}>✓</div>
@@ -4742,12 +4735,9 @@ function PageGeneralSettings() {
           </div>
         </MotionReveal>
 
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'minmax(250px, 300px) 1fr', 
-          gap: '2.5rem',
+        <div className="responsive-grid" style={{ gap: '2.5rem',
           alignItems: 'start' 
-        }}>
+         }}>
           {/* Asset Navigation Stack */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {assetShowcase.map((asset, i) => {
@@ -4903,7 +4893,7 @@ function PageProjectSetup() {
            <h2 style={{ fontSize: '3rem', color: '#fff', opacity: 0.1, position: 'absolute', top: '2rem', left: '5%', fontWeight: 900, letterSpacing: '0.2em' }}>
              01 PERMISSIONS
            </h2>
-           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) minmax(350px, 500px)', gap: '4rem', alignItems: 'center', position: 'relative', zIndex: 2 }}>
+           <div className="responsive-grid" style={{ gap: '4rem', alignItems: 'center', position: 'relative', zIndex: 2  }}>
               <div>
                 <h3 style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1.5rem' }}>Hardware Consent</h3>
                 <p style={{ color: '#aeb7cf', fontSize: '1.1rem', lineHeight: 1.8, marginBottom: '3rem' }}>
@@ -5195,7 +5185,7 @@ function PageDesignSystem() {
             <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
               <div style={{ borderRadius: '30px', padding: '1.2rem', background: 'linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))', border: '1px solid rgba(255,255,255,0.08)', display: 'grid', gap: '1rem' }}>
                 <div style={{ color: '#9dd8ff', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Live composition</div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1.1fr 0.9fr', gap: '1rem' }}>
+                <div className="responsive-grid" style={{ gap: '1rem'  }}>
                   <div style={{ borderRadius: '24px', padding: '1rem', background: 'rgba(8,12,24,0.8)', border: '1px solid rgba(0,245,212,0.18)', display: 'grid', gap: '0.9rem' }}>
                     <div style={{ color: '#00f5d4', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800 }}>Token stack</div>
                     {[
@@ -5204,7 +5194,7 @@ function PageDesignSystem() {
                       { label: 'Accent', swatch: '#ffd700' },
                       { label: 'Signal', swatch: '#a67cff' },
                     ].map((token) => (
-                      <div key={token.label} style={{ display: 'grid', gridTemplateColumns: '46px 1fr auto', gap: '0.7rem', alignItems: 'center' }}>
+                      <div key={token.label} className="responsive-grid" style={{ gap: '0.7rem', alignItems: 'center'  }}>
                         <div style={{ width: '46px', height: '38px', borderRadius: '12px', background: token.swatch, border: '1px solid rgba(255,255,255,0.12)' }} />
                         <div style={{ color: '#eef4ff', fontWeight: 700 }}>{token.label}</div>
                         <div style={{ color: '#8fb4db', fontSize: '0.82rem' }}>{token.swatch}</div>
@@ -5409,7 +5399,7 @@ function PageDesignSystem() {
                 <div style={{ color: colorSources[activeColorSource].accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Active source</div>
                 <div style={{ color: '#fff', fontSize: '1.6rem', lineHeight: 1.2, fontWeight: 800 }}>{colorSources[activeColorSource].title}</div>
                 <p style={{ color: '#cdd8f0', lineHeight: 1.75, fontSize: '1rem' }}>{colorSources[activeColorSource].desc}</p>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '0.8rem', maxWidth: '520px' }}>
+                <div className="responsive-grid" style={{ gap: '0.8rem', maxWidth: '520px'  }}>
                   {['#08111f', colorSources[activeColorSource].accent, '#eaf3ff', '#15243d'].map((swatch, i) => (
                     <div key={`${swatch}-${i}`} style={{ borderRadius: '20px', background: swatch, aspectRatio: '1 / 1', border: '1px solid rgba(255,255,255,0.1)' }} />
                   ))}
@@ -5709,7 +5699,7 @@ function PageStateManagement() {
               <div style={{ borderRadius: '30px', padding: '1.25rem', background: 'linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))', border: '1px solid rgba(255,255,255,0.08)', display: 'grid', gap: '0.9rem' }}>
                 <div style={{ color: '#8fd0ff', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Reactive map</div>
                 {stateTypes.map((type) => (
-                  <div key={type.title} style={{ display: 'grid', gridTemplateColumns: '58px 1fr auto', gap: '0.8rem', alignItems: 'center', padding: '0.9rem', borderRadius: '20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div key={type.title} className="responsive-grid" style={{ gap: '0.8rem', alignItems: 'center', padding: '0.9rem', borderRadius: '20px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)'  }}>
                     <div style={{ width: '58px', height: '58px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: `${type.accent}18`, border: `1px solid ${type.accent}35`, color: type.accent, fontWeight: 900, fontSize: '1.1rem' }}>{type.icon}</div>
                     <div>
                       <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.2rem' }}>{type.title}</div>
@@ -5809,7 +5799,7 @@ function PageStateManagement() {
                   Text Fields, Radio Buttons, and Checkboxes automatically emit their current evaluation. Instead of wiring manual listeners everywhere, read values directly from <code>Widget State -&gt; [your_widget_name]</code>.
                 </p>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '0.8rem' }}>
+                <div className="responsive-grid" style={{ gap: '0.8rem'  }}>
                   {[
                     { label: 'Inputs', value: 'Text, radio, checkbox' },
                     { label: 'Read path', value: 'Widget State object' },
@@ -5896,7 +5886,7 @@ function PageStateManagement() {
                 <p style={{ color: '#d3deef', fontSize: '0.95rem', lineHeight: 1.65, margin: 0 }}>{activeTriggerCard.desc}</p>
               </motion.div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.8rem' }}>
+              <div className="responsive-grid" style={{ gap: '0.8rem'  }}>
                 {[
                   { label: 'Best for', value: 'Validation and flow logic' },
                   { label: 'Reaction type', value: 'Event-driven UI updates' },
@@ -6207,7 +6197,7 @@ function PageFileHandling() {
               </MotionReveal>
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', maxWidth: '800px', margin: '0 auto' }}>
+            <div className="responsive-grid" style={{ gap: '1rem', maxWidth: '800px', margin: '0 auto'  }}>
               <MotionReveal delay={0.4}>
                 <div className="step-media" style={{ borderRadius: '16px' }}>
                    <img src="https://login.skillizee.io/s/articles/69b7ca9595ffd50821a3fdcd/images/image-20260316153818-36.jpeg" alt="Transition matrix" />
@@ -6429,7 +6419,7 @@ function Module4_1Section() {
             </p>
           </div>
 
-          <div className="branching-board-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 0.85fr) minmax(320px, 1.15fr)', gap: '1rem', alignItems: 'stretch' }}>
+          <div className="branching-board-grid responsive-grid" style={{ gap: '1rem', alignItems: 'stretch'  }}>
             <div style={{ display: 'grid', gap: '0.75rem' }}>
               {mergePhases.map((phase, i) => (
                 <motion.div
@@ -6461,7 +6451,7 @@ function Module4_1Section() {
             </div>
 
             <div style={{ display: 'grid', gap: '1rem' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+              <div className="responsive-grid" style={{ gap: '1rem'  }}>
                 {mergeScreenshots.map((shot) => (
                   <motion.div
                     key={shot.title}
@@ -6892,6 +6882,9 @@ function Module4_2Section() {
 }
 
 function Module4_3Section() {
+  const [activeLane, setActiveLane] = useState(0)
+  const [activeMoment, setActiveMoment] = useState(0)
+
   const panelStyle = {
     background: 'linear-gradient(180deg, rgba(5,10,23,0.96) 0%, rgba(4,16,22,0.95) 100%)',
     border: '1px solid rgba(255,255,255,0.1)',
@@ -6986,79 +6979,97 @@ function Module4_3Section() {
                   <span style={{ display: 'block', color: '#6cf0a8' }}>Flight Deck</span>
                 </h1>
                 <p style={{ maxWidth: '720px', color: '#d7e7e6', fontSize: '1.06rem', lineHeight: 1.72, margin: '1.1rem 0 0' }}>
-                  Instead of hiding the environments behind one changing card, this view keeps every lane visible. Compare Development, Staging, and Production side by side, then use the checklist below to understand what changes during testing, export, and deployment.
+                  Select an environment lane to explore its unique configuration behind the scenes, then use the interactive switchboard below to understand what exactly changes during testing, export, and deployment.
                 </p>
               </div>
 
               <div style={{ display: 'grid', gap: '0.8rem' }}>
-                {environmentLanes.map((lane, index) => (
-                  <motion.div
+                {environmentLanes.map((lane, index) => {
+                  const isActive = activeLane === index;
+                  return (
+                  <motion.button
                     key={lane.title}
+                    onClick={() => setActiveLane(index)}
                     initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index * 0.08, duration: 0.45 }}
                     style={{
+                      cursor: 'pointer',
+                      textAlign: 'left',
                       display: 'grid',
                       gridTemplateColumns: '54px minmax(0, 1fr) auto',
                       gap: '1rem',
                       alignItems: 'center',
                       padding: '1rem',
                       borderRadius: '24px',
-                      border: `1px solid ${lane.accent}38`,
-                      background: `linear-gradient(135deg, ${lane.accent}14, rgba(255,255,255,0.035))`
+                      border: `1px solid ${isActive ? lane.accent : 'rgba(255,255,255,0.08)'}`,
+                      background: isActive ? `linear-gradient(135deg, ${lane.accent}20, rgba(255,255,255,0.05))` : 'rgba(255,255,255,0.02)',
+                      opacity: isActive ? 1 : 0.6,
+                      transform: isActive ? 'scale(1.02)' : 'scale(1)',
+                      transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
                     }}
                   >
-                    <span style={{ width: '54px', height: '54px', borderRadius: '18px', display: 'grid', placeItems: 'center', color: lane.accent, background: `${lane.accent}18`, fontWeight: 950 }}>
+                    <span style={{ width: '54px', height: '54px', borderRadius: '18px', display: 'grid', placeItems: 'center', color: isActive ? '#fff' : lane.accent, background: isActive ? lane.accent : `${lane.accent}18`, fontWeight: 950, transition: 'all 0.3s' }}>
                       0{index + 1}
                     </span>
                     <span style={{ minWidth: 0 }}>
                       <span style={{ display: 'block', color: '#fff', fontWeight: 950, fontSize: '1.08rem' }}>{lane.title}</span>
                       <span style={{ display: 'block', color: '#bdd2dc', marginTop: '0.2rem', lineHeight: 1.45 }}>{lane.role}</span>
                     </span>
-                    <span style={{ color: lane.accent, fontWeight: 950, fontSize: '0.78rem', letterSpacing: '0.08em' }}>LANE</span>
-                  </motion.div>
-                ))}
+                    <div style={{ width: '20px', height: '20px', borderRadius: '50%', border: `2px solid ${isActive ? lane.accent : 'rgba(255,255,255,0.2)'}`, display: 'grid', placeItems: 'center' }}>
+                      {isActive && <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: lane.accent }} />}
+                    </div>
+                  </motion.button>
+                )})}
               </div>
             </div>
           </div>
         </MotionReveal>
 
-        <div className="env-lane-board" style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
-          {environmentLanes.map((lane, index) => (
+        <div className="env-lane-board" style={{ marginTop: '2rem' }}>
+          <AnimatePresence mode="wait">
             <motion.article
-              key={lane.title}
-              whileHover={{ y: -8 }}
+              key={activeLane}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.3 }}
               style={{
                 ...panelStyle,
-                minHeight: '100%',
-                padding: '1.45rem',
-                borderColor: `${lane.accent}36`,
-                background: `radial-gradient(circle at 86% 12%, ${lane.accent}20, transparent 36%), linear-gradient(160deg, rgba(5,10,23,0.98), rgba(5,20,26,0.95))`
+                padding: '2.4rem',
+                borderColor: `${environmentLanes[activeLane].accent}36`,
+                background: `radial-gradient(circle at 86% 12%, ${environmentLanes[activeLane].accent}20, transparent 36%), linear-gradient(160deg, rgba(5,10,23,0.98), rgba(5,20,26,0.95))`
               }}
             >
-              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
-                <div style={{ color: lane.accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950 }}>
-                  Lane 0{index + 1}
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ color: environmentLanes[activeLane].accent, fontSize: '0.8rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950 }}>
+                  Active Lane Configuration &mdash; 0{activeLane + 1}
                 </div>
-                <span style={{ width: '11px', height: '11px', borderRadius: '999px', background: lane.accent, boxShadow: `0 0 22px ${lane.accent}` }} />
+                <span style={{ padding: '0.4rem 1rem', borderRadius: '999px', background: `${environmentLanes[activeLane].accent}15`, color: environmentLanes[activeLane].accent, border: `1px solid ${environmentLanes[activeLane].accent}30`, fontWeight: 800, fontSize: '0.75rem' }}>
+                  {environmentLanes[activeLane].title}
+                </span>
               </div>
-              <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '0.55rem', fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif' }}>{lane.title}</h2>
-              <p style={{ color: '#d7d7ea', lineHeight: 1.65, marginBottom: '1rem' }}>{lane.role}</p>
-              <div style={{ display: 'grid', gap: '0.75rem' }}>
-                {[
-                  ['Route', lane.route],
-                  ['Data', lane.data],
-                  ['Use for', lane.launch],
-                  ['Avoid', lane.avoid]
-                ].map(([label, value]) => (
-                  <div key={label} style={{ padding: '0.85rem', borderRadius: '16px', background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
-                    <div style={{ color: lane.accent, fontSize: '0.68rem', letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.28rem' }}>{label}</div>
-                    <div style={{ color: '#fff', lineHeight: 1.45, overflowWrap: 'anywhere' }}>{value}</div>
-                  </div>
-                ))}
+              <div className="responsive-grid" style={{ gap: '2rem', alignItems: 'start' }}>
+                <div style={{ paddingRight: '1rem' }}>
+                  <h2 style={{ color: '#fff', fontSize: '2.8rem', marginBottom: '1rem', fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif', lineHeight: 1.1 }}>{environmentLanes[activeLane].title} Environment</h2>
+                  <p style={{ color: '#bdd2dc', lineHeight: 1.7, fontSize: '1.1rem', margin: 0 }}>{environmentLanes[activeLane].role}</p>
+                </div>
+                <div style={{ display: 'grid', gap: '0.7rem' }}>
+                  {[
+                    ['Route', environmentLanes[activeLane].route],
+                    ['Data', environmentLanes[activeLane].data],
+                    ['Use', environmentLanes[activeLane].launch],
+                    ['Avoid', environmentLanes[activeLane].avoid]
+                  ].map(([label, value]) => (
+                    <div key={label} style={{ padding: '0.85rem 1rem', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.04)', display: 'grid', gridTemplateColumns: '80px 1fr', gap: '1rem', alignItems: 'start' }}>
+                      <div style={{ color: environmentLanes[activeLane].accent, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 900, paddingTop: '0.15rem' }}>{label}</div>
+                      <div style={{ color: '#fff', fontSize: '1.05rem', lineHeight: 1.45, overflowWrap: 'anywhere' }}>{value}</div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </motion.article>
-          ))}
+          </AnimatePresence>
         </div>
 
         <div className="env-ops-grid" style={{ marginTop: '1.2rem', display: 'grid', gridTemplateColumns: 'minmax(280px, 1.1fr) minmax(280px, 0.9fr)', gap: '1rem', alignItems: 'stretch' }}>
@@ -7067,13 +7078,35 @@ function Module4_3Section() {
               What the switch affects
             </div>
             <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '1rem' }}>One selected environment travels through the workflow</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem' }}>
-              {switchboardMoments.map((moment) => (
-                <div key={moment.title} style={{ padding: '1rem', borderRadius: '18px', border: `1px solid ${moment.accent}33`, background: `${moment.accent}0f` }}>
-                  <div style={{ color: moment.accent, fontWeight: 950, marginBottom: '0.45rem' }}>{moment.title}</div>
-                  <p style={{ color: '#d7d7ea', lineHeight: 1.58, margin: 0 }}>{moment.desc}</p>
-                </div>
-              ))}
+            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr)', gap: '1.2rem' }}>
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                {switchboardMoments.map((moment, index) => (
+                  <button 
+                    key={moment.title} 
+                    onClick={() => setActiveMoment(index)} 
+                    style={{ 
+                      padding: '0.6rem 1rem', borderRadius: '12px', 
+                      border: `1px solid ${activeMoment === index ? moment.accent : 'rgba(255,255,255,0.08)'}`, 
+                      background: activeMoment === index ? `${moment.accent}15` : 'rgba(255,255,255,0.02)', 
+                      color: activeMoment === index ? '#fff' : '#8892b0', 
+                      cursor: 'pointer', transition: 'all 0.2s', fontWeight: 800, fontSize: '0.85rem' 
+                    }}>
+                    {moment.title}
+                  </button>
+                ))}
+              </div>
+              <AnimatePresence mode="wait">
+                <motion.div 
+                  key={activeMoment}
+                  initial={{ opacity: 0, scale: 0.98 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.98 }}
+                  transition={{ duration: 0.2 }}
+                  style={{ background: 'rgba(255,255,255,0.025)', padding: '1.4rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)', minHeight: '110px' }}>
+                   <div style={{ color: switchboardMoments[activeMoment].accent, fontSize: '1.1rem', fontWeight: 900, marginBottom: '0.6rem' }}>{switchboardMoments[activeMoment].title}</div>
+                   <p style={{ color: '#d7d7ea', fontSize: '1.05rem', lineHeight: 1.6, margin: 0 }}>{switchboardMoments[activeMoment].desc}</p>
+                </motion.div>
+              </AnimatePresence>
             </div>
           </div>
 
@@ -7082,11 +7115,11 @@ function Module4_3Section() {
               Secret handling
             </div>
             <h2 style={{ color: '#fff', fontSize: '1.55rem', marginBottom: '1rem' }}>Keep sensitive values out of the client</h2>
-            <div style={{ display: 'grid', gap: '0.72rem' }}>
+            <div style={{ display: 'grid', gap: '0.85rem' }}>
               {guardrails.map((rule, index) => (
-                <div key={rule} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: '0.75rem', alignItems: 'start' }}>
-                  <span style={{ width: '34px', height: '34px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.14)', color: '#ff7da1', fontWeight: 950 }}>{index + 1}</span>
-                  <span style={{ color: '#d7d7ea', lineHeight: 1.58 }}>{rule}</span>
+                <div key={rule} style={{ display: 'grid', gridTemplateColumns: '32px 1fr', gap: '1rem', alignItems: 'start' }}>
+                  <span style={{ width: '32px', height: '32px', borderRadius: '10px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.14)', color: '#ff7da1', fontWeight: 950, fontSize: '0.9rem', flexShrink: 0 }}>{index + 1}</span>
+                  <span style={{ color: '#cdd4e8', fontSize: '0.96rem', lineHeight: 1.55 }}>{rule}</span>
                 </div>
               ))}
             </div>
@@ -7127,7 +7160,7 @@ function Module4_3Section() {
           <div style={{ color: '#9ef6c2', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.8rem' }}>
             Resource runway
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.65rem' }}>
             {resourceLinks.map((item, index) => (
               <a
                 key={item.title}
@@ -7135,16 +7168,22 @@ function Module4_3Section() {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                  padding: '1rem',
-                  borderRadius: '18px',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '999px',
                   textDecoration: 'none',
-                  background: 'rgba(255,255,255,0.04)',
+                  background: 'rgba(255,255,255,0.035)',
                   border: '1px solid rgba(255,255,255,0.08)',
-                  color: '#fff'
+                  color: '#fff',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.6rem',
+                  transition: 'background 0.2s'
                 }}
+                onMouseOver={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
+                onMouseOut={(e) => e.currentTarget.style.background = 'rgba(255,255,255,0.035)'}
               >
-                <div style={{ color: index % 2 === 0 ? '#6cf0a8' : '#00f5d4', fontSize: '0.68rem', letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.45rem' }}>Docs</div>
-                <div style={{ fontWeight: 850, lineHeight: 1.42 }}>{item.title}</div>
+                <div style={{ color: index % 2 === 0 ? '#6cf0a8' : '#00f5d4', fontSize: '0.6rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 950 }}>Docs</div>
+                <div style={{ fontWeight: 800, fontSize: '0.88rem' }}>{item.title}</div>
               </a>
             ))}
           </div>
@@ -7369,7 +7408,7 @@ function Module4_3SectionLegacy() {
             boxShadow: '0 18px 50px rgba(0,0,0,0.28)'
           }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: 'auto repeat(3, minmax(0, 1fr))', gap: '0.6rem', alignItems: 'center' }}>
+          <div className="responsive-grid" style={{ gap: '0.6rem', alignItems: 'center'  }}>
             <div style={{ color: '#9ef6c2', fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, padding: '0 0.65rem', whiteSpace: 'nowrap' }}>
               Switch lane
             </div>
@@ -7481,7 +7520,7 @@ function Module4_3SectionLegacy() {
             <div style={{ color: '#00f5d4', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.8rem' }}>Best practice</div>
             <div style={{ display: 'grid', gap: '0.7rem' }}>
               {['Development: build', 'Staging: verify', 'Production: launch'].map((item, index) => (
-                <div key={item} style={{ display: 'grid', gridTemplateColumns: '28px 1fr', gap: '0.65rem', alignItems: 'center', color: '#d7d7ea' }}>
+                <div key={item} className="responsive-grid" style={{ gap: '0.65rem', alignItems: 'center', color: '#d7d7ea'  }}>
                   <span style={{ width: '28px', height: '28px', borderRadius: '10px', display: 'grid', placeItems: 'center', background: 'rgba(0,245,212,0.12)', color: '#00f5d4', fontWeight: 900 }}>{index + 1}</span>
                   <span style={{ fontWeight: 800 }}>{item}</span>
                 </div>
@@ -7594,7 +7633,7 @@ function Module4_3SectionLegacy() {
               </p>
               <div style={{ display: 'grid', gap: '0.75rem' }}>
                 {privateValueRules.map((rule, index) => (
-                  <div key={rule} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: '0.8rem', alignItems: 'start' }}>
+                  <div key={rule} className="responsive-grid" style={{ gap: '0.8rem', alignItems: 'start'  }}>
                     <div style={{ width: '34px', height: '34px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.14)', color: '#ff7da1', fontWeight: 900 }}>
                       {index + 1}
                     </div>
@@ -8786,7 +8825,7 @@ function Module5_1Section() {
 
                   <div style={{ display: 'grid', gap: '0.75rem' }}>
                     {activeDeployData.steps.map((step, index) => (
-                      <div key={step} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: '0.8rem', alignItems: 'start', padding: '0.85rem', borderRadius: '16px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                      <div key={step} className="responsive-grid" style={{ gap: '0.8rem', alignItems: 'start', padding: '0.85rem', borderRadius: '16px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)'  }}>
                         <span style={{ width: '34px', height: '34px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(0,245,212,0.14)', color: '#00f5d4', fontWeight: 900 }}>
                           {index + 1}
                         </span>
@@ -8815,7 +8854,7 @@ function Module5_1Section() {
                       Visual reference for {activeDeployData.title.replace(/^\d+\.\s*/, '')}
                     </div>
                   </div>
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.65rem' }}>
+                  <div className="responsive-grid" style={{ gap: '0.65rem'  }}>
                     {['AAB', 'Track', 'Review'].map((label, index) => (
                       <div key={label} style={{ padding: '0.85rem', borderRadius: '16px', background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
                         <div style={{ color: index === 0 ? '#00f5d4' : index === 1 ? '#ffd166' : '#ff7d6b', fontWeight: 900 }}>{label}</div>
@@ -8845,7 +8884,7 @@ function Module5_1Section() {
                 </span>
               </div>
 
-              <div className="repo-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1rem' }}>
+              <div className="repo-bento-grid responsive-grid" style={{ gap: '1rem'  }}>
             {relevantProjects.map((proj, i) => {
               const accents = ['#00f5d4', '#ff7d6b', '#ffd166', '#61a8ff', '#86ffb7']
               const spans = [
@@ -8917,7 +8956,7 @@ function Module5_1Section() {
                 <h3 style={{ color: '#fff', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', marginBottom: '0.75rem', fontWeight: 950, letterSpacing: '-0.04em', fontFamily: '"Avenir Next Condensed", "Trebuchet MS", sans-serif' }}>Embedded Links with Simulations</h3>
                 <p style={{ color: '#a9a9c6', maxWidth: '800px', lineHeight: 1.7 }}>Interactive simulation links for testing logic, animations, and flows.</p>
               </div>
-              <div className="embedded-link-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1.4rem', maxWidth: '1120px' }}>
+              <div className="embedded-link-grid responsive-grid" style={{ gap: '1.4rem', maxWidth: '1120px'  }}>
                 {embeddedLinks.map((link) => (
                   <TerminalCard key={link.title} command={`open ${link.name.replace(/\s+/g, '_').toLowerCase()}`} className="gsap-child">
                     <div style={{ display: 'grid', gap: '0.8rem' }}>
@@ -9014,7 +9053,7 @@ function Module5_2Section() {
           </div>
         </MotionReveal>
 
-        <div className="module5-2-bento" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1.35rem' }}>
+        <div className="module5-2-bento responsive-grid" style={{ gap: '1.35rem'  }}>
           <MotionReveal delay={0.1}>
             <div style={{ gridColumn: 'span 5', height: '100%', borderRadius: '30px', padding: '1.5rem', border: '1px solid rgba(97,168,255,0.24)', background: 'linear-gradient(145deg, rgba(8,14,30,0.98), rgba(12,10,30,0.94))', boxShadow: '0 24px 70px rgba(97,168,255,0.12)' }}>
               <div style={{ color: '#61a8ff', fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.7rem' }}>Signing cockpit</div>
@@ -9025,7 +9064,7 @@ function Module5_2Section() {
               </div>
               <div style={{ display: 'grid', gap: '0.72rem' }}>
                 {iosChecklist.map((item, index) => (
-                  <div key={item} style={{ display: 'grid', gridTemplateColumns: '36px 1fr', gap: '0.8rem', alignItems: 'start', padding: '0.85rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+                  <div key={item} className="responsive-grid" style={{ gap: '0.8rem', alignItems: 'start', padding: '0.85rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)'  }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(97,168,255,0.15)', color: '#61a8ff', fontWeight: 900 }}>{index + 1}</div>
                     <div style={{ color: '#d8dcf0', lineHeight: 1.55 }}>{item}</div>
                   </div>
@@ -9054,9 +9093,9 @@ function Module5_2Section() {
                   style={{ width: '100%', aspectRatio: '16 / 9', border: 'none', display: 'block' }}
                 />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.85rem' }}>
+              <div className="responsive-grid" style={{ gap: '0.85rem'  }}>
                 {videoTimestamps.map((ts) => (
-                  <div key={ts.time} style={{ display: 'grid', gridTemplateColumns: '36px 1fr', gap: '0.8rem', alignItems: 'start', padding: '0.9rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+                  <div key={ts.time} className="responsive-grid" style={{ gap: '0.8rem', alignItems: 'start', padding: '0.9rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)'  }}>
                     <div style={{ width: '36px', height: '36px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.12)' }}>{ts.icon}</div>
                     <div>
                       <div style={{ color: '#ff9ba8', fontWeight: 800, fontSize: '0.85rem', marginBottom: '0.25rem' }}>{ts.time}</div>
@@ -9444,12 +9483,9 @@ function RoadmapLayerCard({ layerNum, title, description, color, accentClass, ch
       transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
       style={{ position: 'relative', marginBottom: '3rem' }}
     >
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '80px 1fr',
-        gap: '0',
+      <div className="responsive-grid" style={{ gap: '0',
         position: 'relative',
-      }}>
+       }}>
         {/* Left: Number + Vertical Line */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
           <motion.div
@@ -9623,7 +9659,7 @@ function RoadmapSection() {
           description="The UI Layer is all about the visual elements and interactions in your app. It includes widgets for buttons, forms, navigation, and layouts. In FlutterFlow, this layer also covers customization options like themes and responsive design."
           color="#ff2d55" accentClass="accent-rose" delay={0}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div className="responsive-grid" style={{ gap: '2rem'  }}>
             <div>
               <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.05rem' }}>FlutterFlow Widgets</h3>
               <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', color: '#c8c8e0', marginBottom: '1.5rem' }}>
@@ -9662,7 +9698,7 @@ function RoadmapSection() {
           description="The Logic Layer handles your app's business logic and decision-making. This includes state management, conditional actions, and navigation logic."
           color="#7b2ff7" accentClass="accent-violet" delay={0.1}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div className="responsive-grid" style={{ gap: '2rem'  }}>
             <div>
               <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.05rem' }}>State Management</h3>
               <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', color: '#c8c8e0', marginBottom: '1.5rem' }}>
@@ -9705,7 +9741,7 @@ function RoadmapSection() {
           description="The Data Layer manages data storage, retrieval, and integration with external sources like APIs and databases."
           color="#f59e0b" accentClass="accent-amber" delay={0.2}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+          <div className="responsive-grid" style={{ gap: '2rem'  }}>
             <div>
               <h3 style={{ color: '#fff', marginBottom: '0.5rem', fontSize: '1.05rem' }}>Authentication</h3>
               <ul style={{ listStyleType: 'disc', paddingLeft: '1.5rem', color: '#c8c8e0', marginBottom: '1.5rem' }}>
@@ -9839,7 +9875,7 @@ function BeforeYouBeginSection() {
           </h2>
         </MotionReveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '4rem' }}>
+        <div className="responsive-grid" style={{ gap: '2rem', marginBottom: '4rem'  }}>
           {/* Frontend Card */}
           <MotionReveal>
             <motion.div
@@ -9948,7 +9984,7 @@ function BeforeYouBeginSection() {
           </h2>
         </MotionReveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginBottom: '5rem' }}>
+        <div className="responsive-grid" style={{ gap: '2rem', marginBottom: '5rem'  }}>
           <MotionReveal>
             <motion.div style={{
               background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(123,47,247,0.15)',
@@ -9992,7 +10028,7 @@ function BeforeYouBeginSection() {
           </p>
         </MotionReveal>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '5rem' }}>
+        <div className="responsive-grid" style={{ gap: '1.5rem', marginBottom: '5rem'  }}>
           {architectureCards.map((card, i) => (
             <MotionReveal key={i} delay={i * 0.08}>
               <motion.div
@@ -10033,7 +10069,7 @@ function BeforeYouBeginSection() {
               — <a href="https://app.flutterflow.io/create-account" className="text-link" target="_blank" rel="noopener noreferrer">sign up</a> via Apple, Google, or Github.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '1.5rem', marginTop: '2rem' }}>
+            <div className="responsive-grid" style={{ gap: '1.5rem', marginTop: '2rem'  }}>
               {/* General */}
               <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '16px', padding: '1.5rem' }}>
                 <h4 style={{ color: '#00f5d4', fontSize: '0.95rem', marginBottom: '1rem', fontWeight: 600 }}>General Requirements</h4>

@@ -1569,66 +1569,104 @@ function SequenceActivity({ activity, accent }) {
     setSubmitted(false)
   }
 
-  const showCelebration = useCelebration(submitted, reset);
-return (
+  const isPerfectScore = submitted && (score === activity.correctOrder.length);
+  const showCelebration = useCelebration(isPerfectScore, reset);
+
+  return (
     <div>
       {submitted && <ResultBanner score={score} total={activity.correctOrder.length} successText={activity.success} />}
 
-      <div style={{ display: 'grid', gap: '0.9rem' }}>
+      <div style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '1.25rem', padding: '2rem 1.5rem', background: 'rgba(255,255,255,0.02)', borderRadius: '24px', border: `1px solid ${hexToRgba(accent, 0.15)}`, overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: '3.5rem', bottom: '3.5rem', left: '3.6rem', width: '2px', background: `linear-gradient(to bottom, transparent, ${hexToRgba(accent, 0.3)}, transparent)`, zIndex: 0 }} />
+
         {order.map((id, index) => {
           const isCorrectPosition = submitted && id === activity.correctOrder[index]
           const isWrongPosition = submitted && id !== activity.correctOrder[index]
 
+          let statusColor = hexToRgba(accent, 0.4)
+          let statusBg = 'rgba(255,255,255,0.03)'
+          
+          if (isCorrectPosition) {
+            statusColor = '#86ffb7'
+            statusBg = 'rgba(134,255,183,0.1)'
+          } else if (isWrongPosition) {
+            statusColor = '#ff7d6b'
+            statusBg = 'rgba(255,125,107,0.1)'
+          }
+
           return (
-            <div
-              key={`${id}-${index}`}
+            <motion.div
+              layout
+              key={id}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 25 }}
               style={{
-                padding: '1rem',
-                borderRadius: '18px',
-                background: 'rgba(255,255,255,0.03)',
-                border: `1px solid ${
-                  isCorrectPosition
-                    ? 'rgba(134,255,183,0.45)'
-                    : isWrongPosition
-                      ? 'rgba(255,125,107,0.45)'
-                      : hexToRgba(accent, 0.14)
-                }`,
-                display: 'grid',
-                gridTemplateColumns: '48px 1fr auto',
-                gap: '1rem',
+                position: 'relative',
+                zIndex: 1,
+                padding: '1.25rem',
+                borderRadius: '16px',
+                background: statusBg,
+                backdropFilter: 'blur(10px)',
+                border: `1px solid ${statusColor}`,
+                boxShadow: `0 8px 30px ${isCorrectPosition ? 'rgba(134,255,183,0.15)' : 'rgba(0,0,0,0.1)'}`,
+                display: 'flex',
+                flexDirection: 'row',
+                gap: '1.5rem',
                 alignItems: 'center',
+                flexWrap: 'wrap'
               }}
             >
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
+                  width: '46px',
+                  height: '46px',
                   borderRadius: '14px',
                   display: 'grid',
                   placeItems: 'center',
-                  background: hexToRgba(accent, 0.12),
-                  color: '#fff',
-                  fontWeight: 800,
+                  background: isCorrectPosition ? '#86ffb7' : isWrongPosition ? '#ff7d6b' : hexToRgba(accent, 0.2),
+                  color: isCorrectPosition || isWrongPosition ? '#000' : accent,
+                  fontWeight: 900,
+                  fontSize: '1.2rem',
+                  boxShadow: `inset 0 0 10px rgba(0,0,0,0.2), 0 0 15px ${isCorrectPosition ? '#86ffb7' : 'transparent'}`,
+                  flexShrink: 0
                 }}
               >
                 {index + 1}
               </div>
-              <div style={{ color: '#fff', lineHeight: 1.6, fontWeight: 600 }}>{byId[id].label}</div>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
+              
+              <div style={{ flex: 1, minWidth: '180px' }}>
+                <div style={{ color: '#fff', lineHeight: 1.6, fontWeight: 700, fontSize: '1.05rem', wordBreak: 'break-word' }}>
+                  {byId[id].label}
+                </div>
+                {!submitted && (
+                   <div style={{ color: '#8892b0', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 500 }}>
+                     Pipeline Module
+                   </div>
+                )}
+                {submitted && isWrongPosition && (
+                  <div style={{ color: '#ff7d6b', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Position Mismatch
+                  </div>
+                )}
+              </div>
+              
+              <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
                 <button
                   type="button"
                   onClick={() => moveItem(index, 'up')}
                   disabled={index === 0}
                   style={{
-                    width: '40px',
-                    height: '40px',
+                    width: '44px',
+                    height: '44px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    background: 'rgba(255,255,255,0.04)',
-                    color: index === 0 ? '#6f7890' : '#fff',
+                    border: `1px solid ${index === 0 ? 'rgba(255,255,255,0.05)' : hexToRgba(accent, 0.4)}`,
+                    background: index === 0 ? 'rgba(255,255,255,0.02)' : hexToRgba(accent, 0.1),
+                    color: index === 0 ? '#6f7890' : accent,
                     cursor: index === 0 ? 'not-allowed' : 'pointer',
                     display: 'grid',
                     placeItems: 'center',
+                    transition: 'all 0.2s',
                   }}
                 >
                   <MoveIcon direction="up" />
@@ -1638,46 +1676,49 @@ return (
                   onClick={() => moveItem(index, 'down')}
                   disabled={index === order.length - 1}
                   style={{
-                    width: '40px',
-                    height: '40px',
+                    width: '44px',
+                    height: '44px',
                     borderRadius: '12px',
-                    border: '1px solid rgba(255,255,255,0.12)',
-                    background: 'rgba(255,255,255,0.04)',
-                    color: index === order.length - 1 ? '#6f7890' : '#fff',
+                    border: `1px solid ${index === order.length - 1 ? 'rgba(255,255,255,0.05)' : hexToRgba(accent, 0.4)}`,
+                    background: index === order.length - 1 ? 'rgba(255,255,255,0.02)' : hexToRgba(accent, 0.1),
+                    color: index === order.length - 1 ? '#6f7890' : accent,
                     cursor: index === order.length - 1 ? 'not-allowed' : 'pointer',
                     display: 'grid',
                     placeItems: 'center',
+                    transition: 'all 0.2s',
                   }}
                 >
                   <MoveIcon direction="down" />
                 </button>
               </div>
-            
-      <CelebrationOverlay active={showCelebration} />
-</div>
+            </motion.div>
           )
         })}
       </div>
 
+      <CelebrationOverlay active={showCelebration} />
+
       {submitted && score !== activity.correctOrder.length && (
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           style={{
-            marginTop: '1rem',
-            padding: '1rem 1.1rem',
-            borderRadius: '18px',
-            border: '1px solid rgba(255,255,255,0.1)',
-            background: 'rgba(255,255,255,0.03)',
+            marginTop: '1.5rem',
+            padding: '1.25rem 1.5rem',
+            borderRadius: '20px',
+            border: '1px dashed rgba(255,125,107,0.4)',
+            background: 'rgba(255,125,107,0.05)',
           }}
         >
-          <div style={{ color: '#aeb7cf', fontSize: '0.74rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 700, marginBottom: '0.5rem' }}>
-            Correct Order
+          <div style={{ color: '#ffb4a8', fontSize: '0.8rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.75rem' }}>
+            Pipeline Diagnostic Report (Correct Order)
           </div>
-          <ol style={{ margin: 0, paddingLeft: '1.2rem', color: '#d7d7ea', lineHeight: 1.8 }}>
+          <ol style={{ margin: 0, paddingLeft: '1.2rem', color: '#ffecdb', lineHeight: 2, fontWeight: 500 }}>
             {activity.correctOrder.map((id) => (
-              <li key={`correct-${id}`}>{byId[id].label}</li>
+              <li key={`correct-${id}`} style={{ paddingBottom: '0.5rem' }}>{byId[id].label}</li>
             ))}
           </ol>
-        </div>
+        </motion.div>
       )}
 
       <ActionButtons onCheck={() => setSubmitted(true)} onReset={reset} canCheck={canCheck} accent={accent} />
@@ -3151,7 +3192,7 @@ function SorterActivity({ activity, accent }) {
       </div>
 
       {/* Buckets */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', width: '100%' }}>
+      <div className="responsive-grid" style={{ gap: '1rem', width: '100%'  }}>
         {activity.buckets.map(bucket => {
           const isError = errorBucket === bucket.id
           const itemsInBucket = sorted.filter(s => s.bucketId === bucket.id).length
@@ -4051,7 +4092,7 @@ function TimeMachineActivity({ activity, accent }) {
         })}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1.15fr) minmax(300px, 0.85fr)', gap: '1.35rem', alignItems: 'start' }}>
+      <div className="responsive-grid" style={{ gap: '1.35rem', alignItems: 'start'  }}>
         <div style={{ borderRadius: '28px', overflow: 'hidden', position: 'relative', border: `1px solid ${hexToRgba(accent, 0.24)}`, background: 'radial-gradient(circle at 14% 18%, rgba(97,168,255,0.14), transparent 28%), radial-gradient(circle at 86% 12%, rgba(134,255,183,0.12), transparent 28%), linear-gradient(155deg, rgba(7,10,22,0.98), rgba(5,13,24,0.96))', boxShadow: `0 34px 80px ${hexToRgba(accent, 0.12)}` }}>
           <div style={{ padding: '1.2rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
             <div>
@@ -4087,7 +4128,7 @@ function TimeMachineActivity({ activity, accent }) {
               </div>
             </motion.div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.85rem' }}>
+            <div className="responsive-grid" style={{ gap: '0.85rem'  }}>
               {activity.tools.map((tool) => {
                 const theme = toolThemes[tool.id]
                 const isError = errorTool === tool.id
@@ -4132,7 +4173,7 @@ function TimeMachineActivity({ activity, accent }) {
               })}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '0.75rem' }}>
+            <div className="responsive-grid" style={{ gap: '0.75rem'  }}>
               {activity.tools.map((tool) => {
                 const theme = toolThemes[tool.id]
                 return (
@@ -4215,7 +4256,7 @@ function ServerDeployActivity({ activity, accent }) {
 
   return (
     <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.25rem' }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1.1fr) minmax(220px, 0.9fr)', gap: '1rem' }}>
+      <div className="responsive-grid" style={{ gap: '1rem'  }}>
         <div
           style={{
             borderRadius: '24px',
@@ -4269,7 +4310,7 @@ function ServerDeployActivity({ activity, accent }) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1.1fr) minmax(300px, 0.9fr)', gap: '1.35rem', alignItems: 'start' }}>
+      <div className="responsive-grid" style={{ gap: '1.35rem', alignItems: 'start'  }}>
       <div style={{ minHeight: '100%', borderRadius: '28px', overflow: 'hidden', position: 'relative', border: `1px solid ${hexToRgba(accent, 0.24)}`, background: 'radial-gradient(circle at 16% 18%, rgba(0,245,212,0.12), transparent 28%), radial-gradient(circle at 84% 16%, rgba(97,168,255,0.12), transparent 28%), linear-gradient(155deg, rgba(5,8,18,0.97), rgba(6,16,26,0.96))', boxShadow: `0 36px 82px ${hexToRgba(accent, 0.1)}` }}>
         <div style={{ padding: '1.1rem 1.2rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
           <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
@@ -4631,13 +4672,10 @@ export default function ChapterActivities({ chapterId }) {
           }}
         >
           <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(120px, 160px) 1fr',
-              gap: '1.25rem',
+            className="responsive-grid" style={{ gap: '1.25rem',
               alignItems: 'center',
               marginBottom: '1.4rem',
-            }}
+             }}
           >
             <div
               style={{

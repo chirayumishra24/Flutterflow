@@ -215,7 +215,7 @@ export default function CapstoneModule() {
       <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '4rem 4rem 8rem', display: 'flex', flexDirection: 'column', gap: '6rem' }}>
         
         {/* Objective & Phases Section (Offset Layout) */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '3rem' }}>
+        <div className="responsive-grid" style={{ gap: '3rem'  }}>
           
           <div style={{ gridColumn: 'span 7' }}>
             <SectionTitle icon="🎯" color="#5ac8fa" style={{ fontSize: '2.5rem' }}>Project Objective</SectionTitle>
@@ -223,7 +223,7 @@ export default function CapstoneModule() {
               Your capstone must be a comprehensive, real-world solution. <br/>
               Ensure your application integrates these core pillars:
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div className="responsive-grid" style={{ gap: '1rem'  }}>
                <ListItem color="#5ac8fa">User Authentication</ListItem>
                <ListItem color="#5ac8fa">Backend (Firebase/Supabase)</ListItem>
                <ListItem color="#5ac8fa">Advanced State Mgmt</ListItem>
@@ -269,10 +269,10 @@ export default function CapstoneModule() {
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 500px', gap: '4rem', alignItems: 'start' }}>
+            <div className="responsive-grid" style={{ gap: '4rem', alignItems: 'start'  }}>
                
                {/* Ideas Matrix */}
-               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+               <div className="responsive-grid" style={{ gap: '1.5rem'  }}>
                   {[
                     { title: "E-commerce System", desc: "Cart, Checkout, Stripe Payments.", color: "#ff2d55" },
                     { title: "Social Interaction", desc: "Feeds, Likes, Media Uploads.", color: "#5856d6" },
@@ -384,7 +384,7 @@ export default function CapstoneModule() {
         </section>
 
         {/* ─── REFERENCES & BONUS SECTION (Left Aligned Columns) ─── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '4rem' }}>
+        <div className="responsive-grid" style={{ gap: '4rem'  }}>
            <div style={{ gridColumn: 'span 4' }}>
               <SectionTitle icon="🔗" color="#4cd964">Resources</SectionTitle>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
@@ -404,7 +404,7 @@ export default function CapstoneModule() {
            <div style={{ gridColumn: 'span 8' }}>
               <GlassCard style={{ background: 'linear-gradient(135deg, rgba(255,149,0,0.1), transparent)', borderTop: '4px solid #ff9500' }}>
                  <SectionTitle icon="🔥" color="#ff9500">Elite Bonus Challenges</SectionTitle>
-                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                 <div className="responsive-grid" style={{ gap: '2rem'  }}>
                     <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px' }}>
                        <h5 style={{ color: '#ff9500', fontWeight: 800, marginBottom: '0.5rem' }}>AI Integration</h5>
                        <p style={{ color: '#8c8cae', fontSize: '0.9rem', margin: 0 }}>Leverage Gemini or OpenAI custom actions to bring smart features.</p>
@@ -428,7 +428,7 @@ export default function CapstoneModule() {
 
         {/* ─── SUBMISSION SUB-FOOTER ─── */}
         <GlassCard style={{ border: '2px solid #7b2ff7', background: 'radial-gradient(circle at top right, rgba(123, 47, 247, 0.1), transparent 70%)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '4rem', alignItems: 'center' }}>
+          <div className="responsive-grid" style={{ gap: '4rem', alignItems: 'center'  }}>
             <div>
               <SectionTitle icon="⭐" color="#7b2ff7">Final Submission</SectionTitle>
               <p style={{ color: '#b0b0cc', fontSize: '1.1rem', lineHeight: 1.6 }}>Ready to showcase? Please provide the public URLs for your project. Our instructors will evaluate the tech stack, UI polish, and functional logic.</p>
@@ -439,7 +439,7 @@ export default function CapstoneModule() {
             </div>
 
             {!submitted ? (
-               <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+               <form onSubmit={handleSubmit} className="responsive-grid" style={{ gap: '1.5rem'  }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                      <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>Project URL *</label>
                      <input required type="url" value={ffLink} onChange={e=>setFfLink(e.target.value)} placeholder="FlutterFlow Link" style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
