@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
 const problemStatements = [
   {
@@ -79,7 +79,9 @@ const problemStatements = [
 
 const GlassCard = ({ children, delay = 0, style = {}, className="" }) => (
   <motion.div 
-    initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ delay, duration: 0.5 }}
+    initial={false}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay, duration: 0.35 }}
     className={className}
     style={{ 
       background: 'rgba(255,255,255,0.03)', 
@@ -97,7 +99,9 @@ const GlassCard = ({ children, delay = 0, style = {}, className="" }) => (
 
 const SectionTitle = ({ children, icon, color = "#fff", delay = 0, style={} }) => (
   <motion.h3 
-    initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay, duration: 0.5 }}
+    initial={false}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay, duration: 0.35 }}
     style={{ 
       fontSize: '2rem', fontWeight: 800, color, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px',
       ...style
@@ -110,7 +114,9 @@ const SectionTitle = ({ children, icon, color = "#fff", delay = 0, style={} }) =
 
 const ListItem = ({ children, color = "#ff2d55", icon = "✦", delay = 0 }) => (
   <motion.li 
-    initial={{ opacity: 0, x: -10 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }} transition={{ delay }}
+    initial={false}
+    animate={{ opacity: 1, x: 0 }}
+    transition={{ delay, duration: 0.25 }}
     style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: '#b0b0cc', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '0.8rem' }}
   >
     <span style={{ color, marginTop: '2px', fontSize: '1.2rem', fontWeight: 'bold' }}>{icon}</span>
@@ -119,20 +125,49 @@ const ListItem = ({ children, color = "#ff2d55", icon = "✦", delay = 0 }) => (
 );
 
 export default function CapstoneModule() {
+  const readSavedValue = (key, fallback = '') => {
+    if (typeof window === 'undefined') return fallback;
+    return window.localStorage.getItem(key) ?? fallback;
+  };
+
+  const readSavedTopic = () => {
+    if (typeof window === 'undefined') return problemStatements[0];
+    const savedId = Number(window.localStorage.getItem('capstone:selectedTopicId'));
+    return problemStatements.find((topic) => topic.id === savedId) || problemStatements[0];
+  };
+
   const [spinning, setSpinning] = useState(false);
-  const [rotation, setRotation] = useState(0);
-  const [selectedTopic, setSelectedTopic] = useState(null);
+  const [rotation, setRotation] = useState(() => Number(readSavedValue('capstone:rotation', '0')));
+  const [selectedTopic, setSelectedTopic] = useState(readSavedTopic);
   
-  const [ffLink, setFfLink] = useState('');
-  const [githubLink, setGithubLink] = useState('');
-  const [playStoreLink, setPlayStoreLink] = useState('');
-  const [demoLink, setDemoLink] = useState('');
-  const [submitted, setSubmitted] = useState(false);
+  const [ffLink, setFfLink] = useState(() => readSavedValue('capstone:ffLink'));
+  const [githubLink, setGithubLink] = useState(() => readSavedValue('capstone:githubLink'));
+  const [playStoreLink, setPlayStoreLink] = useState(() => readSavedValue('capstone:playStoreLink'));
+  const [demoLink, setDemoLink] = useState(() => readSavedValue('capstone:demoLink'));
+  const [submitted, setSubmitted] = useState(() => readSavedValue('capstone:submitted', 'false') === 'true');
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('capstone:rotation', String(rotation));
+  }, [rotation]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || !selectedTopic) return;
+    window.localStorage.setItem('capstone:selectedTopicId', String(selectedTopic.id));
+  }, [selectedTopic]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    window.localStorage.setItem('capstone:ffLink', ffLink);
+    window.localStorage.setItem('capstone:githubLink', githubLink);
+    window.localStorage.setItem('capstone:playStoreLink', playStoreLink);
+    window.localStorage.setItem('capstone:demoLink', demoLink);
+    window.localStorage.setItem('capstone:submitted', String(submitted));
+  }, [ffLink, githubLink, playStoreLink, demoLink, submitted]);
 
   const spinWheel = () => {
     if (spinning || submitted) return;
     setSpinning(true);
-    setSelectedTopic(null);
     
     const winIndex = Math.floor(Math.random() * problemStatements.length);
     const segmentAngle = 360 / problemStatements.length;
@@ -322,13 +357,13 @@ export default function CapstoneModule() {
             </div>
             
             {/* Wheel Spin Result (Full-Width Popover style) */}
-            <AnimatePresence>
-              {selectedTopic && !spinning && (
-                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: '4rem' }}>
+            <div>
+              {selectedTopic && (
+                <motion.div initial={false} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: '4rem' }}>
                    <GlassCard style={{ borderLeft: `8px solid ${selectedTopic.themeColor}`, background: `${selectedTopic.themeColor}10` }}>
                       <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', flexWrap: 'wrap' }}>
                         <div style={{ flex: 1, minWidth: '300px' }}>
-                           <span style={{ color: selectedTopic.themeColor, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem' }}>Official Assignment</span>
+                           <span style={{ color: selectedTopic.themeColor, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem' }}>{spinning ? 'Current Assignment' : 'Official Assignment'}</span>
                            <h2 style={{ fontSize: '3rem', fontWeight: 900, margin: '1rem 0' }}>{selectedTopic.title}</h2>
                            <p style={{ color: '#d0d0e0', fontSize: '1.2rem', lineHeight: 1.6 }}>{selectedTopic.description}</p>
                         </div>
@@ -344,7 +379,7 @@ export default function CapstoneModule() {
                    </GlassCard>
                 </motion.div>
               )}
-            </AnimatePresence>
+            </div>
           </div>
         </section>
 

@@ -2775,27 +2775,6 @@ function Chapter5_2() {
   return (
     <>
       <Module5_2Section />
-      
-      <div style={{ padding: '6rem 2rem', textAlign: 'center', background: 'linear-gradient(to bottom, transparent, rgba(123, 47, 247, 0.1))', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <h2 style={{ fontSize: '3rem', color: '#fff', marginBottom: '1rem', fontWeight: 800 }}>Ready for the Final Challenge?</h2>
-        <p style={{ color: '#c8c8e0', fontSize: '1.2rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto 2.5rem auto' }}>
-          You've completed all the modules! It's time to test your FlutterFlow skills by spinning the wheel for your official Capstone Project.
-        </p>
-        <a href="/capstone" style={{
-          display: 'inline-block', padding: '1.2rem 3rem', fontSize: '1.3rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '1px',
-          borderRadius: '50px', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7)', color: '#fff', 
-          textDecoration: 'none', boxShadow: '0 15px 30px rgba(123, 47, 247, 0.3)', transition: 'all 0.3s ease'
-        }} onMouseOver={e => e.currentTarget.style.transform = 'translateY(-4px)'} onMouseOut={e => e.currentTarget.style.transform = 'translateY(0)'}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem' }}>
-            Start Capstone Project
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M5 19c3.5-1 8-4.5 10.5-10.5L20 4l-4.5 4.5C9.5 11 6 15.5 5 19Z" />
-              <path d="M15 9l-5 5" />
-              <path d="M7 17l-2 2" />
-            </svg>
-          </span>
-        </a>
-      </div>
 
       <ChapterActivities chapterId="5-2" />
       <FAQSection />
@@ -6251,7 +6230,6 @@ function PageFileHandling() {
 /* ═══════ MODULE 4 ═══════ */
 
 function Module4_1Section() {
-  const [activePhase, setActivePhase] = useState(1)
   const [flippedCard, setFlippedCard] = useState(null)
 
   const railCards = [
@@ -6325,7 +6303,18 @@ function Module4_1Section() {
     }
   ]
 
-  const active = mergePhases[activePhase]
+  const mergeScreenshots = [
+    {
+      title: 'Create and commit view',
+      src: 'https://login.skillizee.io/s/articles/69bb947cbba4ebf527bce93e/images/image-20260319114527-1.jpeg',
+      accent: '#ffd700'
+    },
+    {
+      title: 'Merge and resolve view',
+      src: 'https://login.skillizee.io/s/articles/69bb947cbba4ebf527bce93e/images/image-20260319114527-2.jpeg',
+      accent: '#7b2ff7'
+    }
+  ]
 
   return (
     <section className="sec" style={{ paddingTop: '0', paddingBottom: '90px', position: 'relative', overflow: 'hidden' }}>
@@ -6353,90 +6342,146 @@ function Module4_1Section() {
           </div>
         </MotionReveal>
 
-        <div style={{
+        <div className="branching-bento-grid" style={{
           marginTop: '2.2rem',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+          gridTemplateColumns: 'repeat(12, 1fr)',
           gap: '1rem',
           paddingBottom: '0.75rem'
         }}>
-          {railCards.map((card, i) => (
-            <motion.div
-              key={card.title}
-              whileHover={{ y: -10, rotate: i % 2 === 0 ? -0.5 : 0.5 }}
-              style={{
-                scrollSnapAlign: 'start',
-                minHeight: '220px',
-                padding: '1.45rem',
-                borderRadius: i % 2 === 0 ? '28px' : '18px',
-                border: '1px solid rgba(255,255,255,0.1)',
-                background: `linear-gradient(160deg, ${['rgba(255,215,0,0.18)', 'rgba(0,245,212,0.14)', 'rgba(123,47,247,0.16)', 'rgba(255,154,92,0.15)', 'rgba(67,97,238,0.16)'][i]} 0%, rgba(6,10,26,0.96) 82%)`,
-                boxShadow: '0 22px 50px rgba(0,0,0,0.22)'
-              }}
-            >
-              <div style={{ fontSize: '0.74rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#d0d5ef', marginBottom: '0.85rem' }}>{card.tag}</div>
-              <h3 style={{ color: '#fff', fontSize: '1.18rem', marginBottom: '0.55rem' }}>{card.title}</h3>
-              <p style={{ color: '#cfd6ea', lineHeight: 1.72 }}>{card.desc}</p>
-              <div style={{ marginTop: '1.2rem', color: '#00f5d4', fontWeight: 700 }}>Slide this rail →</div>
-            </motion.div>
-          ))}
-        </div>
-
-        <div className="chapter-split" style={{ marginTop: '2.6rem', alignItems: 'stretch' }}>
-          <div style={{
-            borderRadius: '30px',
-            border: '1px solid rgba(255,255,255,0.08)',
-            background: 'linear-gradient(180deg, rgba(12,12,29,0.96) 0%, rgba(8,9,22,0.98) 100%)',
-            padding: '1rem',
-            display: 'grid',
-            gap: '0.75rem'
-          }}>
-            {mergePhases.map((phase, i) => (
-              <motion.button
-                key={phase.title}
-                onClick={() => setActivePhase(i)}
-                whileHover={{ x: 6 }}
+          {railCards.map((card, i) => {
+            const accents = ['#ffd700', '#00f5d4', '#7b2ff7', '#ff9a5c', '#4361ee']
+            const spans = [
+              { gridColumn: 'span 4', minHeight: '240px' },
+              { gridColumn: 'span 4', minHeight: '240px' },
+              { gridColumn: 'span 4', minHeight: '240px' },
+              { gridColumn: 'span 5', minHeight: '220px' },
+              { gridColumn: 'span 7', minHeight: '220px' }
+            ]
+            const accent = accents[i % accents.length]
+            const span = spans[i % spans.length]
+            return (
+              <motion.div
+                key={card.title}
+                whileHover={{ y: -10, rotate: i % 2 === 0 ? -0.45 : 0.45 }}
+                className="branching-bento-card"
                 style={{
-                  textAlign: 'left',
-                  padding: '1rem 1.1rem',
-                  borderRadius: '18px',
-                  border: `1px solid ${i === activePhase ? phase.accent : 'rgba(255,255,255,0.08)'}`,
-                  background: i === activePhase ? `${phase.accent}16` : 'rgba(255,255,255,0.03)',
-                  color: '#fff',
-                  cursor: 'pointer'
+                  ...span,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  padding: i === 4 ? '1.8rem' : '1.45rem',
+                  borderRadius: i === 3 ? '34px' : i === 4 ? '30px' : '24px',
+                  border: `1px solid ${accent}33`,
+                  background: `radial-gradient(circle at ${i % 2 === 0 ? '18% 18%' : '82% 20%'}, ${accent}22, transparent 35%), linear-gradient(155deg, rgba(6,10,26,0.98), rgba(10,8,30,0.95))`,
+                  boxShadow: `0 24px 56px ${accent}12`,
+                  display: 'grid',
+                  alignContent: 'space-between'
                 }}
               >
-                <div style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: phase.accent, marginBottom: '0.35rem', fontWeight: 700 }}>
-                  Phase {i + 1}
+                <div style={{ position: 'absolute', right: '-28px', bottom: '-28px', width: '120px', height: '120px', borderRadius: '999px', background: `${accent}14`, filter: 'blur(6px)' }} />
+                <div style={{ position: 'relative', zIndex: 2 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                    <div style={{ color: '#d0d5ef', fontSize: '0.74rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 800 }}>{card.tag}</div>
+                    <div style={{ width: '12px', height: '12px', borderRadius: '999px', background: accent, boxShadow: `0 0 20px ${accent}` }} />
+                  </div>
+                  <h3 style={{ color: '#fff', fontSize: i === 4 ? '1.55rem' : '1.28rem', lineHeight: 1.08, marginBottom: '0.7rem', maxWidth: i === 4 ? '420px' : '260px' }}>{card.title}</h3>
+                  <p style={{ color: '#cfd6ea', lineHeight: 1.72, maxWidth: i === 4 ? '520px' : '340px', margin: 0 }}>{card.desc}</p>
                 </div>
-                <div style={{ fontSize: '1.04rem', fontWeight: 700, marginBottom: '0.25rem' }}>{phase.title}</div>
-                <div style={{ color: '#cfd6ea', lineHeight: 1.6 }}>{phase.body}</div>
-              </motion.button>
-            ))}
+                <div style={{ position: 'relative', zIndex: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.8rem', marginTop: '1.35rem' }}>
+                  <div style={{ color: accent, fontSize: '0.78rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 900 }}>
+                    Branching step
+                  </div>
+                  <div style={{ color: '#fff', opacity: 0.7, fontWeight: 800 }}>
+                    0{i + 1}
+                  </div>
+                </div>
+              </motion.div>
+            )
+          })}
+          <style>{`
+            @media (max-width: 980px) {
+              .branching-bento-card {
+                grid-column: span 12 !important;
+                min-height: 220px !important;
+              }
+            }
+          `}</style>
+        </div>
+
+        <div style={{
+          marginTop: '2.6rem',
+          borderRadius: '34px',
+          border: '1px solid rgba(255,255,255,0.1)',
+          background: 'radial-gradient(circle at 12% 20%, rgba(255,215,0,0.12), transparent 30%), radial-gradient(circle at 88% 10%, rgba(0,245,212,0.12), transparent 32%), linear-gradient(180deg, rgba(10,12,30,0.98) 0%, rgba(6,8,18,0.98) 100%)',
+          boxShadow: '0 26px 70px rgba(0,0,0,0.28)',
+          padding: '1.25rem',
+          overflow: 'hidden'
+        }}>
+          <div style={{ textAlign: 'center', maxWidth: '780px', margin: '0 auto 1.6rem' }}>
+            <div style={{ color: '#00f5d4', fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem' }}>
+              Branching operations board
+            </div>
+            <h2 style={{ color: '#fff', fontSize: 'clamp(1.8rem, 3vw, 2.65rem)', marginBottom: '0.65rem' }}>
+              One workflow, two screens, one tutorial
+            </h2>
+            <p style={{ color: '#cfd6ea', lineHeight: 1.75, margin: 0 }}>
+              The source only needs two interface screenshots and one guide video, so the flow is now arranged as a complete board instead of repeating media behind every phase.
+            </p>
           </div>
 
-          <motion.div
-            key={active.title}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{
-              borderRadius: '34px',
-              overflow: 'hidden',
-              border: `1px solid ${active.accent}55`,
-              background: 'linear-gradient(180deg, rgba(10,12,30,0.98) 0%, rgba(6,8,18,0.98) 100%)',
-              boxShadow: '0 24px 60px rgba(0,0,0,0.28)'
-            }}
-          >
-            <div style={{ padding: '1rem' }}>
-              <img src={active.image} alt={active.title} style={{ width: '100%', borderRadius: '22px' }} />
+          <div className="branching-board-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(260px, 0.85fr) minmax(320px, 1.15fr)', gap: '1rem', alignItems: 'stretch' }}>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {mergePhases.map((phase, i) => (
+                <motion.div
+                  key={phase.title}
+                  whileHover={{ x: 5 }}
+                  style={{
+                    padding: '1rem',
+                    borderRadius: '20px',
+                    border: `1px solid ${phase.accent}36`,
+                    background: `linear-gradient(135deg, ${phase.accent}12, rgba(255,255,255,0.035))`,
+                    display: 'grid',
+                    gridTemplateColumns: '42px 1fr',
+                    gap: '0.8rem',
+                    alignItems: 'start'
+                  }}
+                >
+                  <span style={{ width: '42px', height: '42px', borderRadius: '14px', display: 'grid', placeItems: 'center', color: phase.accent, background: `${phase.accent}18`, fontWeight: 900 }}>
+                    {i + 1}
+                  </span>
+                  <span>
+                    <span style={{ display: 'block', color: phase.accent, fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.25rem' }}>
+                      Phase {i + 1}
+                    </span>
+                    <span style={{ display: 'block', color: '#fff', fontWeight: 850, fontSize: '1.03rem', marginBottom: '0.25rem' }}>{phase.title}</span>
+                    <span style={{ display: 'block', color: '#cfd6ea', lineHeight: 1.55 }}>{phase.body}</span>
+                  </span>
+                </motion.div>
+              ))}
             </div>
-            <div style={{ padding: '0 1.35rem 1.35rem' }}>
-              <div style={{ fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: active.accent, fontWeight: 700, marginBottom: '0.55rem' }}>
-                Merge Lab
+
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1rem' }}>
+                {mergeScreenshots.map((shot) => (
+                  <motion.div
+                    key={shot.title}
+                    whileHover={{ y: -6 }}
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: '24px',
+                      border: `1px solid ${shot.accent}44`,
+                      background: 'rgba(255,255,255,0.045)'
+                    }}
+                  >
+                    <img src={shot.src} alt={shot.title} style={{ width: '100%', borderRadius: '18px', display: 'block' }} />
+                    <div style={{ color: shot.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginTop: '0.75rem', textAlign: 'center' }}>
+                      {shot.title}
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-              <h2 style={{ color: '#fff', fontSize: '1.7rem', marginBottom: '0.55rem' }}>{active.title}</h2>
-              <p style={{ color: '#d7d7ea', lineHeight: 1.8, marginBottom: '1rem' }}>{active.body}</p>
-              <div className="step-media" style={{ borderRadius: '22px', borderColor: `${active.accent}44` }}>
+
+              <div className="step-media" style={{ borderRadius: '24px', borderColor: 'rgba(0,245,212,0.28)', overflow: 'hidden' }}>
                 <iframe
                   src="https://www.youtube.com/embed/r8BR248HR0U"
                   title="Branching Version 2 New Feature Tutorial"
@@ -6445,7 +6490,20 @@ function Module4_1Section() {
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
+
+          <style>{`
+            @media (max-width: 900px) {
+              .branching-board-grid {
+                grid-template-columns: 1fr !important;
+              }
+            }
+            @media (max-width: 620px) {
+              .branching-board-grid [style*="repeat(2"] {
+                grid-template-columns: 1fr !important;
+              }
+            }
+          `}</style>
         </div>
 
         <div style={{ marginTop: '2.6rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem' }}>
@@ -8122,9 +8180,19 @@ function PageLocalRun() {
               <span className="chip" style={{ width: 'max-content', color: '#86ffb7', border: '1px solid rgba(134,255,183,0.28)', background: 'rgba(134,255,183,0.1)', marginBottom: '1rem' }}>
                 Module 4 - Chapter 4.4 · Page 2
               </span>
-              <div style={{ marginBottom: '0.7rem' }}>
-                <TexturedMaskText text="Device Lab" className="textured-mask-heading" imageUrl="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop" />
-              </div>
+              <h1
+                style={{
+                  margin: '0 0 0.7rem',
+                  fontSize: 'clamp(3rem, 6vw, 5.6rem)',
+                  lineHeight: 0.92,
+                  fontWeight: 950,
+                  letterSpacing: '-0.06em',
+                  color: '#f4fff9',
+                  textShadow: '0 10px 34px rgba(0,0,0,0.35)'
+                }}
+              >
+                Device Lab
+              </h1>
               <TypewriterText
                 text="Run it where real users will touch it..."
                 className="typewriter-heading"
@@ -8583,6 +8651,9 @@ function Module5_1Section() {
   ]
 
   const activeDeployData = playStoreSteps[activeDeployStep]
+  const activeDeployEmbed = activeDeployData.videoLink.includes('watch?v=')
+    ? activeDeployData.videoLink.replace('watch?v=', 'embed/')
+    : activeDeployData.videoLink.replace('youtu.be/', 'www.youtube.com/embed/')
   const launchSignals = [
     ['Readiness', activeDeployStep >= 0 ? 'Checked' : 'Pending'],
     ['Console', activeDeployStep >= 1 ? 'Registered' : 'Queued'],
@@ -8590,6 +8661,7 @@ function Module5_1Section() {
     ['Release', activeDeployStep >= 3 ? 'Build path open' : 'Waiting'],
     ['Monitor', activeDeployStep >= 4 ? 'Watch mode' : 'After rollout']
   ]
+  const stageTheme = ['#00f5d4', '#ff7d6b', '#ffd166', '#61a8ff', '#86ffb7', '#b388ff'][activeDeployStep % 6]
 
   return (
     <section className="sec" ref={containerRef}>
@@ -8725,12 +8797,22 @@ function Module5_1Section() {
                 </div>
 
                 <div style={{ display: 'grid', gap: '1rem', alignContent: 'start' }}>
+                  <div style={{ borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', background: '#050915' }}>
+                    <iframe
+                      src={activeDeployEmbed}
+                      title={activeDeployData.videoDesc}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      style={{ width: '100%', aspectRatio: '16 / 9', border: 'none', display: 'block' }}
+                    />
+                    <div style={{ padding: '0.9rem 1rem', borderTop: '1px solid rgba(255,255,255,0.08)', color: '#fff', fontWeight: 850, lineHeight: 1.45 }}>
+                      {activeDeployData.videoDesc}
+                    </div>
+                  </div>
                   <div style={{ borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', background: '#050915', position: 'relative' }}>
                     <img src={activeDeployData.image} alt={activeDeployData.title} style={{ width: '100%', display: 'block' }} />
-                    <div style={{ position: 'absolute', inset: 'auto 0 0 0', padding: '1rem', background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.82))' }}>
-                      <a href={activeDeployData.videoLink} target="_blank" rel="noopener noreferrer" className="arrow-link" style={{ color: '#fff', textDecoration: 'none', fontWeight: 900 }}>
-                        Watch guide: {activeDeployData.videoDesc} <span>→</span>
-                      </a>
+                    <div style={{ position: 'absolute', inset: 'auto 0 0 0', padding: '0.9rem 1rem', background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.82))', color: '#fff', fontWeight: 850 }}>
+                      Visual reference for {activeDeployData.title.replace(/^\d+\.\s*/, '')}
                     </div>
                   </div>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.65rem' }}>
@@ -8749,17 +8831,21 @@ function Module5_1Section() {
 
         {/* Relevant Projects Table / Grid */}
         <MotionReveal delay={0.2}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'end', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
-            <div>
-              <h3 style={{ color: '#fff', fontSize: 'clamp(1.8rem, 3vw, 2.55rem)', marginBottom: '0.65rem', fontWeight: 950, letterSpacing: '-0.04em' }}>Relevant Projects</h3>
-              <p style={{ color: '#a9a9c6', maxWidth: '860px', lineHeight: 1.7 }}>Open-source launch pads for testing real app structure, deployment readiness, and Run/Test workflows.</p>
-            </div>
-            <span style={{ padding: '0.8rem 1rem', borderRadius: '999px', color: '#00f5d4', border: '1px solid rgba(0,245,212,0.24)', background: 'rgba(0,245,212,0.08)', fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', fontSize: '0.72rem' }}>
-              Bento repo dock
-            </span>
-          </div>
+          <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '34px', padding: 'clamp(1.35rem, 3vw, 2rem)', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(145deg, rgba(10,10,24,0.95), rgba(16,8,26,0.9))', boxShadow: '0 24px 70px rgba(0,0,0,0.22)' }}>
+            <div style={{ position: 'absolute', inset: 0, background: `radial-gradient(circle at 12% 12%, ${stageTheme}16, transparent 22%), radial-gradient(circle at 88% 80%, rgba(255,255,255,0.06), transparent 18%)` }} />
+            <div style={{ position: 'relative', zIndex: 2 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'end', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+                <div>
+                  <div style={{ color: stageTheme, fontSize: '0.74rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.65rem' }}>Launch-ready references</div>
+                  <h3 style={{ color: '#fff', fontSize: 'clamp(2.1rem, 4vw, 3.2rem)', marginBottom: '0.65rem', fontWeight: 950, letterSpacing: '-0.05em', fontFamily: '"Avenir Next Condensed", "Trebuchet MS", sans-serif' }}>Relevant Projects</h3>
+                  <p style={{ color: '#a9a9c6', maxWidth: '860px', lineHeight: 1.7 }}>Open-source launch pads for testing real app structure, deployment readiness, and Run/Test workflows.</p>
+                </div>
+                <span style={{ padding: '0.8rem 1rem', borderRadius: '999px', color: stageTheme, border: `1px solid ${stageTheme}33`, background: `${stageTheme}12`, fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', fontSize: '0.72rem' }}>
+                  Bento repo dock
+                </span>
+              </div>
 
-          <div className="repo-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1rem' }}>
+              <div className="repo-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1rem' }}>
             {relevantProjects.map((proj, i) => {
               const accents = ['#00f5d4', '#ff7d6b', '#ffd166', '#61a8ff', '#86ffb7']
               const spans = [
@@ -8808,6 +8894,8 @@ function Module5_1Section() {
                 </motion.a>
               )
             })}
+              </div>
+            </div>
           </div>
           <style>{`
             @media (max-width: 980px) {
@@ -8821,21 +8909,30 @@ function Module5_1Section() {
 
         {/* Embedded Links */}
         <MotionReveal delay={0.2} style={{ marginTop: '5rem' }}>
-          <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 600 }}>Embedded Links with Simulations</h3>
-          <p style={{ color: '#a9a9c6', marginBottom: '2rem', maxWidth: '800px' }}>Interactive simulation links for testing logic, animations, and flows.</p>
-          <div className="embedded-link-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1.4rem', maxWidth: '1120px' }}>
-            {embeddedLinks.map((link, i) => (
-              <TerminalCard key={link.title} command={`open ${link.name.replace(/\s+/g, '_').toLowerCase()}`} className="gsap-child">
-                <div style={{ display: 'grid', gap: '0.6rem' }}>
-                  <h4 style={{ color: '#00f5d4', fontSize: '1.05rem', margin: 0 }}>{link.title}</h4>
-                  <p style={{ color: '#a9a9c6', fontSize: '0.9rem', lineHeight: 1.5 }}>{link.desc}</p>
-                  <a href={link.link} target="_blank" rel="noopener noreferrer" style={{ color: '#ffd700', textDecoration: 'none', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
-                    {link.name}
-                  </a>
-                </div>
-              </TerminalCard>
-            ))}
+          <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '34px', padding: 'clamp(1.35rem, 3vw, 2rem)', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(145deg, rgba(8,9,22,0.95), rgba(17,7,26,0.9))' }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 84% 18%, rgba(97,168,255,0.16), transparent 18%), radial-gradient(circle at 16% 88%, rgba(255,209,102,0.14), transparent 18%)' }} />
+            <div style={{ position: 'relative', zIndex: 2 }}>
+              <div style={{ marginBottom: '1.8rem' }}>
+                <div style={{ color: '#61a8ff', fontSize: '0.74rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.65rem' }}>Interactive assets</div>
+                <h3 style={{ color: '#fff', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', marginBottom: '0.75rem', fontWeight: 950, letterSpacing: '-0.04em', fontFamily: '"Avenir Next Condensed", "Trebuchet MS", sans-serif' }}>Embedded Links with Simulations</h3>
+                <p style={{ color: '#a9a9c6', maxWidth: '800px', lineHeight: 1.7 }}>Interactive simulation links for testing logic, animations, and flows.</p>
+              </div>
+              <div className="embedded-link-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1.4rem', maxWidth: '1120px' }}>
+                {embeddedLinks.map((link) => (
+                  <TerminalCard key={link.title} command={`open ${link.name.replace(/\s+/g, '_').toLowerCase()}`} className="gsap-child">
+                    <div style={{ display: 'grid', gap: '0.8rem' }}>
+                      <div style={{ color: '#7d8ea8', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900 }}>Simulation dock</div>
+                      <h4 style={{ color: '#00f5d4', fontSize: '1.12rem', margin: 0, lineHeight: 1.3 }}>{link.title}</h4>
+                      <p style={{ color: '#a9a9c6', fontSize: '0.94rem', lineHeight: 1.6 }}>{link.desc}</p>
+                      <a href={link.link} target="_blank" rel="noopener noreferrer" style={{ color: '#ffd700', textDecoration: 'none', fontSize: '0.88rem', display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem', fontWeight: 800 }}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+                        {link.name}
+                      </a>
+                    </div>
+                  </TerminalCard>
+                ))}
+              </div>
+            </div>
           </div>
           <style>{`
             @media (max-width: 760px) {
@@ -8860,6 +8957,18 @@ function Module5_2Section() {
     { time: "9:00 - 14:00", title: "Apple App Store (Profiles, Review)", icon: "🍎" },
     { time: "14:00 - End", title: "Testing in Environments (Beta Tracks)", icon: "🧪" }
   ]
+  const iosChecklist = [
+    "Set the bundle identifier, app name, icon, and metadata before the first export.",
+    "Prepare certificates, provisioning, and App Store Connect access in one pass.",
+    "Run a release build and verify permissions, privacy strings, and device behavior.",
+    "Submit screenshots, review notes, and privacy details with the binary."
+  ]
+  const iosSignals = [
+    ['Identity', 'Bundle ID locked'],
+    ['Signing', 'Certificates ready'],
+    ['Review', 'Assets aligned']
+  ]
+  const appStoreEmbed = "https://www.youtube.com/embed/4GFMsYep_S0"
 
   return (
     <section className="sec" ref={containerRef}>
@@ -8867,70 +8976,131 @@ function Module5_2Section() {
       <div className="wrap" style={{ position: 'relative', zIndex: 2 }}>
         
         <MotionReveal>
-          <div className="section-head text-center" style={{ maxWidth: '800px', margin: '0 auto 4rem auto', textAlign: 'center' }}>
-            <h5 className="accent-text" style={{ color: '#00f5d4' }}>Module 5 - Chapter 2</h5>
-            <h2 style={{ fontSize: '2.5rem' }}>Apple App Store Deployment</h2>
-            <p style={{ fontSize: '1.15rem', color: '#c8c8e0', lineHeight: 1.6, marginTop: '1rem' }}>
-              Development & Publishing Mobile deployment settings specifically tailored for the Apple App Store ecosystem.
-            </p>
+          <div style={{
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '38px',
+            padding: 'clamp(1.6rem, 4vw, 3rem)',
+            marginBottom: '2.4rem',
+            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'radial-gradient(circle at 16% 20%, rgba(97,168,255,0.18), transparent 24%), radial-gradient(circle at 84% 12%, rgba(255,45,85,0.14), transparent 22%), linear-gradient(145deg, rgba(8,10,24,0.97), rgba(17,8,26,0.94))',
+            boxShadow: '0 28px 90px rgba(0,0,0,0.3)'
+          }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(255,255,255,0.04), transparent 18%, transparent 82%, rgba(255,255,255,0.04))' }} />
+            <div style={{ position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.6rem', alignItems: 'center' }}>
+              <div>
+                <div style={{ color: '#61a8ff', fontSize: '0.76rem', letterSpacing: '0.22em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.9rem' }}>Module 5 - Chapter 2</div>
+                <h2 style={{ fontSize: 'clamp(3rem, 7vw, 5.8rem)', lineHeight: 0.92, letterSpacing: '-0.07em', color: '#fff', marginBottom: '1rem', fontWeight: 950, fontFamily: 'Georgia, \"Times New Roman\", serif' }}>
+                  Apple App
+                  <br />
+                  Store Deck
+                </h2>
+                <p style={{ fontSize: '1.08rem', color: '#c8c8e0', lineHeight: 1.75, maxWidth: '760px' }}>
+                  Chapter 5.2 now behaves like an iOS release deck instead of a plain resource page. The visuals focus on signing setup, review readiness, and the exact masterclass moments needed to ship cleanly.
+                </p>
+              </div>
+              <div style={{ display: 'grid', gap: '0.9rem' }}>
+                {iosSignals.map(([label, value], index) => (
+                  <div key={label} style={{ padding: '1rem 1.1rem', borderRadius: '18px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.045)', display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center' }}>
+                    <div>
+                      <div style={{ color: '#8fa3bf', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.28rem' }}>Signal 0{index + 1}</div>
+                      <div style={{ color: '#fff', fontWeight: 850 }}>{label}</div>
+                    </div>
+                    <div style={{ color: index === 0 ? '#61a8ff' : index === 1 ? '#00f5d4' : '#ff7d6b', fontWeight: 900 }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </MotionReveal>
 
-        <div className="chapter-grid" style={{ gridTemplateColumns: 'minmax(350px, 1fr) minmax(350px, 1.2fr)', gap: '3rem', alignItems: 'stretch' }}>
-          
+        <div className="module5-2-bento" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1.35rem' }}>
           <MotionReveal delay={0.1}>
-            <NeonCard accent="#4361ee" className="gsap-child" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '1.5rem', background: '#4361ee20', color: '#4361ee', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>🍎</span>
-                <h3 style={{ color: '#fff', fontSize: '1.3rem', margin: 0 }}>App Store Settings</h3>
+            <div style={{ gridColumn: 'span 5', height: '100%', borderRadius: '30px', padding: '1.5rem', border: '1px solid rgba(97,168,255,0.24)', background: 'linear-gradient(145deg, rgba(8,14,30,0.98), rgba(12,10,30,0.94))', boxShadow: '0 24px 70px rgba(97,168,255,0.12)' }}>
+              <div style={{ color: '#61a8ff', fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.7rem' }}>Signing cockpit</div>
+              <h3 style={{ color: '#fff', fontSize: 'clamp(1.6rem, 3vw, 2.25rem)', marginBottom: '0.9rem', fontWeight: 900 }}>App Store Settings</h3>
+              <p style={{ color: '#c8c8e0', lineHeight: 1.65, marginBottom: '1.2rem' }}>The iOS side now reads like a preflight checklist. The settings image stays grounded inside a stronger release card, with a concise sequence that mirrors how teams actually ship.</p>
+              <div style={{ borderRadius: '20px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '1rem', background: '#050915' }}>
+                <img src="https://login.skillizee.io/s/articles/69bcfbf7d54aea36df35001f/images/image-20260320132043-19.png" alt="App Store Mobile Deployment Settings" style={{ width: '100%', display: 'block' }} />
               </div>
-              <div style={{ flex: 1, borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', marginBottom: '1.5rem' }}>
-                <img src="https://login.skillizee.io/s/articles/69bcfbf7d54aea36df35001f/images/image-20260320132043-19.png" alt="App Store Mobile Deployment Settings" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.2rem', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                <h4 style={{ color: '#c8c8e0', fontSize: '0.95rem', marginBottom: '0.5rem', fontWeight: 600 }}>External Resources</h4>
-                <a href="https://blog.flutterflow.io/in-app-subscriptions-using-revenue-cat/" className="text-link" target="_blank" rel="noopener noreferrer" style={{ display: 'block', fontSize: '0.9rem', lineHeight: 1.5 }}>
-                  In-App Subscriptions Using RevenueCat and FlutterFlow
-                </a>
-              </div>
-            </NeonCard>
-          </MotionReveal>
-
-          <MotionReveal delay={0.2}>
-            <TiltCard accent="#ff2d55" className="gsap-child" style={{ height: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.5rem' }}>
-                <span style={{ fontSize: '1.5rem', background: '#ff2d5520', color: '#ff2d55', width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '12px' }}>▶️</span>
-                <h3 style={{ color: '#fff', fontSize: '1.3rem', margin: 0 }}>Video Masterclass</h3>
-              </div>
-              
-              <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', cursor: 'pointer', position: 'relative', marginBottom: '2rem' }}>
-                <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10 }}>
-                  <div style={{ width: '60px', height: '60px', background: 'rgba(255,45,85,0.9)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontSize: '1.5rem', boxShadow: '0 10px 30px rgba(255,45,85,0.4)', backdropFilter: 'blur(5px)' }}>
-                     <i className="fas fa-play" style={{ marginLeft: '4px' }}></i>
+              <div style={{ display: 'grid', gap: '0.72rem' }}>
+                {iosChecklist.map((item, index) => (
+                  <div key={item} style={{ display: 'grid', gridTemplateColumns: '36px 1fr', gap: '0.8rem', alignItems: 'start', padding: '0.85rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(97,168,255,0.15)', color: '#61a8ff', fontWeight: 900 }}>{index + 1}</div>
+                    <div style={{ color: '#d8dcf0', lineHeight: 1.55 }}>{item}</div>
                   </div>
-                </div>
-                <img src="https://login.skillizee.io/s/articles/69bcfbf7d54aea36df35001f/images/image-20260320132043-20.jpeg" alt="App Store submission preview" style={{ width: '100%', display: 'block' }} />
-              </div>
-
-              <h4 style={{ color: '#fff', fontSize: '1.1rem', marginBottom: '1rem', fontWeight: 700 }}>
-                <a href="https://www.youtube.com/watch?v=4GFMsYep_S0" className="arrow-link" style={{ color: '#fff' }} target="_blank" rel="noopener noreferrer">
-                  Deploy to Apple App Store | FlutterFlow University <span>→</span>
-                </a>
-              </h4>
-              
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.8rem' }}>
-                {videoTimestamps.map((ts, i) => (
-                  <li key={i} style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                    <span style={{ fontSize: '1.1rem' }}>{ts.icon}</span>
-                    <span style={{ color: '#00f5d4', fontWeight: 700, fontSize: '0.9rem', width: '90px' }}>{ts.time}</span>
-                    <span style={{ color: '#c8c8e0', fontSize: '0.95rem' }}>{ts.title}</span>
-                  </li>
                 ))}
-              </ul>
-            </TiltCard>
+              </div>
+            </div>
           </MotionReveal>
 
+          <MotionReveal delay={0.16}>
+            <div style={{ gridColumn: 'span 7', height: '100%', borderRadius: '30px', padding: '1.5rem', border: '1px solid rgba(255,45,85,0.2)', background: 'linear-gradient(145deg, rgba(14,9,26,0.98), rgba(8,10,24,0.94))', boxShadow: '0 24px 70px rgba(255,45,85,0.12)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'end', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                <div>
+                  <div style={{ color: '#ff7d6b', fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.7rem' }}>Review masterclass</div>
+                  <h3 style={{ color: '#fff', fontSize: 'clamp(1.7rem, 3vw, 2.4rem)', marginBottom: '0.4rem', fontWeight: 900 }}>Submission Walkthrough</h3>
+                </div>
+                <a href="https://www.youtube.com/watch?v=4GFMsYep_S0" className="arrow-link" style={{ color: '#fff', textDecoration: 'none', fontWeight: 800 }} target="_blank" rel="noopener noreferrer">
+                  Open full tutorial <span>→</span>
+                </a>
+              </div>
+              <div style={{ borderRadius: '22px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', background: '#050915', marginBottom: '1rem' }}>
+                <iframe
+                  src={appStoreEmbed}
+                  title="Deploy to Apple App Store | FlutterFlow University"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ width: '100%', aspectRatio: '16 / 9', border: 'none', display: 'block' }}
+                />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.85rem' }}>
+                {videoTimestamps.map((ts) => (
+                  <div key={ts.time} style={{ display: 'grid', gridTemplateColumns: '36px 1fr', gap: '0.8rem', alignItems: 'start', padding: '0.9rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+                    <div style={{ width: '36px', height: '36px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.12)' }}>{ts.icon}</div>
+                    <div>
+                      <div style={{ color: '#ff9ba8', fontWeight: 800, fontSize: '0.85rem', marginBottom: '0.25rem' }}>{ts.time}</div>
+                      <div style={{ color: '#d8dcf0', lineHeight: 1.45 }}>{ts.title}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </MotionReveal>
+
+          <MotionReveal delay={0.22}>
+            <div style={{ gridColumn: 'span 4', borderRadius: '26px', padding: '1.3rem', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(145deg, rgba(7,10,24,0.96), rgba(12,8,24,0.9))' }}>
+              <div style={{ color: '#86ffb7', fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.65rem' }}>Resource pulse</div>
+              <h4 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '0.7rem', fontWeight: 900 }}>Monetization Reference</h4>
+              <p style={{ color: '#b8bfd7', lineHeight: 1.6, marginBottom: '1rem' }}>Useful when your iOS release includes subscriptions or gated premium features.</p>
+              <a href="https://blog.flutterflow.io/in-app-subscriptions-using-revenue-cat/" className="arrow-link" target="_blank" rel="noopener noreferrer" style={{ color: '#86ffb7', textDecoration: 'none', fontWeight: 800 }}>
+                RevenueCat guide <span>→</span>
+              </a>
+            </div>
+          </MotionReveal>
+
+          <MotionReveal delay={0.28}>
+            <div style={{ gridColumn: 'span 8', borderRadius: '26px', padding: '1.3rem', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(145deg, rgba(12,8,24,0.94), rgba(7,10,24,0.96))' }}>
+              <div style={{ color: '#ffd166', fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.65rem' }}>Review board</div>
+              <h4 style={{ color: '#fff', fontSize: '1.2rem', marginBottom: '1rem', fontWeight: 900 }}>What Apple Cares About</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.8rem' }}>
+                {['Privacy details', 'Accurate screenshots', 'Stable build behavior', 'Clear review notes'].map((item, index) => (
+                  <div key={item} style={{ padding: '0.9rem', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.03)' }}>
+                    <div style={{ color: index % 2 === 0 ? '#ffd166' : '#61a8ff', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.35rem' }}>Focus 0{index + 1}</div>
+                    <div style={{ color: '#d8dcf0', fontWeight: 750 }}>{item}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </MotionReveal>
         </div>
+        <style>{`
+          @media (max-width: 980px) {
+            .module5-2-bento > * {
+              grid-column: span 12 !important;
+            }
+          }
+        `}</style>
       </div>
     </section>
   )

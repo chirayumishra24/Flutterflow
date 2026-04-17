@@ -3974,7 +3974,7 @@ return (
   )
 }
 
-// --- Chapter 4-2: Time Machine Console (3D) ---
+// --- Chapter 4-2: History Triage Desk ---
 function TimeMachineActivity({ activity, accent }) {
   const [currentCrisis, setCurrentCrisis] = useState(0)
   const [isDone, setIsDone] = useState(false)
@@ -3982,7 +3982,6 @@ function TimeMachineActivity({ activity, accent }) {
   const [resolvedTool, setResolvedTool] = useState(null)
 
   const crisis = activity.crises[currentCrisis]
-  const resolvedCount = isDone ? activity.crises.length : currentCrisis
   const activeAnswer = crisis?.answer
   const toolThemes = {
     peek: { tint: '#61a8ff', mode: 'Inspect without changing history' },
@@ -4019,14 +4018,8 @@ function TimeMachineActivity({ activity, accent }) {
   const showCelebration = useCelebration(isDone, resetActivity)
 
   return (
-    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.35rem' }}>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))',
-          gap: '0.8rem',
-        }}
-      >
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.2rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.8rem' }}>
         {activity.crises.map((item, index) => {
           const isActive = index === currentCrisis && !isDone
           const isSolved = index < currentCrisis || isDone
@@ -4037,16 +4030,10 @@ function TimeMachineActivity({ activity, accent }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.04 }}
               style={{
-                position: 'relative',
-                overflow: 'hidden',
-                minHeight: '96px',
+                minHeight: '94px',
                 padding: '0.95rem 1rem',
                 borderRadius: '20px',
-                background: isSolved
-                  ? 'linear-gradient(135deg, rgba(134,255,183,0.12), rgba(134,255,183,0.03))'
-                  : isActive
-                    ? `linear-gradient(135deg, ${hexToRgba(accent, 0.18)}, rgba(255,255,255,0.03))`
-                    : 'rgba(255,255,255,0.03)',
+                background: isSolved ? 'linear-gradient(135deg, rgba(134,255,183,0.12), rgba(134,255,183,0.03))' : isActive ? `linear-gradient(135deg, ${hexToRgba(accent, 0.18)}, rgba(255,255,255,0.03))` : 'rgba(255,255,255,0.03)',
                 border: `1px solid ${isSolved ? 'rgba(134,255,183,0.28)' : isActive ? hexToRgba(accent, 0.48) : 'rgba(255,255,255,0.08)'}`,
               }}
             >
@@ -4064,246 +4051,102 @@ function TimeMachineActivity({ activity, accent }) {
         })}
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(340px, 1.25fr) minmax(300px, 0.95fr)',
-          gap: '1.35rem',
-          alignItems: 'start',
-        }}
-      >
-        <div
-          style={{
-            minHeight: '560px',
-            borderRadius: '28px',
-            overflow: 'hidden',
-            position: 'relative',
-            border: `1px solid ${hexToRgba(accent, 0.24)}`,
-            background: 'radial-gradient(circle at 50% 22%, rgba(255,255,255,0.08), rgba(5,8,18,0.96) 58%)',
-            boxShadow: `0 34px 80px ${hexToRgba(accent, 0.12)}`,
-          }}
-        >
-        <div style={{ position: 'absolute', inset: '1rem 1rem auto 1rem', zIndex: 2, display: 'flex', justifyContent: 'space-between', gap: '1rem', pointerEvents: 'none' }}>
-          <div style={{ padding: '0.75rem 0.95rem', borderRadius: '16px', background: 'rgba(5,9,18,0.72)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(14px)' }}>
-            <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
-              Chronology Engine
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1.15fr) minmax(300px, 0.85fr)', gap: '1.35rem', alignItems: 'start' }}>
+        <div style={{ borderRadius: '28px', overflow: 'hidden', position: 'relative', border: `1px solid ${hexToRgba(accent, 0.24)}`, background: 'radial-gradient(circle at 14% 18%, rgba(97,168,255,0.14), transparent 28%), radial-gradient(circle at 86% 12%, rgba(134,255,183,0.12), transparent 28%), linear-gradient(155deg, rgba(7,10,22,0.98), rgba(5,13,24,0.96))', boxShadow: `0 34px 80px ${hexToRgba(accent, 0.12)}` }}>
+          <div style={{ padding: '1.2rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+            <div>
+              <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
+                History triage desk
+              </div>
+              <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 700 }}>
+                Crisis {currentCrisis + 1} / {activity.crises.length}
+              </div>
             </div>
-            <div style={{ color: '#fff', fontSize: '0.96rem', fontWeight: 700 }}>
-              Crisis {currentCrisis + 1} / {activity.crises.length}
+            <div style={{ padding: '0.72rem 0.95rem', borderRadius: '16px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
+                Best-fit lens
+              </div>
+              <div style={{ color: activeAnswer ? toolThemes[activeAnswer].tint : '#fff', fontSize: '0.94rem', fontWeight: 800 }}>
+                {activeAnswer ? toolThemes[activeAnswer].mode : 'Mission cleared'}
+              </div>
             </div>
           </div>
-          <div style={{ padding: '0.75rem 0.95rem', borderRadius: '16px', background: 'rgba(5,9,18,0.72)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(14px)', textAlign: 'right' }}>
-            <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
-              Active operator lens
+
+          <div style={{ padding: '1.2rem', display: 'grid', gap: '1rem' }}>
+            <motion.div
+              key={currentCrisis}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              style={{ borderRadius: '24px', padding: '1.2rem', background: 'rgba(255,255,255,0.04)', border: `1px solid ${hexToRgba(accent, 0.24)}` }}
+            >
+              <div style={{ color: accent, fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.45rem' }}>
+                Live incident
+              </div>
+              <div style={{ color: '#fff', fontSize: '1.08rem', lineHeight: 1.7, fontWeight: 700 }}>
+                {crisis.prompt}
+              </div>
+            </motion.div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.85rem' }}>
+              {activity.tools.map((tool) => {
+                const theme = toolThemes[tool.id]
+                const isError = errorTool === tool.id
+                const isResolved = resolvedTool === tool.id
+                const isCurrent = activeAnswer === tool.id && !isDone
+
+                return (
+                  <motion.button
+                    key={tool.id}
+                    type="button"
+                    onClick={() => handleToolClick(tool.id)}
+                    whileHover={{ y: -6 }}
+                    whileTap={{ scale: 0.985 }}
+                    className={isError ? 'jam-shake' : ''}
+                    style={{
+                      minHeight: '190px',
+                      padding: '1rem',
+                      borderRadius: '24px',
+                      textAlign: 'left',
+                      cursor: 'pointer',
+                      position: 'relative',
+                      overflow: 'hidden',
+                      background: isResolved ? 'linear-gradient(145deg, rgba(134,255,183,0.14), rgba(255,255,255,0.03))' : isError ? 'linear-gradient(145deg, rgba(255,45,85,0.14), rgba(255,255,255,0.03))' : isCurrent ? `linear-gradient(145deg, ${hexToRgba(theme.tint, 0.18)}, rgba(255,255,255,0.03))` : 'linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))',
+                      border: `1px solid ${isResolved ? 'rgba(134,255,183,0.35)' : isError ? 'rgba(255,45,85,0.34)' : isCurrent ? hexToRgba(theme.tint, 0.44) : 'rgba(255,255,255,0.08)'}`,
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', alignItems: 'start' }}>
+                      <div style={{ width: '56px', height: '56px', borderRadius: '18px', display: 'grid', placeItems: 'center', color: theme.tint, background: hexToRgba(theme.tint, 0.12), border: `1px solid ${hexToRgba(theme.tint, 0.22)}`, fontSize: '0.88rem', fontWeight: 900, letterSpacing: '0.08em' }}>
+                        {getCrisisToolIcon(tool.id)}
+                      </div>
+                      <div style={{ padding: '0.35rem 0.6rem', borderRadius: '999px', fontSize: '0.68rem', color: theme.tint, background: hexToRgba(theme.tint, 0.1), letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                        {theme.mode.split(' ')[0]}
+                      </div>
+                    </div>
+                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.4rem' }}>{tool.label}</div>
+                    <div style={{ color: '#95a8cb', fontSize: '0.84rem', lineHeight: 1.6 }}>{tool.desc}</div>
+                    <div style={{ position: 'absolute', left: '1rem', right: '1rem', bottom: '1rem', color: isResolved ? '#86ffb7' : isError ? '#ff8ca0' : isCurrent ? theme.tint : '#6f829f', fontSize: '0.76rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                      {isResolved ? 'Resolved' : isError ? 'Unsafe fit' : isCurrent ? 'Best match now' : 'Standby'}
+                    </div>
+                  </motion.button>
+                )
+              })}
             </div>
-            <div style={{ color: activeAnswer ? toolThemes[activeAnswer].tint : '#fff', fontSize: '0.96rem', fontWeight: 800 }}>
-              {activeAnswer ? toolThemes[activeAnswer].mode : 'Mission cleared'}
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, minmax(0, 1fr))', gap: '0.75rem' }}>
+              {activity.tools.map((tool) => {
+                const theme = toolThemes[tool.id]
+                return (
+                  <div key={tool.id} style={{ padding: '0.85rem', borderRadius: '18px', background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
+                    <div style={{ color: theme.tint, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.13em', fontWeight: 800, marginBottom: '0.3rem' }}>{tool.label}</div>
+                    <div style={{ color: '#c8d5ec', fontSize: '0.8rem', lineHeight: 1.45 }}>{theme.mode}</div>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </div>
-        <Canvas camera={{ position: [0, 1.25, 7.2], fov: 42 }}>
-          <Environment preset="city" />
-          <ambientLight intensity={0.42} />
-          <pointLight position={[4, 5, 4]} intensity={1.35} color="#ffffff" />
-          <pointLight position={[-4, 3, 2]} intensity={1.25} color={accent} />
-          <spotLight position={[0, 8, 0]} angle={0.42} penumbra={1} intensity={18} color="#e1f7ff" />
-
-          <group position={[0, -0.55, 0]}>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.18, 0]}>
-              <cylinderGeometry args={[4.45, 5.1, 0.38, 72]} />
-              <meshPhysicalMaterial color="#0a0f1b" metalness={0.8} roughness={0.18} clearcoat={1} />
-            </mesh>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.95, 0]}>
-              <ringGeometry args={[2.25, 4.15, 72]} />
-              <meshBasicMaterial color={accent} transparent opacity={0.16} side={THREE.DoubleSide} />
-            </mesh>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.94, 0]}>
-              <ringGeometry args={[0.8, 1.55, 72]} />
-              <meshBasicMaterial color="#86ffb7" transparent opacity={0.2} side={THREE.DoubleSide} />
-            </mesh>
-
-            {[0, 1, 2].map((ring) => (
-              <Float key={ring} speed={1.5 + ring * 0.45} rotationIntensity={0.25} floatIntensity={0.18}>
-                <mesh rotation={[Math.PI / (2.8 + ring * 0.2), ring * 0.65, ring * 0.2]} position={[0, 0.55 + ring * 0.4, 0]}>
-                  <torusGeometry args={[1.15 + ring * 0.35, 0.028 + ring * 0.006, 32, 140]} />
-                  <meshPhysicalMaterial color={ring === 1 ? '#86ffb7' : accent} emissive={ring === 1 ? '#86ffb7' : accent} emissiveIntensity={0.4 + ring * 0.15} roughness={0.06} metalness={0.86} transparent opacity={0.72 - ring * 0.12} />
-                </mesh>
-              </Float>
-            ))}
-
-            <HistoryArchive3D
-              accent={accent}
-              activeLabel={activeAnswer ? toolThemes[activeAnswer].mode : `Crisis ${currentCrisis + 1}`}
-              isDone={isDone}
-            />
-
-            {activity.tools.map((tool, index) => {
-              const angle = (index / activity.tools.length) * Math.PI * 2 - Math.PI / 4
-              const x = Math.cos(angle) * 2.95
-              const z = Math.sin(angle) * 2.25
-              const theme = toolThemes[tool.id]
-              const isError = errorTool === tool.id
-              const isResolved = resolvedTool === tool.id
-              const isCurrent = activeAnswer === tool.id && !isDone
-              const tint = isError ? '#ff7d8f' : isResolved ? '#86ffb7' : isCurrent ? theme.tint : '#4f5973'
-
-              return (
-                <group key={tool.id}>
-                  <PipeSegment3D start={[0, -0.25, 0]} end={[x, -0.05, z]} color={tint} radius={0.03} opacity={isCurrent ? 0.95 : 0.35} />
-                  <group position={[x, -0.02, z]} onClick={() => handleToolClick(tool.id)}>
-                    <mesh>
-                      <cylinderGeometry args={[0.52, 0.76, 0.28, 36]} />
-                      <meshPhysicalMaterial color="#111827" metalness={0.88} roughness={0.12} clearcoat={1} />
-                    </mesh>
-                    <mesh position={[0, 0.55, 0]}>
-                      <boxGeometry args={[0.5, 1.05, 0.5]} />
-                      <meshPhysicalMaterial color="#131f33" metalness={0.82} roughness={0.16} />
-                    </mesh>
-                    <mesh position={[0, 0.95, 0]}>
-                      <octahedronGeometry args={[0.24, 0]} />
-                      <meshPhysicalMaterial color={tint} emissive={tint} emissiveIntensity={isCurrent ? 1.2 : 0.35} transmission={0.75} roughness={0.05} />
-                    </mesh>
-                    <Text position={[0, 0.56, 0.27]} fontSize={0.1} color="#f5fbff" anchorX="center" anchorY="middle">
-                      {getCrisisToolIcon(tool.id)}
-                    </Text>
-                    <Text position={[0, -0.46, 0]} fontSize={0.12} maxWidth={1.5} color={tint} anchorX="center" anchorY="middle">
-                      {tool.label}
-                    </Text>
-                    {(isResolved || isCurrent) && (
-                      <GlowSphere position={[0, 1.36, 0]} color={isResolved ? '#86ffb7' : tint} scale={0.09} pulse={isCurrent && !resolvedTool} withSparkles={isResolved} />
-                    )}
-                  </group>
-                </group>
-              )
-            })}
-
-            {activity.crises.map((item, index) => {
-              const x = -2.7 + index * 1.35
-              const solved = index < resolvedCount || isDone
-              const activeNode = index === currentCrisis && !isDone
-
-              return (
-                <group key={item.id} position={[x, -0.92, -2.45]}>
-                  <mesh>
-                    <sphereGeometry args={[0.12, 24, 24]} />
-                    <meshPhysicalMaterial color={solved ? '#86ffb7' : activeNode ? accent : '#2e3a56'} emissive={solved ? '#86ffb7' : activeNode ? accent : '#2e3a56'} emissiveIntensity={activeNode ? 0.95 : 0.25} />
-                  </mesh>
-                </group>
-              )
-            })}
-          </group>
-
-          <ContactShadows position={[0, -1.25, 0]} opacity={0.78} scale={14} blur={2.8} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.55} />
-        </Canvas>
-      </div>
 
         <div style={{ display: 'grid', gap: '1rem' }}>
-          <motion.div
-            key={currentCrisis}
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            style={{
-              position: 'relative',
-              overflow: 'hidden',
-              borderRadius: '26px',
-              padding: '1.35rem',
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02))',
-              border: `1px solid ${hexToRgba(accent, 0.22)}`,
-            }}
-          >
-            <div style={{ color: '#8ca0c4', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.18em', fontWeight: 800, marginBottom: '0.6rem' }}>
-              Situation brief
-            </div>
-            <div style={{ color: '#fff', fontSize: '1.12rem', fontWeight: 700, lineHeight: 1.6 }}>
-              {crisis.prompt}
-            </div>
-            <div style={{ marginTop: '1rem', display: 'flex', gap: '0.6rem', flexWrap: 'wrap' }}>
-              {['inspect', 'checkpoint', 'rollback', 'explain legacy'].map((label, index) => (
-                <span
-                  key={label}
-                  style={{
-                    padding: '0.38rem 0.72rem',
-                    borderRadius: '999px',
-                    background: index === 0 ? hexToRgba(accent, 0.12) : 'rgba(255,255,255,0.04)',
-                    border: `1px solid ${index === 0 ? hexToRgba(accent, 0.3) : 'rgba(255,255,255,0.08)'}`,
-                    color: index === 0 ? accent : '#b9c7e3',
-                    fontSize: '0.72rem',
-                    letterSpacing: '0.08em',
-                    textTransform: 'uppercase',
-                    fontWeight: 800,
-                  }}
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '0.9rem' }}>
-            {activity.tools.map((tool, index) => {
-              const theme = toolThemes[tool.id]
-              const isError = errorTool === tool.id
-              const isResolved = resolvedTool === tool.id
-              const isCurrent = activeAnswer === tool.id && !isDone
-
-              return (
-                <motion.button
-                  key={tool.id}
-                  type="button"
-                  onClick={() => handleToolClick(tool.id)}
-                  whileHover={{ y: -6, rotateX: -4, rotateY: index % 2 === 0 ? -3 : 3 }}
-                  whileTap={{ scale: 0.985 }}
-                  className={isError ? 'jam-shake' : ''}
-                  style={{
-                    minHeight: '195px',
-                    padding: '1rem',
-                    borderRadius: '24px',
-                    textAlign: 'left',
-                    position: 'relative',
-                    overflow: 'hidden',
-                    cursor: 'pointer',
-                    background: isResolved
-                      ? 'linear-gradient(155deg, rgba(134,255,183,0.14), rgba(255,255,255,0.04))'
-                      : isError
-                        ? 'linear-gradient(155deg, rgba(255,45,85,0.14), rgba(255,255,255,0.03))'
-                        : isCurrent
-                          ? `linear-gradient(155deg, ${hexToRgba(theme.tint, 0.18)}, rgba(255,255,255,0.04))`
-                          : 'linear-gradient(155deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02))',
-                    border: `1px solid ${isResolved ? 'rgba(134,255,183,0.35)' : isError ? 'rgba(255,45,85,0.34)' : isCurrent ? hexToRgba(theme.tint, 0.44) : 'rgba(255,255,255,0.08)'}`,
-                    boxShadow: isCurrent ? `0 22px 48px ${hexToRgba(theme.tint, 0.14)}` : 'none',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '1rem', alignItems: 'start' }}>
-                    <div style={{
-                      width: '56px',
-                      height: '56px',
-                      borderRadius: '18px',
-                      display: 'grid',
-                      placeItems: 'center',
-                      color: theme.tint,
-                      background: hexToRgba(theme.tint, 0.12),
-                      border: `1px solid ${hexToRgba(theme.tint, 0.22)}`,
-                      fontSize: '0.88rem',
-                      fontWeight: 900,
-                      letterSpacing: '0.08em',
-                    }}>
-                      {getCrisisToolIcon(tool.id)}
-                    </div>
-                    <div style={{ padding: '0.35rem 0.6rem', borderRadius: '999px', fontSize: '0.68rem', color: theme.tint, background: hexToRgba(theme.tint, 0.1), letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
-                      {theme.mode.split(' ')[0]}
-                    </div>
-                  </div>
-                  <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.4rem' }}>{tool.label}</div>
-                  <div style={{ color: '#95a8cb', fontSize: '0.84rem', lineHeight: 1.6 }}>{tool.desc}</div>
-                  <div style={{ position: 'absolute', left: '1rem', right: '1rem', bottom: '1rem', color: isResolved ? '#86ffb7' : isError ? '#ff8ca0' : isCurrent ? theme.tint : '#6f829f', fontSize: '0.76rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
-                    {isResolved ? 'Resolved' : isError ? 'Unsafe fit' : isCurrent ? 'Best match now' : 'Standby'}
-                  </div>
-                </motion.button>
-              )
-            })}
-          </div>
-
           <AnimatePresence mode="wait">
             {!isDone && (
               <motion.div
@@ -4314,11 +4157,7 @@ function TimeMachineActivity({ activity, accent }) {
                 style={{
                   borderRadius: '22px',
                   padding: '1.1rem 1.15rem',
-                  background: resolvedTool
-                    ? 'rgba(134,255,183,0.08)'
-                    : errorTool
-                      ? 'rgba(255,45,85,0.08)'
-                      : 'rgba(255,255,255,0.03)',
+                  background: resolvedTool ? 'rgba(134,255,183,0.08)' : errorTool ? 'rgba(255,45,85,0.08)' : 'rgba(255,255,255,0.03)',
                   border: `1px solid ${resolvedTool ? 'rgba(134,255,183,0.28)' : errorTool ? 'rgba(255,45,85,0.28)' : 'rgba(255,255,255,0.08)'}`,
                 }}
               >
@@ -4349,7 +4188,7 @@ function TimeMachineActivity({ activity, accent }) {
   )
 }
 
-// --- Chapter 4-3: Server Rack Deployer (3D) ---
+// --- Chapter 4-3: Signal Sorting Bay ---
 function ServerDeployActivity({ activity, accent }) {
   const [routed, setRouted] = useState([])
   const [errorRack, setErrorRack] = useState(null)
@@ -4376,13 +4215,7 @@ function ServerDeployActivity({ activity, accent }) {
 
   return (
     <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.25rem' }}>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(280px, 1.1fr) minmax(220px, 0.9fr)',
-          gap: '1rem',
-        }}
-      >
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(280px, 1.1fr) minmax(220px, 0.9fr)', gap: '1rem' }}>
         <div
           style={{
             borderRadius: '24px',
@@ -4436,80 +4269,66 @@ function ServerDeployActivity({ activity, accent }) {
         </div>
       </div>
 
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'minmax(340px, 1.2fr) minmax(300px, 0.98fr)',
-          gap: '1.35rem',
-          alignItems: 'start',
-        }}
-      >
-      <div style={{ minHeight: '560px', borderRadius: '28px', overflow: 'hidden', position: 'relative', border: `1px solid ${hexToRgba(accent, 0.24)}`, background: 'radial-gradient(circle at 50% 15%, rgba(255,255,255,0.1), rgba(5,8,18,0.97) 60%)', boxShadow: `0 36px 82px ${hexToRgba(accent, 0.1)}`, cursor: current ? 'crosshair' : 'default' }}>
-        <div style={{ position: 'absolute', inset: '1rem 1rem auto 1rem', zIndex: 2, display: 'flex', justifyContent: 'space-between', gap: '0.8rem', pointerEvents: 'none' }}>
-          <div style={{ padding: '0.72rem 0.95rem', borderRadius: '16px', background: 'rgba(5,9,18,0.72)', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(14px)' }}>
-            <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
-              Deployment chamber
-            </div>
-            <div style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 700 }}>
-              Route the incoming config to the correct environment lane
-            </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(340px, 1.1fr) minmax(300px, 0.9fr)', gap: '1.35rem', alignItems: 'start' }}>
+      <div style={{ minHeight: '100%', borderRadius: '28px', overflow: 'hidden', position: 'relative', border: `1px solid ${hexToRgba(accent, 0.24)}`, background: 'radial-gradient(circle at 16% 18%, rgba(0,245,212,0.12), transparent 28%), radial-gradient(circle at 84% 16%, rgba(97,168,255,0.12), transparent 28%), linear-gradient(155deg, rgba(5,8,18,0.97), rgba(6,16,26,0.96))', boxShadow: `0 36px 82px ${hexToRgba(accent, 0.1)}` }}>
+        <div style={{ padding: '1.1rem 1.2rem', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+          <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
+            Signal sorting bay
+          </div>
+          <div style={{ color: '#fff', fontSize: '0.95rem', fontWeight: 700 }}>
+            Route the incoming config packet to the correct environment lane
           </div>
         </div>
-        <Canvas camera={{ position: [0, 2.2, 8.2], fov: 42 }}>
-          <Environment preset="city" />
-          <ambientLight intensity={0.42} />
-          <pointLight position={[4, 6, 4]} intensity={1.65} color="#ffffff" />
-          <pointLight position={[-4, 2, 3]} intensity={1.15} color={accent} />
-          <spotLight position={[0, 8, 0]} angle={0.5} penumbra={1} intensity={16} color="#d8efff" />
 
-          <group position={[0, -0.72, 0]}>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -1.12, 0]}>
-              <cylinderGeometry args={[4.8, 5.2, 0.34, 72]} />
-              <meshPhysicalMaterial color="#0a111d" metalness={0.82} roughness={0.16} clearcoat={1} />
-            </mesh>
-            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.94, 0]}>
-              <ringGeometry args={[0.75, 1.45, 72]} />
-              <meshBasicMaterial color={accent} transparent opacity={0.22} side={THREE.DoubleSide} />
-            </mesh>
-
-            {activity.racks.map((rack, index) => {
-              const x = (index - 1) * 3
-              const z = index === 1 ? 0.95 : -0.65
-              const stackCount = routed.filter((item) => item.rackId === rack.id).length
-              const selectedWrong = errorRack === rack.id
-              return (
-                <group key={rack.id}>
-                  <PipeSegment3D start={[0, -0.1, 0]} end={[x, -0.1, z]} color={selectedWrong ? '#ff7d8f' : rack.color} radius={0.045} opacity={0.62} />
-                  <mesh position={[x, -0.1, z]}>
-                    <cylinderGeometry args={[0.42, 0.42, 0.18, 32]} />
-                    <meshPhysicalMaterial color={rack.color} emissive={rack.color} emissiveIntensity={0.35} roughness={0.18} metalness={0.82} />
-                  </mesh>
-                  <ServerRack3D
-                    position={[x, 0.7, z]}
-                    color={selectedWrong ? '#ff7d8f' : rack.color}
-                    label={rack.label}
-                    filled={stackCount > 0}
-                    onClick={() => handleRackClick(rack.id)}
-                  />
-                  {stackCount > 0 && (
-                    <Text position={[x, 1.95, z]} fontSize={0.16} color={rack.color} anchorX="center" anchorY="middle">
-                      +{stackCount}
-                    </Text>
-                  )}
-                </group>
-              )
-            })}
-
-            <ConfigPacket3D
-              accent={accent}
-              label={current ? currentSignal?.tag : 'All environments routed'}
-              isDone={isDone}
-            />
-          </group>
-
-          <ContactShadows position={[0, -1.6, 0]} opacity={0.76} scale={13} blur={2.6} far={5} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.52} />
-        </Canvas>
+        <div style={{ padding: '1.1rem', display: 'grid', gap: '0.9rem' }}>
+          {activity.racks.map((rack, index) => {
+            const routedCount = routed.filter((item) => item.rackId === rack.id).length
+            const isError = errorRack === rack.id
+            const heuristics = current ? getEnvironmentHeuristics(current.label, rack.id) : []
+            return (
+              <motion.button
+                key={rack.id}
+                type="button"
+                onClick={() => handleRackClick(rack.id)}
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.99 }}
+                className={isError ? 'jam-shake' : ''}
+                style={{
+                  padding: '1rem 1.05rem',
+                  borderRadius: '24px',
+                  textAlign: 'left',
+                  cursor: current ? 'pointer' : 'default',
+                  background: isError ? 'linear-gradient(145deg, rgba(255,45,85,0.13), rgba(255,255,255,0.03))' : `linear-gradient(145deg, ${hexToRgba(rack.color, 0.12)}, rgba(255,255,255,0.03))`,
+                  border: `1px solid ${isError ? 'rgba(255,45,85,0.36)' : hexToRgba(rack.color, 0.34)}`,
+                }}
+              >
+                <div style={{ display: 'grid', gridTemplateColumns: '52px 1fr 48px', gap: '0.9rem', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <div style={{ width: '52px', height: '52px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: hexToRgba(rack.color, 0.14), color: rack.color, fontWeight: 950 }}>
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div style={{ color: rack.color, fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 800, marginBottom: '0.3rem' }}>
+                      {rack.label}
+                    </div>
+                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800 }}>
+                      {rack.id === 'dev' ? 'Build + experiment' : rack.id === 'staging' ? 'Mirror + verify' : 'Serve + protect'}
+                    </div>
+                  </div>
+                  <div style={{ minWidth: '48px', height: '48px', borderRadius: '16px', display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.05)', color: '#fff', fontWeight: 900 }}>
+                    {routedCount}
+                  </div>
+                </div>
+                <div style={{ display: 'grid', gap: '0.45rem' }}>
+                  {heuristics.slice(0, 2).map((line) => (
+                    <div key={line} style={{ color: '#c8d5ec', fontSize: '0.84rem', lineHeight: 1.55 }}>
+                      {line}
+                    </div>
+                  ))}
+                </div>
+              </motion.button>
+            )
+          })}
+        </div>
       </div>
 
       <div style={{ display: 'grid', gap: '1rem' }}>
@@ -4531,58 +4350,25 @@ function ServerDeployActivity({ activity, accent }) {
             <div style={{ color: '#fff', fontSize: '1rem', lineHeight: 1.65, fontWeight: 600 }}>
               {currentSignal?.summary}
             </div>
+            <div style={{ marginTop: '0.95rem', display: 'flex', gap: '0.7rem', flexWrap: 'wrap' }}>
+              {currentSignal?.spectrum.map((token) => (
+                <span key={token} style={{ padding: '0.4rem 0.72rem', borderRadius: '999px', background: hexToRgba(accent, 0.12), border: `1px solid ${hexToRgba(accent, 0.22)}`, color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                  {token}
+                </span>
+              ))}
+            </div>
           </motion.div>
         )}
 
-        <div style={{ display: 'grid', gap: '0.9rem' }}>
-          {activity.racks.map((rack, index) => {
-            const heuristics = current ? getEnvironmentHeuristics(current.label, rack.id) : []
-            const isError = errorRack === rack.id
-            const routedCount = routed.filter((item) => item.rackId === rack.id).length
-
-            return (
-              <motion.button
-                key={rack.id}
-                type="button"
-                onClick={() => handleRackClick(rack.id)}
-                whileHover={{ y: -5, x: index === 1 ? 0 : index === 0 ? -3 : 3 }}
-                whileTap={{ scale: 0.99 }}
-                className={isError ? 'jam-shake' : ''}
-                style={{
-                  padding: '1rem 1.05rem',
-                  borderRadius: '24px',
-                  textAlign: 'left',
-                  cursor: current ? 'pointer' : 'default',
-                  background: isError
-                    ? 'linear-gradient(145deg, rgba(255,45,85,0.13), rgba(255,255,255,0.03))'
-                    : `linear-gradient(145deg, ${hexToRgba(rack.color, 0.12)}, rgba(255,255,255,0.03))`,
-                  border: `1px solid ${isError ? 'rgba(255,45,85,0.36)' : hexToRgba(rack.color, 0.34)}`,
-                  opacity: current ? 1 : 0.7,
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.75rem' }}>
-                  <div>
-                    <div style={{ color: rack.color, fontSize: '0.74rem', textTransform: 'uppercase', letterSpacing: '0.16em', fontWeight: 800, marginBottom: '0.3rem' }}>
-                      {rack.label}
-                    </div>
-                    <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800 }}>
-                      {rack.id === 'dev' ? 'Build + experiment' : rack.id === 'staging' ? 'Mirror + verify' : 'Serve + protect'}
-                    </div>
-                  </div>
-                  <div style={{ minWidth: '42px', height: '42px', borderRadius: '14px', display: 'grid', placeItems: 'center', background: hexToRgba(rack.color, 0.14), color: rack.color, fontWeight: 900 }}>
-                    {routedCount}
-                  </div>
-                </div>
-                <div style={{ display: 'grid', gap: '0.45rem' }}>
-                  {heuristics.slice(0, 2).map((line) => (
-                    <div key={line} style={{ color: '#c8d5ec', fontSize: '0.84rem', lineHeight: 1.55 }}>
-                      {line}
-                    </div>
-                  ))}
-                </div>
-              </motion.button>
-            )
-          })}
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          {pending.slice(0, 4).map((item, index) => (
+            <div key={item.id} style={{ padding: '0.95rem 1rem', borderRadius: '18px', background: index === 0 ? hexToRgba(accent, 0.12) : 'rgba(255,255,255,0.03)', border: `1px solid ${index === 0 ? hexToRgba(accent, 0.28) : 'rgba(255,255,255,0.08)'}` }}>
+              <div style={{ color: index === 0 ? accent : '#8fa6ce', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.14em', fontWeight: 800, marginBottom: '0.35rem' }}>
+                {index === 0 ? 'Active packet' : `Queued ${index}`}
+              </div>
+              <div style={{ color: '#fff', lineHeight: 1.55 }}>{item.label}</div>
+            </div>
+          ))}
         </div>
 
         {current && (
