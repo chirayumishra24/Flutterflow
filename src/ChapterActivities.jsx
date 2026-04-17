@@ -440,8 +440,8 @@ chapterActivities['4-2'] = {
   activity: {
     type: 'time_machine',
     visualKind: 'audit',
-    title: 'Time Machine Console',
-    instructions: 'Resolve each timeline crisis with the single safest tool. Similar tools exist — pick precisely.',
+    title: 'History Recovery Console',
+    instructions: 'Read the active scenario, then choose the safest history action: inspect, checkpoint, explain, or restore.',
     success: 'Every timeline crisis resolved with surgical precision!',
     tools: [
       { id: 'peek', label: 'Peek', desc: 'View older work without changing or replacing anything.' },
@@ -465,8 +465,8 @@ chapterActivities['4-3'] = {
   activity: {
     type: 'server_deploy',
     visualKind: 'configure',
-    title: 'Server Rack Deployer',
-    instructions: 'Route each config disk to the correct 3D server rack. Think carefully about edge cases.',
+    title: 'Environment Router',
+    instructions: 'Route each config packet to Development, Staging, or Production based on how risky and public it is.',
     success: 'All endpoints are correctly routed to the right environments!',
     racks: [
       { id: 'dev', label: 'Development', color: '#61a8ff' },
@@ -3744,6 +3744,94 @@ function ServerRack3D({ position, color, label, filled, onClick }) {
   )
 }
 
+function HistoryArchive3D({ accent, activeLabel, isDone }) {
+  const handRef = useRef()
+  useFrame((state) => {
+    if (handRef.current) {
+      handRef.current.rotation.z = -state.clock.elapsedTime * 0.55
+    }
+  })
+
+  return (
+    <Float speed={1.8} rotationIntensity={0.16} floatIntensity={0.22}>
+      <group position={[0, 1.25, 0]}>
+        <mesh rotation={[Math.PI / 2, 0, 0]}>
+          <cylinderGeometry args={[1.02, 1.02, 0.16, 64]} />
+          <meshPhysicalMaterial color="#0b1422" metalness={0.82} roughness={0.18} clearcoat={1} />
+        </mesh>
+        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, 0.1, 0]}>
+          <torusGeometry args={[1.04, 0.035, 20, 96]} />
+          <meshPhysicalMaterial color={accent} emissive={accent} emissiveIntensity={0.85} metalness={0.6} roughness={0.18} />
+        </mesh>
+        <group ref={handRef} position={[0, 0.2, 0]}>
+          <mesh position={[0, 0, 0.32]} rotation={[Math.PI / 2, 0, 0]}>
+            <boxGeometry args={[0.065, 0.58, 0.035]} />
+            <meshStandardMaterial color="#f7fbff" emissive={accent} emissiveIntensity={0.35} />
+          </mesh>
+          <mesh position={[0.22, 0, 0]} rotation={[Math.PI / 2, 0, -0.85]}>
+            <boxGeometry args={[0.055, 0.42, 0.035]} />
+            <meshStandardMaterial color="#86ffb7" emissive="#86ffb7" emissiveIntensity={0.35} />
+          </mesh>
+        </group>
+        {[-0.72, 0, 0.72].map((x, index) => (
+          <group key={x} position={[x, -0.58 - index * 0.06, -0.18]}>
+            <RoundedBox args={[0.64, 0.12, 0.48]} radius={0.04} smoothness={3}>
+              <meshPhysicalMaterial color={index === 1 ? '#17243a' : '#101927'} metalness={0.72} roughness={0.22} />
+            </RoundedBox>
+            <mesh position={[0, 0.075, 0.02]}>
+              <boxGeometry args={[0.42, 0.018, 0.02]} />
+              <meshStandardMaterial color={index === 0 ? accent : '#4f6485'} emissive={index === 0 ? accent : '#000'} emissiveIntensity={0.5} />
+            </mesh>
+          </group>
+        ))}
+        <mesh rotation={[Math.PI / 2, 0, 0]} position={[0, -0.52, 0]}>
+          <torusGeometry args={[1.42, 0.025, 18, 96]} />
+          <meshBasicMaterial color={isDone ? '#86ffb7' : accent} transparent opacity={0.38} />
+        </mesh>
+        <Text position={[0, -1.1, 0]} fontSize={0.15} maxWidth={2.6} color={isDone ? '#86ffb7' : '#f3fbff'} anchorX="center" anchorY="middle">
+          {isDone ? 'History restored safely' : activeLabel}
+        </Text>
+        <Sparkles count={isDone ? 58 : 24} scale={3.1} size={1.7} color={isDone ? '#86ffb7' : accent} speed={1.5} />
+      </group>
+    </Float>
+  )
+}
+
+function ConfigPacket3D({ accent, label, isDone }) {
+  const ref = useRef()
+  useFrame((state) => {
+    if (ref.current) {
+      ref.current.rotation.y = Math.sin(state.clock.elapsedTime * 0.65) * 0.18
+      ref.current.position.y = 2.45 + Math.sin(state.clock.elapsedTime * 1.4) * 0.08
+    }
+  })
+
+  return (
+    <group ref={ref} position={[0, 2.45, 0]}>
+      <RoundedBox args={[1.35, 0.86, 0.16]} radius={0.08} smoothness={4}>
+        <meshPhysicalMaterial color="#101827" metalness={0.72} roughness={0.18} clearcoat={1} />
+      </RoundedBox>
+      <mesh position={[0, 0.2, 0.095]}>
+        <boxGeometry args={[1.06, 0.08, 0.025]} />
+        <meshStandardMaterial color={isDone ? '#86ffb7' : accent} emissive={isDone ? '#86ffb7' : accent} emissiveIntensity={0.8} />
+      </mesh>
+      {[-0.16, -0.34].map((y, index) => (
+        <mesh key={y} position={[-0.18, y, 0.096]}>
+          <boxGeometry args={[0.72 - index * 0.16, 0.04, 0.02]} />
+          <meshStandardMaterial color="#cfe8ff" emissive="#61a8ff" emissiveIntensity={0.12} />
+        </mesh>
+      ))}
+      <Text position={[0, 0.02, 0.12]} fontSize={0.16} color="#f5fbff" anchorX="center" anchorY="middle">
+        ENV
+      </Text>
+      <Text position={[0, -0.62, 0]} fontSize={0.12} maxWidth={2.4} color={isDone ? '#86ffb7' : accent} anchorX="center" anchorY="middle">
+        {label || 'Config packet'}
+      </Text>
+      <Sparkles count={isDone ? 48 : 18} scale={2.3} size={1.6} color={isDone ? '#86ffb7' : accent} speed={1.65} />
+    </group>
+  )
+}
+
 function LaunchPad3D({ position, color, active, onClick, label }) {
   const ref = useRef()
   useFrame((state) => {
@@ -3951,7 +4039,7 @@ function TimeMachineActivity({ activity, accent }) {
               style={{
                 position: 'relative',
                 overflow: 'hidden',
-                minHeight: '110px',
+                minHeight: '96px',
                 padding: '0.95rem 1rem',
                 borderRadius: '20px',
                 background: isSolved
@@ -3968,7 +4056,9 @@ function TimeMachineActivity({ activity, accent }) {
                 </div>
                 <div style={{ color: '#fff', fontWeight: 800 }}>{String(index + 1).padStart(2, '0')}</div>
               </div>
-              <div style={{ color: '#dce5f8', fontSize: '0.86rem', lineHeight: 1.5 }}>{item.prompt}</div>
+              <div style={{ color: '#dce5f8', fontSize: '0.86rem', lineHeight: 1.5 }}>
+                {isActive ? item.prompt : isSolved ? 'Resolved and locked.' : 'Queued for review.'}
+              </div>
             </motion.div>
           )
         })}
@@ -4041,22 +4131,11 @@ function TimeMachineActivity({ activity, accent }) {
               </Float>
             ))}
 
-            <Float speed={2.2} rotationIntensity={0.45} floatIntensity={0.45}>
-              <group position={[0, 1.55, 0]}>
-                <mesh>
-                  <octahedronGeometry args={[0.64, 1]} />
-                  <meshPhysicalMaterial color={accent} emissive={accent} emissiveIntensity={1.2} transmission={0.85} thickness={0.72} roughness={0.03} />
-                </mesh>
-                <mesh scale={1.25}>
-                  <icosahedronGeometry args={[0.62, 0]} />
-                  <meshBasicMaterial color="#dff8ff" wireframe transparent opacity={0.3} />
-                </mesh>
-                <Sparkles count={isDone ? 64 : 30} scale={3.4} size={2.2} color={isDone ? '#86ffb7' : accent} speed={1.9} />
-                <Text position={[0, 0, 0]} fontSize={0.16} color="#f3fbff" anchorX="center" anchorY="middle">
-                  {isDone ? 'SYNC' : `C${currentCrisis + 1}`}
-                </Text>
-              </group>
-            </Float>
+            <HistoryArchive3D
+              accent={accent}
+              activeLabel={activeAnswer ? toolThemes[activeAnswer].mode : `Crisis ${currentCrisis + 1}`}
+              isDone={isDone}
+            />
 
             {activity.tools.map((tool, index) => {
               const angle = (index / activity.tools.length) * Math.PI * 2 - Math.PI / 4
@@ -4421,19 +4500,11 @@ function ServerDeployActivity({ activity, accent }) {
               )
             })}
 
-            <Float speed={3.2} rotationIntensity={0.6} floatIntensity={0.5}>
-              <group position={[0, 2.55, 0]}>
-                <mesh>
-                  <octahedronGeometry args={[0.46, 0]} />
-                  <meshPhysicalMaterial color={current ? accent : '#86ffb7'} emissive={current ? accent : '#86ffb7'} emissiveIntensity={1.15} roughness={0.04} transmission={0.82} thickness={0.45} />
-                </mesh>
-                <mesh scale={1.26}>
-                  <icosahedronGeometry args={[0.42, 0]} />
-                  <meshBasicMaterial color="#dff8ff" wireframe transparent opacity={0.3} />
-                </mesh>
-                <Sparkles count={current ? 22 : 50} scale={2.5} size={2} color={current ? accent : '#86ffb7'} speed={1.8} />
-              </group>
-            </Float>
+            <ConfigPacket3D
+              accent={accent}
+              label={current ? currentSignal?.tag : 'All environments routed'}
+              isDone={isDone}
+            />
           </group>
 
           <ContactShadows position={[0, -1.6, 0]} opacity={0.76} scale={13} blur={2.6} far={5} />
@@ -4503,7 +4574,7 @@ function ServerDeployActivity({ activity, accent }) {
                   </div>
                 </div>
                 <div style={{ display: 'grid', gap: '0.45rem' }}>
-                  {heuristics.map((line) => (
+                  {heuristics.slice(0, 2).map((line) => (
                     <div key={line} style={{ color: '#c8d5ec', fontSize: '0.84rem', lineHeight: 1.55 }}>
                       {line}
                     </div>

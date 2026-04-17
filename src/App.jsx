@@ -1611,7 +1611,7 @@ function CanvasSection() {
         filter: 'blur(80px)', pointerEvents: 'none', zIndex: 0
       }} />
 
-      <div className="wrap" style={{ position: 'relative', zIndex: 2 }}>
+      <div className="wrap" style={{ position: 'relative', zIndex: 2, fontFamily: '"Trebuchet MS", "Gill Sans", "Avenir Next", sans-serif' }}>
         <MotionReveal>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '4rem' }}>
             <div style={{ 
@@ -6511,9 +6511,14 @@ function Module4_1Section() {
         <div style={{
           marginTop: '2.2rem',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 360px))',
+          justifyContent: 'center',
+          justifyItems: 'center',
           gap: '1.5rem',
-          paddingBottom: '0.4rem'
+          paddingBottom: '0.4rem',
+          maxWidth: '1180px',
+          marginLeft: 'auto',
+          marginRight: 'auto'
         }}>
           {resources.map((item, i) => {
             const isVideo = item.href.includes('youtube.com') || item.href.includes('youtu.be')
@@ -6528,14 +6533,17 @@ function Module4_1Section() {
                   background: 'rgba(8,10,24,0.86)',
                   overflow: 'hidden',
                   display: 'flex',
-                  flexDirection: 'column'
+                  flexDirection: 'column',
+                  width: '100%',
+                  textAlign: 'center',
+                  alignItems: 'center'
                 }}
               >
                 <div style={{ padding: '1.2rem' }}>
                   <div style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: ['#ffd700', '#00f5d4', '#b48fff'][i % 3], fontWeight: 700, marginBottom: '0.4rem' }}>
                     {item.label}
                   </div>
-                  <div style={{ lineHeight: 1.4, color: '#fff', fontSize: '1.1rem' }}>{item.title}</div>
+                  <div style={{ lineHeight: 1.4, color: '#fff', fontSize: '1.1rem', maxWidth: '280px', margin: '0 auto' }}>{item.title}</div>
                 </div>
                 {isVideo ? (
                   <iframe
@@ -6549,7 +6557,7 @@ function Module4_1Section() {
                     style={{ display: 'block', marginTop: 'auto' }}
                   />
                 ) : (
-                  <a href={item.href} target="_blank" rel="noopener noreferrer" style={{ display: 'block', padding: '1rem 1.2rem', background: 'rgba(255,255,255,0.05)', color: '#fff', textDecoration: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: 'auto', fontWeight: 600 }}>
+                  <a href={item.href} target="_blank" rel="noopener noreferrer" style={{ display: 'block', width: '100%', boxSizing: 'border-box', padding: '1rem 1.2rem', background: 'rgba(255,255,255,0.05)', color: '#fff', textDecoration: 'none', borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: 'auto', fontWeight: 600, textAlign: 'center' }}>
                     Open Resource <span>↗</span>
                   </a>
                 )}
@@ -6827,6 +6835,284 @@ function Module4_2Section() {
 
 function Module4_3Section() {
   const panelStyle = {
+    background: 'linear-gradient(180deg, rgba(5,10,23,0.96) 0%, rgba(4,16,22,0.95) 100%)',
+    border: '1px solid rgba(255,255,255,0.1)',
+    borderRadius: '28px',
+    boxShadow: '0 24px 70px rgba(0,0,0,0.28)'
+  }
+
+  const environmentLanes = [
+    {
+      title: 'Development',
+      role: 'Experiment without fear',
+      route: 'dev.api.yourapp.test',
+      data: 'Mock data, test accounts, rough integrations',
+      launch: 'Feature work, debugging, early backend checks',
+      avoid: 'Real users, real payments, production secrets',
+      accent: '#6cf0a8'
+    },
+    {
+      title: 'Staging',
+      role: 'Rehearse the release',
+      route: 'staging.api.yourapp.com',
+      data: 'Production-like schemas and controlled testers',
+      launch: 'QA, stakeholder review, policy checks',
+      avoid: 'Unreviewed experiments and unstable migrations',
+      accent: '#00f5d4'
+    },
+    {
+      title: 'Production',
+      role: 'Serve the live app',
+      route: 'api.yourapp.com',
+      data: 'Real users, live content, protected services',
+      launch: 'Published web, Android, and iOS releases',
+      avoid: 'Debug endpoints, test credentials, risky changes',
+      accent: '#61a8ff'
+    }
+  ]
+
+  const switchboardMoments = [
+    { title: 'Test and Run sessions', desc: 'The selected environment decides which backend your browser session connects to.', accent: '#6cf0a8' },
+    { title: 'Local Run', desc: 'Device testing follows the active FlutterFlow environment while you iterate with Hot Reload.', accent: '#00f5d4' },
+    { title: 'Code export', desc: 'Generated files include non-private environment values through environment.json and FFDevEnvironmentValues.', accent: '#ffd166' },
+    { title: 'Deployment', desc: 'Deployment settings let you choose the environment that powers the released build.', accent: '#61a8ff' }
+  ]
+
+  const guardrails = [
+    'Private values are not included in compiled client-side application code.',
+    'Private values are not written into environment.json or exposed through FFDevEnvironmentValues.',
+    'Use private values for server-side flows such as generated Cloud Functions.',
+    'Review exported cloud function files carefully before pushing sensitive configuration to GitHub.'
+  ]
+
+  const resourceLinks = [
+    { title: 'Firebase or Supabase per environment', href: 'https://docs.flutterflow.io/testing/dev-environments#configuring-firebase-or-supabase-for-each-environment' },
+    { title: 'Environment Values docs', href: 'https://docs.flutterflow.io/testing/dev-environments#environment-values' },
+    { title: 'Get values in custom code', href: 'https://docs.flutterflow.io/concepts/custom-code/common-examples#get-dev-environment-values-in-custom-code' },
+    { title: 'Connect Firebase manually', href: 'https://docs.flutterflow.io/integrations/firebase/connect-to-firebase#connect-an-existing-firebase-project-manually' },
+    { title: 'Firestore rules', href: 'https://docs.flutterflow.io/integrations/database/cloud-firestore/firestore-rules' },
+    { title: 'Supabase setup', href: 'https://docs.flutterflow.io/integrations/supabase/setup' }
+  ]
+
+  return (
+    <section className="sec" style={{ paddingTop: 0, paddingBottom: '90px', position: 'relative', overflow: 'hidden' }}>
+      <SectionHeroBackdrop height={460} opacity={0.42} />
+      <div className="wrap" style={{ paddingTop: '120px', position: 'relative', zIndex: 2 }}>
+        <MotionReveal>
+          <div style={{
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '42px',
+            padding: 'clamp(1.5rem, 4vw, 3rem)',
+            border: '1px solid rgba(108,240,168,0.22)',
+            background: 'radial-gradient(circle at 14% 18%, rgba(108,240,168,0.2), transparent 30%), radial-gradient(circle at 88% 16%, rgba(97,168,255,0.16), transparent 32%), linear-gradient(135deg, rgba(3,11,22,0.98), rgba(3,27,27,0.96))',
+            boxShadow: '0 42px 120px rgba(0,0,0,0.34)'
+          }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(0deg, rgba(255,255,255,0.028) 1px, transparent 1px)', backgroundSize: '46px 46px', opacity: 0.42 }} />
+            <div className="env-flight-hero" style={{ position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: 'minmax(260px, 0.74fr) minmax(380px, 1fr)', gap: '3rem', alignItems: 'center' }}>
+              <div>
+                <span className="chip" style={{ width: 'max-content', color: '#6cf0a8', border: '1px solid rgba(108,240,168,0.28)', background: 'rgba(108,240,168,0.1)', marginBottom: '1rem' }}>
+                  Module 4 - Chapter 4.3
+                </span>
+                <h1 style={{
+                  margin: 0,
+                  color: '#f5fff9',
+                  fontFamily: '"Copperplate Gothic Light", "Bahnschrift", "Trebuchet MS", sans-serif',
+                  fontSize: 'clamp(2.35rem, 4.2vw, 4.8rem)',
+                  lineHeight: 0.96,
+                  letterSpacing: '-0.045em',
+                  fontWeight: 950,
+                  textTransform: 'uppercase'
+                }}>
+                  Environment
+                  <span style={{ display: 'block', color: '#6cf0a8' }}>Flight Deck</span>
+                </h1>
+                <p style={{ maxWidth: '720px', color: '#d7e7e6', fontSize: '1.06rem', lineHeight: 1.72, margin: '1.1rem 0 0' }}>
+                  Instead of hiding the environments behind one changing card, this view keeps every lane visible. Compare Development, Staging, and Production side by side, then use the checklist below to understand what changes during testing, export, and deployment.
+                </p>
+              </div>
+
+              <div style={{ display: 'grid', gap: '0.8rem' }}>
+                {environmentLanes.map((lane, index) => (
+                  <motion.div
+                    key={lane.title}
+                    initial={{ opacity: 0, x: 24 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.08, duration: 0.45 }}
+                    style={{
+                      display: 'grid',
+                      gridTemplateColumns: '54px minmax(0, 1fr) auto',
+                      gap: '1rem',
+                      alignItems: 'center',
+                      padding: '1rem',
+                      borderRadius: '24px',
+                      border: `1px solid ${lane.accent}38`,
+                      background: `linear-gradient(135deg, ${lane.accent}14, rgba(255,255,255,0.035))`
+                    }}
+                  >
+                    <span style={{ width: '54px', height: '54px', borderRadius: '18px', display: 'grid', placeItems: 'center', color: lane.accent, background: `${lane.accent}18`, fontWeight: 950 }}>
+                      0{index + 1}
+                    </span>
+                    <span style={{ minWidth: 0 }}>
+                      <span style={{ display: 'block', color: '#fff', fontWeight: 950, fontSize: '1.08rem' }}>{lane.title}</span>
+                      <span style={{ display: 'block', color: '#bdd2dc', marginTop: '0.2rem', lineHeight: 1.45 }}>{lane.role}</span>
+                    </span>
+                    <span style={{ color: lane.accent, fontWeight: 950, fontSize: '0.78rem', letterSpacing: '0.08em' }}>LANE</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </MotionReveal>
+
+        <div className="env-lane-board" style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: '1rem' }}>
+          {environmentLanes.map((lane, index) => (
+            <motion.article
+              key={lane.title}
+              whileHover={{ y: -8 }}
+              style={{
+                ...panelStyle,
+                minHeight: '100%',
+                padding: '1.45rem',
+                borderColor: `${lane.accent}36`,
+                background: `radial-gradient(circle at 86% 12%, ${lane.accent}20, transparent 36%), linear-gradient(160deg, rgba(5,10,23,0.98), rgba(5,20,26,0.95))`
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', marginBottom: '1rem' }}>
+                <div style={{ color: lane.accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950 }}>
+                  Lane 0{index + 1}
+                </div>
+                <span style={{ width: '11px', height: '11px', borderRadius: '999px', background: lane.accent, boxShadow: `0 0 22px ${lane.accent}` }} />
+              </div>
+              <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '0.55rem', fontFamily: '"Bahnschrift", "Trebuchet MS", sans-serif' }}>{lane.title}</h2>
+              <p style={{ color: '#d7d7ea', lineHeight: 1.65, marginBottom: '1rem' }}>{lane.role}</p>
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {[
+                  ['Route', lane.route],
+                  ['Data', lane.data],
+                  ['Use for', lane.launch],
+                  ['Avoid', lane.avoid]
+                ].map(([label, value]) => (
+                  <div key={label} style={{ padding: '0.85rem', borderRadius: '16px', background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    <div style={{ color: lane.accent, fontSize: '0.68rem', letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.28rem' }}>{label}</div>
+                    <div style={{ color: '#fff', lineHeight: 1.45, overflowWrap: 'anywhere' }}>{value}</div>
+                  </div>
+                ))}
+              </div>
+            </motion.article>
+          ))}
+        </div>
+
+        <div className="env-ops-grid" style={{ marginTop: '1.2rem', display: 'grid', gridTemplateColumns: 'minmax(280px, 1.1fr) minmax(280px, 0.9fr)', gap: '1rem', alignItems: 'stretch' }}>
+          <div style={{ ...panelStyle, padding: '1.6rem', borderColor: 'rgba(0,245,212,0.24)' }}>
+            <div style={{ color: '#00f5d4', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.8rem' }}>
+              What the switch affects
+            </div>
+            <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '1rem' }}>One selected environment travels through the workflow</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.75rem' }}>
+              {switchboardMoments.map((moment) => (
+                <div key={moment.title} style={{ padding: '1rem', borderRadius: '18px', border: `1px solid ${moment.accent}33`, background: `${moment.accent}0f` }}>
+                  <div style={{ color: moment.accent, fontWeight: 950, marginBottom: '0.45rem' }}>{moment.title}</div>
+                  <p style={{ color: '#d7d7ea', lineHeight: 1.58, margin: 0 }}>{moment.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div style={{ ...panelStyle, padding: '1.6rem', borderColor: 'rgba(255,45,85,0.24)', background: 'linear-gradient(155deg, rgba(255,45,85,0.08), rgba(5,10,23,0.96))' }}>
+            <div style={{ color: '#ff7da1', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.8rem' }}>
+              Secret handling
+            </div>
+            <h2 style={{ color: '#fff', fontSize: '1.55rem', marginBottom: '1rem' }}>Keep sensitive values out of the client</h2>
+            <div style={{ display: 'grid', gap: '0.72rem' }}>
+              {guardrails.map((rule, index) => (
+                <div key={rule} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: '0.75rem', alignItems: 'start' }}>
+                  <span style={{ width: '34px', height: '34px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.14)', color: '#ff7da1', fontWeight: 950 }}>{index + 1}</span>
+                  <span style={{ color: '#d7d7ea', lineHeight: 1.58 }}>{rule}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="env-media-grid" style={{ marginTop: '1.2rem', display: 'grid', gridTemplateColumns: 'minmax(280px, 0.9fr) minmax(280px, 1.1fr)', gap: '1rem', alignItems: 'stretch' }}>
+          <motion.div whileHover={{ y: -6 }} style={{ ...panelStyle, padding: '1rem', overflow: 'hidden', borderColor: 'rgba(97,168,255,0.24)' }}>
+            <img
+              src="https://login.skillizee.io/s/articles/69bb947cbba4ebf527bce93e/images/image-20260319114634-5.png"
+              alt="FlutterFlow Firebase configuration for different environments"
+              style={{ width: '100%', borderRadius: '20px', display: 'block' }}
+            />
+            <div style={{ padding: '1rem 0.35rem 0.2rem' }}>
+              <h3 style={{ color: '#fff', fontSize: '1.15rem', marginBottom: '0.45rem' }}>Backend selection by environment</h3>
+              <p style={{ color: '#cdd4e8', lineHeight: 1.7, margin: 0 }}>Each environment needs its own backend setup before it becomes trustworthy for testing.</p>
+            </div>
+          </motion.div>
+
+          <div style={{ ...panelStyle, padding: '1.6rem', borderColor: 'rgba(108,240,168,0.24)' }}>
+            <div style={{ color: '#6cf0a8', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.8rem' }}>
+              Environment values
+            </div>
+            <h2 style={{ color: '#fff', fontSize: '1.55rem', marginBottom: '0.9rem' }}>Example: apiUrl changes per lane</h2>
+            <p style={{ color: '#d7d7ea', lineHeight: 1.75, marginBottom: '1rem' }}>
+              In an e-commerce app, <code>apiUrl</code> can point to different servers for Development, Staging, and Production so test orders never collide with real customer traffic. You can access values in custom code with the official{' '}
+              <a href="https://docs.flutterflow.io/concepts/custom-code/common-examples#get-dev-environment-values-in-custom-code" className="text-link" target="_blank" rel="noopener noreferrer">custom code examples</a>.
+            </p>
+            <BulletList items={[
+              'environment.json stores non-private values defined in FlutterFlow.',
+              'FFDevEnvironmentValues exposes generated getters for those values.',
+              'Private values should flow through server-side functions, not client UI.'
+            ]} />
+          </div>
+        </div>
+
+        <div style={{ marginTop: '1.2rem', ...panelStyle, padding: '1.2rem' }}>
+          <div style={{ color: '#9ef6c2', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.8rem' }}>
+            Resource runway
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '0.75rem' }}>
+            {resourceLinks.map((item, index) => (
+              <a
+                key={item.title}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  padding: '1rem',
+                  borderRadius: '18px',
+                  textDecoration: 'none',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  color: '#fff'
+                }}
+              >
+                <div style={{ color: index % 2 === 0 ? '#6cf0a8' : '#00f5d4', fontSize: '0.68rem', letterSpacing: '0.13em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.45rem' }}>Docs</div>
+                <div style={{ fontWeight: 850, lineHeight: 1.42 }}>{item.title}</div>
+              </a>
+            ))}
+          </div>
+        </div>
+
+        <style>{`
+          @media (max-width: 980px) {
+            .env-flight-hero,
+            .env-lane-board,
+            .env-ops-grid,
+            .env-media-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}</style>
+      </div>
+    </section>
+  )
+}
+
+function Module4_3SectionLegacy() {
+  const [activeEnv, setActiveEnv] = useState(0)
+  const [activeGeneratedEvent, setActiveGeneratedEvent] = useState(0)
+  const [activeFaq, setActiveFaq] = useState(0)
+
+  const panelStyle = {
     background: 'linear-gradient(180deg, rgba(7,28,30,0.96) 0%, rgba(8,14,28,0.95) 100%)',
     border: '1px solid rgba(108,240,168,0.2)',
     borderRadius: '24px',
@@ -6837,25 +7123,34 @@ function Module4_3Section() {
     {
       title: 'Development',
       desc: 'Use this environment for feature work, backend experiments, and safe testing away from production data.',
-      accent: '#6cf0a8'
+      accent: '#6cf0a8',
+      tag: 'Build safely',
+      route: 'dev.api.yourapp.test',
+      signal: 'Fastest iteration loop with mock data, experiments, and unstable work.'
     },
     {
       title: 'Staging',
       desc: 'Use staging to simulate production before launch while keeping it isolated from live users and real production traffic.',
-      accent: '#00f5d4'
+      accent: '#00f5d4',
+      tag: 'Verify deeply',
+      route: 'staging.api.yourapp.com',
+      signal: 'Production-like rehearsal lane for QA, sign-off, and final confidence checks.'
     },
     {
       title: 'Production',
       desc: 'Every project starts with Production by default, making it the baseline environment for deployed behavior.',
-      accent: '#61a8ff'
+      accent: '#61a8ff',
+      tag: 'Serve users',
+      route: 'api.yourapp.com',
+      signal: 'Live customer traffic, real money, public domains, and protected data.'
     }
   ]
 
   const generatedEvents = [
-    'Test and Run mode sessions',
-    'Local Run',
-    'Code export',
-    'Deployment'
+    { title: 'Test and Run mode sessions', desc: 'The selected environment controls what your browser test session connects to.' },
+    { title: 'Local Run', desc: 'Local device testing still follows the active environment configuration.' },
+    { title: 'Code export', desc: 'Exported code includes the generated environment helper for non-private values.' },
+    { title: 'Deployment', desc: 'Deployment settings let you choose which environment powers the released build.' }
   ]
 
   const privateValueRules = [
@@ -6890,80 +7185,277 @@ function Module4_3Section() {
     }
   ]
 
+  const activeEnvironment = environments[activeEnv]
+  const activeEvent = generatedEvents[activeGeneratedEvent]
+  const environmentMetrics = [
+    { label: 'Backend route', value: activeEnvironment.route },
+    { label: 'Primary job', value: activeEnvironment.tag },
+    { label: 'Risk level', value: activeEnv === 0 ? 'Low' : activeEnv === 1 ? 'Medium' : 'Live' }
+  ]
+
   return (
-    <section className="sec" style={{ paddingTop: '0', paddingBottom: '80px' }}>
-      <div className="wrap" style={{ paddingTop: '120px' }}>
+    <section className="sec" style={{ paddingTop: '0', paddingBottom: '80px', position: 'relative', overflow: 'hidden' }}>
+      <SectionHeroBackdrop height={420} opacity={0.5} />
+      <div className="wrap" style={{ paddingTop: '120px', position: 'relative', zIndex: 2 }}>
         <MotionReveal>
-          <div style={{ display: 'grid', gap: '1rem' }}>
-            <span className="chip" style={{ width: 'max-content', color: '#6cf0a8', border: '1px solid rgba(108,240,168,0.28)', background: 'rgba(108,240,168,0.1)' }}>
-              Module 4 - Chapter 4.3
-            </span>
-            <h1 style={{
-              fontSize: 'clamp(2.8rem, 5vw, 4rem)',
-              fontWeight: 800,
-              lineHeight: 1.08,
-              background: 'linear-gradient(135deg, #6cf0a8, #00f5d4, #61a8ff)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text'
-            }}>
-              Development Environments
-            </h1>
-            <p style={{ maxWidth: '900px', color: '#c8c8e0', fontSize: '1.06rem', lineHeight: 1.85 }}>
-              Development Environments let one FlutterFlow project point at different backends across your lifecycle. You can keep Development, Staging, and Production isolated while generating environment-specific code for testing, export, and deployment.
-            </p>
+          <div style={{
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '38px',
+            padding: 'clamp(1.4rem, 3vw, 2.4rem)',
+            border: '1px solid rgba(108,240,168,0.2)',
+            background: 'radial-gradient(circle at 8% 10%, rgba(108,240,168,0.16), transparent 30%), radial-gradient(circle at 92% 18%, rgba(97,168,255,0.14), transparent 32%), linear-gradient(135deg, rgba(5,16,24,0.98), rgba(7,11,25,0.97))',
+            boxShadow: '0 42px 120px rgba(0,0,0,0.34)'
+          }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px), linear-gradient(0deg, rgba(255,255,255,0.03) 1px, transparent 1px)', backgroundSize: '44px 44px', opacity: 0.35 }} />
+            <div className="env-switchboard-grid" style={{ position: 'relative', zIndex: 2, display: 'grid', gridTemplateColumns: 'minmax(0, 0.9fr) minmax(360px, 1fr)', gap: '1.5rem', alignItems: 'stretch' }}>
+              <div style={{ minWidth: 0, display: 'grid', alignContent: 'space-between', gap: '1.6rem' }}>
+                <div>
+                  <span className="chip" style={{ width: 'max-content', color: '#6cf0a8', border: '1px solid rgba(108,240,168,0.28)', background: 'rgba(108,240,168,0.1)', marginBottom: '1rem' }}>
+                    Module 4 - Chapter 4.3
+                  </span>
+                  <h1 style={{
+                    margin: 0,
+                    color: '#f5fff9',
+                    fontFamily: '"Rajdhani", "Bahnschrift", "Trebuchet MS", sans-serif',
+                    fontSize: 'clamp(2.65rem, 5vw, 5.25rem)',
+                    lineHeight: 0.94,
+                    letterSpacing: '-0.055em',
+                    fontWeight: 900,
+                    textTransform: 'uppercase'
+                  }}>
+                    Environment
+                    <span style={{ display: 'block', color: '#6cf0a8', letterSpacing: '-0.035em' }}>Switchboard</span>
+                  </h1>
+                  <p style={{ maxWidth: '660px', color: '#d7e7e6', fontSize: '1.03rem', lineHeight: 1.72, margin: '1rem 0 0' }}>
+                    One FlutterFlow project can point to separate backends for Development, Staging, and Production. Pick a lane, then verify which route, data, and deployment behavior it controls.
+                  </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(145px, 1fr))', gap: '0.75rem' }}>
+                  {environmentMetrics.map((metric) => (
+                    <div key={metric.label} style={{ padding: '0.95rem', borderRadius: '18px', border: `1px solid ${activeEnvironment.accent}33`, background: 'rgba(255,255,255,0.045)', minWidth: 0 }}>
+                      <div style={{ color: activeEnvironment.accent, fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.35rem' }}>{metric.label}</div>
+                      <div style={{ color: '#fff', fontWeight: 800, lineHeight: 1.4, overflowWrap: 'anywhere' }}>{metric.value}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div style={{ minWidth: 0, display: 'grid', gap: '1rem' }}>
+                <div style={{ display: 'grid', gap: '0.75rem' }}>
+                  {environments.map((env, index) => {
+                    const isActive = index === activeEnv
+                    return (
+                      <motion.button
+                        key={env.title}
+                        type="button"
+                        onClick={() => setActiveEnv(index)}
+                        whileHover={{ y: -4 }}
+                        whileTap={{ scale: 0.98 }}
+                        style={{
+                          position: 'relative',
+                          overflow: 'hidden',
+                          display: 'grid',
+                          gridTemplateColumns: '54px minmax(0, 1fr)',
+                          gap: '1rem',
+                          alignItems: 'center',
+                          textAlign: 'left',
+                          padding: '1rem',
+                          borderRadius: '24px',
+                          border: `1px solid ${isActive ? env.accent : 'rgba(255,255,255,0.08)'}`,
+                          background: isActive ? `linear-gradient(135deg, ${env.accent}20, rgba(255,255,255,0.05))` : 'rgba(255,255,255,0.035)',
+                          color: '#fff',
+                          cursor: 'pointer',
+                          boxShadow: isActive ? `0 22px 56px ${env.accent}18` : 'none'
+                        }}
+                      >
+                        <span style={{ width: '54px', height: '54px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: `${env.accent}18`, color: env.accent, fontWeight: 950, fontSize: '1.05rem' }}>
+                          0{index + 1}
+                        </span>
+                        <span style={{ minWidth: 0 }}>
+                          <span style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center' }}>
+                            <span style={{ color: '#fff', fontWeight: 900, fontSize: '1.1rem' }}>{env.title}</span>
+                            <span style={{ width: '10px', height: '10px', borderRadius: '999px', background: env.accent, boxShadow: `0 0 20px ${env.accent}` }} />
+                          </span>
+                          <span style={{ display: 'block', color: '#bcd0e1', fontSize: '0.92rem', marginTop: '0.3rem', lineHeight: 1.45 }}>{env.signal}</span>
+                        </span>
+                      </motion.button>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+            <style>{`
+              @media (max-width: 980px) {
+                .env-switchboard-grid {
+                  grid-template-columns: 1fr !important;
+                }
+              }
+            `}</style>
           </div>
         </MotionReveal>
 
-        <div className="chapter-split" style={{ marginTop: '2.2rem', alignItems: 'stretch' }}>
-          <div className="split-col">
-            <div style={{ ...panelStyle, padding: '2rem' }}>
-              <div style={{ fontSize: '0.76rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#6cf0a8', fontWeight: 700, marginBottom: '0.9rem' }}>
-                Starting point
-              </div>
-              <h2 style={{ color: '#fff', fontSize: '1.75rem', marginBottom: '0.8rem' }}>
-                Production exists by default
-              </h2>
-              <p style={{ color: '#d7d7ea', lineHeight: 1.8, marginBottom: '1rem' }}>
-                Every FlutterFlow project begins with a Production environment. From there, you can add Development, Staging, or any custom environment names that match your workflow.
-              </p>
-              <p style={{ color: '#d7d7ea', lineHeight: 1.8 }}>
-                The active environment affects generated behavior for items tied to{' '}
-                <a href="https://docs.flutterflow.io/testing/dev-environments#environment-values" className="text-link" target="_blank" rel="noopener noreferrer">Environment Values</a>{' '}
-                and backend configuration such as{' '}
-                <a href="https://docs.flutterflow.io/testing/dev-environments#configuring-firebase-or-supabase-for-each-environment" className="text-link" target="_blank" rel="noopener noreferrer">Firebase or Supabase per environment</a>.
-              </p>
+        <div
+          className="env-sticky-dock"
+          style={{
+            position: 'sticky',
+            top: '18px',
+            zIndex: 20,
+            marginTop: '1rem',
+            padding: '0.7rem',
+            borderRadius: '24px',
+            border: '1px solid rgba(255,255,255,0.1)',
+            background: 'linear-gradient(135deg, rgba(5,12,24,0.9), rgba(5,24,27,0.86))',
+            backdropFilter: 'blur(18px)',
+            boxShadow: '0 18px 50px rgba(0,0,0,0.28)'
+          }}
+        >
+          <div style={{ display: 'grid', gridTemplateColumns: 'auto repeat(3, minmax(0, 1fr))', gap: '0.6rem', alignItems: 'center' }}>
+            <div style={{ color: '#9ef6c2', fontSize: '0.7rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, padding: '0 0.65rem', whiteSpace: 'nowrap' }}>
+              Switch lane
             </div>
-            <CalloutCard tone="note" title="Best practice">
-              Development is for active work, Staging is for production-like verification, and Production is for the live app.
-            </CalloutCard>
+            {environments.map((env, index) => {
+              const isActive = index === activeEnv
+              return (
+                <button
+                  key={env.title}
+                  type="button"
+                  onClick={() => setActiveEnv(index)}
+                  style={{
+                    minHeight: '48px',
+                    borderRadius: '16px',
+                    border: `1px solid ${isActive ? env.accent : 'rgba(255,255,255,0.08)'}`,
+                    background: isActive ? `${env.accent}1f` : 'rgba(255,255,255,0.04)',
+                    color: '#fff',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '0.75rem',
+                    padding: '0.72rem 0.85rem',
+                    fontWeight: 900,
+                    boxShadow: isActive ? `0 12px 34px ${env.accent}18` : 'none'
+                  }}
+                >
+                  <span style={{ minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{env.title}</span>
+                  <span style={{ width: '9px', height: '9px', borderRadius: '999px', background: env.accent, boxShadow: `0 0 18px ${env.accent}`, flexShrink: 0 }} />
+                </button>
+              )
+            })}
+          </div>
+          <style>{`
+            @media (max-width: 760px) {
+              .env-sticky-dock {
+                top: 10px !important;
+                overflow-x: auto;
+              }
+              .env-sticky-dock > div {
+                grid-template-columns: 110px repeat(3, 160px) !important;
+                min-width: 610px;
+              }
+            }
+          `}</style>
+        </div>
+
+        <div className="env-bento-grid" style={{ marginTop: '2rem', display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1rem' }}>
+          <motion.div
+            key={activeEnvironment.title}
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.28 }}
+            className="env-bento-card"
+            style={{
+              ...panelStyle,
+              gridColumn: 'span 6',
+              minHeight: '290px',
+              padding: '2rem',
+              borderColor: `${activeEnvironment.accent}48`,
+              background: `radial-gradient(circle at 92% 12%, ${activeEnvironment.accent}22, transparent 35%), linear-gradient(155deg, rgba(8,13,24,0.98), rgba(4,22,27,0.95))`
+            }}
+          >
+            <div style={{ color: activeEnvironment.accent, fontSize: '0.74rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.8rem' }}>
+              Active environment
+            </div>
+            <h2 style={{ color: '#fff', fontSize: 'clamp(2rem, 3vw, 3rem)', lineHeight: 1, marginBottom: '0.9rem', fontFamily: '"Rajdhani", "Bahnschrift", sans-serif', letterSpacing: '-0.04em' }}>
+              {activeEnvironment.title}
+            </h2>
+            <p style={{ color: '#d7d7ea', lineHeight: 1.75, marginBottom: '1.2rem' }}>{activeEnvironment.desc}</p>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.55rem', marginBottom: '1rem' }}>
+              {environments.map((env, index) => {
+                const isActive = index === activeEnv
+                return (
+                  <button
+                    key={env.title}
+                    type="button"
+                    onClick={() => setActiveEnv(index)}
+                    style={{
+                      padding: '0.55rem 0.7rem',
+                      borderRadius: '999px',
+                      border: `1px solid ${isActive ? env.accent : 'rgba(255,255,255,0.08)'}`,
+                      background: isActive ? `${env.accent}1f` : 'rgba(255,255,255,0.04)',
+                      color: isActive ? '#fff' : '#c8d6df',
+                      cursor: 'pointer',
+                      fontWeight: 850,
+                      fontSize: '0.82rem'
+                    }}
+                  >
+                    {env.title}
+                  </button>
+                )
+              })}
+            </div>
+            <div style={{ padding: '1rem', borderRadius: '18px', background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: activeEnvironment.accent, fontSize: '0.68rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.35rem' }}>Current backend route</div>
+              <div style={{ color: '#fff', fontWeight: 900, overflowWrap: 'anywhere' }}>{activeEnvironment.route}</div>
+            </div>
+          </motion.div>
+
+          <div className="env-bento-card" style={{ ...panelStyle, gridColumn: 'span 3', minHeight: '290px', padding: '1.4rem', borderColor: 'rgba(108,240,168,0.24)' }}>
+            <div style={{ color: '#6cf0a8', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.8rem' }}>Default baseline</div>
+            <h3 style={{ color: '#fff', fontSize: '1.4rem', marginBottom: '0.7rem' }}>Production exists first</h3>
+            <p style={{ color: '#d7d7ea', lineHeight: 1.7, margin: 0 }}>
+              Every FlutterFlow project begins with Production. Add Development or Staging when your workflow needs safer separation.
+            </p>
           </div>
 
-          <div className="chapter-grid">
-            {environments.map((item) => (
-              <div
-                key={item.title}
-                style={{
-                  ...panelStyle,
-                  padding: '1.45rem',
-                  borderColor: `${item.accent}44`,
-                  background: `linear-gradient(160deg, ${item.accent}15 0%, rgba(8,13,24,0.96) 88%)`
-                }}
-              >
-                <div style={{ fontSize: '0.76rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: item.accent, fontWeight: 700, marginBottom: '0.8rem' }}>
-                  {item.title}
+          <div className="env-bento-card" style={{ ...panelStyle, gridColumn: 'span 3', minHeight: '290px', padding: '1.4rem', borderColor: 'rgba(0,245,212,0.24)' }}>
+            <div style={{ color: '#00f5d4', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.8rem' }}>Best practice</div>
+            <div style={{ display: 'grid', gap: '0.7rem' }}>
+              {['Development: build', 'Staging: verify', 'Production: launch'].map((item, index) => (
+                <div key={item} style={{ display: 'grid', gridTemplateColumns: '28px 1fr', gap: '0.65rem', alignItems: 'center', color: '#d7d7ea' }}>
+                  <span style={{ width: '28px', height: '28px', borderRadius: '10px', display: 'grid', placeItems: 'center', background: 'rgba(0,245,212,0.12)', color: '#00f5d4', fontWeight: 900 }}>{index + 1}</span>
+                  <span style={{ fontWeight: 800 }}>{item}</span>
                 </div>
-                <p style={{ color: '#d7d7ea', lineHeight: 1.75 }}>{item.desc}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
+
+          <div className="env-bento-card" style={{ ...panelStyle, gridColumn: 'span 12', padding: '1.25rem', borderColor: 'rgba(97,168,255,0.22)' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: '0.8rem' }}>
+              {environments.map((env, index) => (
+                <div key={env.title} style={{ padding: '1rem', borderRadius: '20px', background: index === activeEnv ? `${env.accent}14` : 'rgba(255,255,255,0.035)', border: `1px solid ${index === activeEnv ? env.accent : 'rgba(255,255,255,0.08)'}` }}>
+                  <div style={{ color: env.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.55rem' }}>{String(index + 1).padStart(2, '0')} / {env.title}</div>
+                  <p style={{ color: '#d7d7ea', lineHeight: 1.62, margin: 0 }}>{env.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <style>{`
+            @media (max-width: 980px) {
+              .env-bento-card {
+                grid-column: span 12 !important;
+              }
+            }
+          `}</style>
         </div>
 
         <div className="chapter-split" style={{ marginTop: '2.4rem', alignItems: 'start' }}>
           <div className="split-col">
             <div style={{ ...panelStyle, padding: '2rem' }}>
               <div style={{ fontSize: '0.76rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#00f5d4', fontWeight: 700, marginBottom: '0.9rem' }}>
-                Generated code
+                Generated-code switchboard
               </div>
               <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '0.9rem' }}>
                 The selected environment drives code generation
@@ -6971,7 +7463,47 @@ function Module4_3Section() {
               <p style={{ color: '#d7d7ea', lineHeight: 1.8, marginBottom: '1rem' }}>
                 FlutterFlow uses the active environment when running, exporting, or deploying your app. That includes the files that expose values through <code>environment.json</code> and the generated <code>FFDevEnvironmentValues</code> helper.
               </p>
-              <BulletList items={generatedEvents} />
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.7rem', marginBottom: '1rem' }}>
+                {generatedEvents.map((event, index) => {
+                  const isActive = index === activeGeneratedEvent
+                  return (
+                    <button
+                      key={event.title}
+                      type="button"
+                      onClick={() => setActiveGeneratedEvent(index)}
+                      style={{
+                        padding: '0.68rem 0.82rem',
+                        borderRadius: '999px',
+                        border: `1px solid ${isActive ? '#00f5d4' : 'rgba(255,255,255,0.08)'}`,
+                        background: isActive ? 'rgba(0,245,212,0.14)' : 'rgba(255,255,255,0.04)',
+                        color: '#fff',
+                        fontWeight: 700,
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {event.title}
+                    </button>
+                  )
+                })}
+              </div>
+              <motion.div
+                key={activeEvent.title}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.28 }}
+                style={{
+                  padding: '1rem',
+                  borderRadius: '20px',
+                  background: 'rgba(0,245,212,0.07)',
+                  border: '1px solid rgba(0,245,212,0.18)'
+                }}
+              >
+                <div style={{ color: '#00f5d4', fontSize: '0.7rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.35rem' }}>
+                  Active generation moment
+                </div>
+                <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.35rem' }}>{activeEvent.title}</div>
+                <div style={{ color: '#d7e7e6', lineHeight: 1.65 }}>{activeEvent.desc}</div>
+              </motion.div>
             </div>
             <div style={{ ...panelStyle, padding: '2rem', borderColor: 'rgba(97,168,255,0.22)' }}>
               <div style={{ fontSize: '0.76rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#61a8ff', fontWeight: 700, marginBottom: '0.9rem' }}>
@@ -6992,9 +7524,9 @@ function Module4_3Section() {
           </div>
 
           <div className="split-col">
-            <div style={{ ...panelStyle, padding: '2rem', borderColor: 'rgba(255,45,85,0.24)' }}>
+            <div style={{ ...panelStyle, padding: '2rem', borderColor: 'rgba(255,45,85,0.24)', background: 'linear-gradient(155deg, rgba(255,45,85,0.08) 0%, rgba(8,14,28,0.95) 88%)' }}>
               <div style={{ fontSize: '0.76rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: '#ff5c8d', fontWeight: 700, marginBottom: '0.9rem' }}>
-                Private environment values
+                Secret handling checkpoint
               </div>
               <h2 style={{ color: '#fff', fontSize: '1.55rem', marginBottom: '0.8rem' }}>
                 Sensitive values need repository discipline
@@ -7002,7 +7534,16 @@ function Module4_3Section() {
               <p style={{ color: '#d7d7ea', lineHeight: 1.8, marginBottom: '1rem' }}>
                 Private environment values stay out of compiled client code, but if they flow into generated Cloud Functions for private API calls, you still need to review what gets exported or pushed to source control.
               </p>
-              <BulletList items={privateValueRules} />
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {privateValueRules.map((rule, index) => (
+                  <div key={rule} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: '0.8rem', alignItems: 'start' }}>
+                    <div style={{ width: '34px', height: '34px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(255,45,85,0.14)', color: '#ff7da1', fontWeight: 900 }}>
+                      {index + 1}
+                    </div>
+                    <div style={{ color: '#d7d7ea', lineHeight: 1.65 }}>{rule}</div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <motion.div
@@ -7046,16 +7587,65 @@ function Module4_3Section() {
           ))}
         </div>
 
-        <div className="chapter-grid" style={{ marginTop: '2rem' }}>
-          {faq.map((item) => (
-            <div key={item.question} style={{ ...panelStyle, padding: '1.5rem' }}>
-              <div style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#6cf0a8', fontWeight: 700, marginBottom: '0.75rem' }}>
-                FAQ
+        <div style={{ marginTop: '2.4rem' }}>
+          <MotionReveal>
+            <div style={{ ...panelStyle, padding: '1.4rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                <div>
+                  <div style={{ fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: '#6cf0a8', fontWeight: 800, marginBottom: '0.4rem' }}>
+                    Environment FAQ console
+                  </div>
+                  <h2 style={{ color: '#fff', fontSize: '1.45rem', margin: 0 }}>Questions teams usually ask before shipping</h2>
+                </div>
               </div>
-              <h3 style={{ color: '#fff', fontSize: '1.05rem', marginBottom: '0.55rem' }}>{item.question}</h3>
-              <p style={{ color: '#d7d7ea', lineHeight: 1.7 }}>{item.answer}</p>
+
+              <div className="chapter-split" style={{ alignItems: 'stretch', gap: '1rem' }}>
+                <div className="split-col" style={{ display: 'grid', gap: '0.75rem' }}>
+                  {faq.map((item, index) => {
+                    const isActive = index === activeFaq
+                    return (
+                      <button
+                        key={item.question}
+                        type="button"
+                        onClick={() => setActiveFaq(index)}
+                        style={{
+                          textAlign: 'left',
+                          padding: '1rem',
+                          borderRadius: '18px',
+                          border: `1px solid ${isActive ? '#6cf0a8' : 'rgba(255,255,255,0.08)'}`,
+                          background: isActive ? 'rgba(108,240,168,0.12)' : 'rgba(255,255,255,0.035)',
+                          color: '#fff',
+                          cursor: 'pointer',
+                          fontWeight: 800,
+                          lineHeight: 1.45
+                        }}
+                      >
+                        {item.question}
+                      </button>
+                    )
+                  })}
+                </div>
+                <motion.div
+                  key={faq[activeFaq].question}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.28 }}
+                  className="split-col"
+                  style={{
+                    padding: '1.2rem',
+                    borderRadius: '22px',
+                    background: 'linear-gradient(155deg, rgba(108,240,168,0.1), rgba(255,255,255,0.03))',
+                    border: '1px solid rgba(108,240,168,0.2)'
+                  }}
+                >
+                  <div style={{ color: '#6cf0a8', fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.5rem' }}>
+                    Answer
+                  </div>
+                  <p style={{ color: '#d7d7ea', lineHeight: 1.75, margin: 0 }}>{faq[activeFaq].answer}</p>
+                </motion.div>
+              </div>
             </div>
-          ))}
+          </MotionReveal>
         </div>
       </div>
     </section>
@@ -7132,6 +7722,8 @@ function Module4_4Section() {
 }
 
 function PageRunYourApp() {
+  const [activeMode, setActiveMode] = useState(1)
+
   const panelStyle = {
     background: 'linear-gradient(180deg, rgba(10,16,36,0.96) 0%, rgba(6,11,24,0.96) 100%)',
     border: '1px solid rgba(97,168,255,0.2)',
@@ -7202,48 +7794,116 @@ function PageRunYourApp() {
     { title: 'Local Run setup guide', href: 'https://docs.flutterflow.io/testing/local-run' }
   ]
 
+  const modeSignals = [
+    { label: 'Speed', values: ['Instant', 'Fast', '2-4 min', 'Device paced'] },
+    { label: 'Data fidelity', values: ['Low', 'Medium', 'High', 'Highest'] },
+    { label: 'Best moment', values: ['Layout check', 'Iteration loop', 'Team review', 'Real hardware'] }
+  ]
+
+  const activeModeData = modes[activeMode]
+
   return (
     <div style={{ paddingTop: '120px', paddingBottom: '40px' }}>
       <MotionReveal>
-        <div style={{ display: 'grid', gap: '1rem' }}>
-          <span className="chip" style={{ width: 'max-content', color: '#61a8ff', border: '1px solid rgba(97,168,255,0.28)', background: 'rgba(97,168,255,0.1)' }}>
-            Module 4 - Chapter 4.4 · Page 1
-          </span>
-          <h1 style={{
-            fontSize: 'clamp(2.8rem, 5vw, 4rem)',
-            fontWeight: 800,
-            lineHeight: 1.08,
-            background: 'linear-gradient(135deg, #86ffb7, #61a8ff, #ffd166)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>
-            Testing Your App
-          </h1>
-          <p style={{ maxWidth: '900px', color: '#c8c8e0', fontSize: '1.06rem', lineHeight: 1.85 }}>
-            Running and testing is a core part of the FlutterFlow workflow. You can access Preview, Test, Run, and Local Run from the{' '}
-            <a href="https://docs.flutterflow.io/flutterflow-ui/toolbar" className="text-link" target="_blank" rel="noopener noreferrer">Toolbar</a>, and each mode is optimized for a different stage of validation.
-          </p>
+        <div style={{
+          ...panelStyle,
+          position: 'relative',
+          overflow: 'hidden',
+          padding: 'clamp(1.5rem, 4vw, 3rem)',
+          borderColor: 'rgba(97,168,255,0.28)',
+          background: 'radial-gradient(circle at 18% 20%, rgba(134,255,183,0.18), transparent 30%), radial-gradient(circle at 86% 12%, rgba(255,209,102,0.16), transparent 28%), linear-gradient(135deg, rgba(7,13,31,0.98), rgba(4,20,31,0.96))'
+        }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(0deg, rgba(255,255,255,0.035) 1px, transparent 1px)', backgroundSize: '42px 42px', opacity: 0.28 }} />
+          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem', alignItems: 'center' }}>
+            <div>
+              <span className="chip" style={{ width: 'max-content', color: '#61a8ff', border: '1px solid rgba(97,168,255,0.28)', background: 'rgba(97,168,255,0.1)', marginBottom: '1rem' }}>
+                Module 4 - Chapter 4.4 · Page 1
+              </span>
+              <div style={{ marginBottom: '0.7rem' }}>
+                <TexturedMaskText text="Testing Runway" className="textured-mask-heading" />
+              </div>
+              <SlideInText text="Pick the right runway before you launch." className="slide-heading" />
+              <p style={{ maxWidth: '760px', color: '#d7d7ea', fontSize: '1.06rem', lineHeight: 1.85, marginTop: '1.1rem' }}>
+                Running and testing is a core part of the FlutterFlow workflow. The <a href="https://docs.flutterflow.io/flutterflow-ui/toolbar" className="text-link" target="_blank" rel="noopener noreferrer">Toolbar</a> gives you four routes: Preview, Test, Run, and Local Run. Each one answers a different question about your app.
+              </p>
+            </div>
+
+            <motion.div
+              animate={{ y: [0, -10, 0], rotate: [0, 0.8, 0] }}
+              transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+              style={{
+                minHeight: '320px',
+                borderRadius: '34px',
+                border: `1px solid ${activeModeData.accent}55`,
+                background: `linear-gradient(155deg, ${activeModeData.accent}24, rgba(255,255,255,0.04))`,
+                boxShadow: `0 28px 80px ${activeModeData.accent}20`,
+                display: 'grid',
+                placeItems: 'center',
+                padding: '1.2rem'
+              }}
+            >
+              <div style={{ width: '100%', maxWidth: '330px', borderRadius: '28px', background: 'rgba(2,8,20,0.82)', border: '1px solid rgba(255,255,255,0.12)', padding: '1.2rem' }}>
+                <div style={{ display: 'flex', gap: '0.45rem', marginBottom: '1rem' }}>
+                  {modes.map((mode, index) => (
+                    <span key={mode.title} style={{ flex: 1, height: '7px', borderRadius: '99px', background: index === activeMode ? mode.accent : 'rgba(255,255,255,0.12)' }} />
+                  ))}
+                </div>
+                <div style={{ color: activeModeData.accent, fontSize: '0.72rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.5rem' }}>
+                  Active testing route
+                </div>
+                <h2 style={{ color: '#fff', fontSize: '1.75rem', marginBottom: '0.75rem' }}>{activeModeData.title}</h2>
+                <p style={{ color: '#d7d7ea', lineHeight: 1.7 }}>{activeModeData.desc}</p>
+              </div>
+            </motion.div>
+          </div>
         </div>
       </MotionReveal>
 
-      <div className="chapter-grid" style={{ marginTop: '2rem' }}>
-        {modes.map((item) => (
-          <div
-            key={item.title}
-            style={{
-              ...panelStyle,
-              padding: '1.5rem',
-              borderColor: `${item.accent}44`,
-              background: `linear-gradient(160deg, ${item.accent}15 0%, rgba(7,12,26,0.96) 88%)`
-            }}
-          >
-            <div style={{ fontSize: '0.76rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: item.accent, fontWeight: 700, marginBottom: '0.8rem' }}>
-              {item.title}
+      <div style={{ ...panelStyle, marginTop: '2rem', padding: '1rem', borderColor: 'rgba(255,255,255,0.1)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(190px, 1fr))', gap: '0.8rem' }}>
+          {modes.map((item, index) => {
+            const isActive = index === activeMode
+            return (
+              <button
+                key={item.title}
+                type="button"
+                onClick={() => setActiveMode(index)}
+                style={{
+                  textAlign: 'left',
+                  padding: '1rem',
+                  borderRadius: '20px',
+                  border: `1px solid ${isActive ? item.accent : 'rgba(255,255,255,0.08)'}`,
+                  background: isActive ? `${item.accent}1f` : 'rgba(255,255,255,0.035)',
+                  cursor: 'pointer',
+                  color: '#fff',
+                  boxShadow: isActive ? `0 18px 40px ${item.accent}18` : 'none'
+                }}
+              >
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.8rem', alignItems: 'center', marginBottom: '0.65rem' }}>
+                  <span style={{ color: item.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 900 }}>
+                    Route 0{index + 1}
+                  </span>
+                  <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: item.accent, boxShadow: `0 0 20px ${item.accent}` }} />
+                </div>
+                <div style={{ fontWeight: 900, fontSize: '1.05rem' }}>{item.title}</div>
+              </button>
+            )
+          })}
+        </div>
+        <motion.div
+          key={activeModeData.title}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.28 }}
+          style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '0.8rem' }}
+        >
+          {modeSignals.map((signal) => (
+            <div key={signal.label} style={{ padding: '1rem', borderRadius: '18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: activeModeData.accent, fontSize: '0.72rem', letterSpacing: '0.14em', textTransform: 'uppercase', fontWeight: 800, marginBottom: '0.35rem' }}>{signal.label}</div>
+              <div style={{ color: '#fff', fontWeight: 800 }}>{signal.values[activeMode]}</div>
             </div>
-            <p style={{ color: '#d7d7ea', lineHeight: 1.75 }}>{item.desc}</p>
-          </div>
-        ))}
+          ))}
+        </motion.div>
       </div>
 
       <div className="chapter-split" style={{ marginTop: '2.4rem', alignItems: 'start' }}>
@@ -7381,6 +8041,8 @@ function PageRunYourApp() {
 }
 
 function PageLocalRun() {
+  const [activeSetupStep, setActiveSetupStep] = useState(0)
+
   const panelStyle = {
     background: 'linear-gradient(180deg, rgba(9,14,31,0.96) 0%, rgba(6,10,22,0.96) 100%)',
     border: '1px solid rgba(134,255,183,0.18)',
@@ -7430,27 +8092,81 @@ function PageLocalRun() {
     { title: 'iOS add-to-app', href: 'https://docs.flutter.dev/add-to-app/ios/project-setup' }
   ]
 
+  const setupMoments = [
+    { label: 'Desktop app', accent: '#86ffb7', status: 'Connect FlutterFlow to your machine' },
+    { label: 'Test menu', accent: '#61a8ff', status: 'Open the Local Run wizard' },
+    { label: 'SDK', accent: '#ffd166', status: 'Install the compatible Flutter toolchain' },
+    { label: 'Doctor', accent: '#ff7d6b', status: 'Validate dependencies before running' },
+    { label: 'IDE', accent: '#b388ff', status: 'Point FlutterFlow at your editor' },
+    { label: 'Format', accent: '#00f5d4', status: 'Choose speed or readable exports' },
+    { label: 'Devices', accent: '#86ffb7', status: 'Select emulator or hardware' },
+    { label: 'Reload', accent: '#61a8ff', status: 'Iterate with Hot Reload/Restart' }
+  ]
+
+  const activeSetupMoment = setupMoments[activeSetupStep]
+
   return (
     <div style={{ paddingTop: '120px', paddingBottom: '40px' }}>
       <MotionReveal>
-        <div style={{ display: 'grid', gap: '1rem' }}>
-          <span className="chip" style={{ width: 'max-content', color: '#86ffb7', border: '1px solid rgba(134,255,183,0.28)', background: 'rgba(134,255,183,0.1)' }}>
-            Module 4 - Chapter 4.4 · Page 2
-          </span>
-          <h1 style={{
-            fontSize: 'clamp(2.8rem, 5vw, 4rem)',
-            fontWeight: 800,
-            lineHeight: 1.08,
-            background: 'linear-gradient(135deg, #86ffb7, #61a8ff, #ff7d6b)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text'
-          }}>
-            Local Run
-          </h1>
-          <p style={{ maxWidth: '920px', color: '#c8c8e0', fontSize: '1.06rem', lineHeight: 1.85 }}>
-            Local Run lets you test on real devices through the FlutterFlow Desktop App, automatically downloads project code, and supports Hot Reload or Hot Restart. It is the closest loop to working like a native Flutter developer while still staying tied to FlutterFlow output.
-          </p>
+        <div style={{
+          ...panelStyle,
+          position: 'relative',
+          overflow: 'hidden',
+          padding: 'clamp(1.5rem, 4vw, 3rem)',
+          borderColor: 'rgba(134,255,183,0.26)',
+          background: 'radial-gradient(circle at 20% 18%, rgba(134,255,183,0.2), transparent 30%), radial-gradient(circle at 72% 70%, rgba(255,125,107,0.16), transparent 32%), linear-gradient(135deg, rgba(5,16,28,0.98), rgba(5,8,22,0.96))'
+        }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px)', backgroundSize: '26px 26px', opacity: 0.22 }} />
+          <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem', alignItems: 'center' }}>
+            <div>
+              <span className="chip" style={{ width: 'max-content', color: '#86ffb7', border: '1px solid rgba(134,255,183,0.28)', background: 'rgba(134,255,183,0.1)', marginBottom: '1rem' }}>
+                Module 4 - Chapter 4.4 · Page 2
+              </span>
+              <div style={{ marginBottom: '0.7rem' }}>
+                <TexturedMaskText text="Device Lab" className="textured-mask-heading" imageUrl="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=2070&auto=format&fit=crop" />
+              </div>
+              <TypewriterText
+                text="Run it where real users will touch it..."
+                className="typewriter-heading"
+                textStyle={{ color: '#eafff5', fontSize: 'clamp(1.25rem, 2vw, 1.9rem)' }}
+                cursorStyle={{ color: '#86ffb7' }}
+              />
+              <p style={{ maxWidth: '820px', color: '#d7d7ea', fontSize: '1.06rem', lineHeight: 1.85, marginTop: '1.1rem' }}>
+                Local Run lets you test on real devices through the FlutterFlow Desktop App, automatically downloads project code, and supports Hot Reload or Hot Restart. It is the closest loop to native Flutter development while still staying tied to FlutterFlow output.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {['Android emulator', 'iPhone hardware', 'Desktop target'].map((device, index) => (
+                <motion.div
+                  key={device}
+                  animate={{ x: [0, index % 2 === 0 ? 8 : -8, 0] }}
+                  transition={{ duration: 5 + index, repeat: Infinity, ease: 'easeInOut' }}
+                  style={{
+                    marginLeft: index === 1 ? '2rem' : 0,
+                    padding: '1rem 1.1rem',
+                    borderRadius: '22px',
+                    border: `1px solid ${index === 0 ? 'rgba(134,255,183,0.32)' : index === 1 ? 'rgba(97,168,255,0.32)' : 'rgba(255,125,107,0.32)'}`,
+                    background: 'rgba(255,255,255,0.055)',
+                    backdropFilter: 'blur(12px)',
+                    display: 'grid',
+                    gridTemplateColumns: '42px 1fr auto',
+                    gap: '0.9rem',
+                    alignItems: 'center'
+                  }}
+                >
+                  <span style={{ width: '42px', height: '42px', borderRadius: '16px', display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.08)', color: '#fff', fontWeight: 900 }}>
+                    0{index + 1}
+                  </span>
+                  <div>
+                    <div style={{ color: '#fff', fontWeight: 900 }}>{device}</div>
+                    <div style={{ color: '#b9c9d7', fontSize: '0.88rem' }}>Local Run target ready</div>
+                  </div>
+                  <span style={{ color: index === 0 ? '#86ffb7' : index === 1 ? '#61a8ff' : '#ff7d6b', fontWeight: 900 }}>LIVE</span>
+                </motion.div>
+              ))}
+            </div>
+          </div>
         </div>
       </MotionReveal>
 
@@ -7483,9 +8199,52 @@ function PageLocalRun() {
               Local Run workflow
             </div>
             <h2 style={{ color: '#fff', fontSize: '1.65rem', marginBottom: '0.8rem' }}>
-              Eight-step setup path
+              Interactive eight-step setup path
             </h2>
-            <StepsList steps={setupSteps} />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(92px, 1fr))', gap: '0.65rem', marginBottom: '1rem' }}>
+              {setupMoments.map((moment, index) => {
+                const isActive = index === activeSetupStep
+                return (
+                  <button
+                    key={moment.label}
+                    type="button"
+                    onClick={() => setActiveSetupStep(index)}
+                    style={{
+                      minHeight: '76px',
+                      borderRadius: '18px',
+                      border: `1px solid ${isActive ? moment.accent : 'rgba(255,255,255,0.08)'}`,
+                      background: isActive ? `${moment.accent}1f` : 'rgba(255,255,255,0.035)',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      display: 'grid',
+                      gap: '0.25rem',
+                      placeItems: 'center',
+                      fontWeight: 900
+                    }}
+                  >
+                    <span style={{ color: moment.accent, fontSize: '0.78rem' }}>0{index + 1}</span>
+                    <span style={{ fontSize: '0.82rem' }}>{moment.label}</span>
+                  </button>
+                )
+              })}
+            </div>
+            <motion.div
+              key={activeSetupMoment.label}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.28 }}
+              style={{
+                padding: '1.15rem',
+                borderRadius: '22px',
+                background: `linear-gradient(135deg, ${activeSetupMoment.accent}16, rgba(255,255,255,0.035))`,
+                border: `1px solid ${activeSetupMoment.accent}40`
+              }}
+            >
+              <div style={{ color: activeSetupMoment.accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.45rem' }}>
+                {activeSetupMoment.status}
+              </div>
+              <p style={{ color: '#fff', lineHeight: 1.72, margin: 0 }}>{setupSteps[activeSetupStep]}</p>
+            </motion.div>
           </div>
           <div className="chapter-grid tight">
             {[
@@ -7755,6 +8514,7 @@ function FullscreenButton() {
 
 function Module5_1Section() {
   const containerRef = useReveal()
+  const [activeDeployStep, setActiveDeployStep] = useState(0)
 
   const relevantProjects = [
     { name: "Sample Apps", desc: "Official collection: Meal Planner (UI/state demo), e-commerce prototypes. Includes JSON exports for quick starts.", link: "https://github.com/FlutterFlow/sample-apps", module: "Modules 1-3" },
@@ -7822,84 +8582,248 @@ function Module5_1Section() {
     }
   ]
 
+  const activeDeployData = playStoreSteps[activeDeployStep]
+  const launchSignals = [
+    ['Readiness', activeDeployStep >= 0 ? 'Checked' : 'Pending'],
+    ['Console', activeDeployStep >= 1 ? 'Registered' : 'Queued'],
+    ['Credentials', activeDeployStep >= 2 ? 'Linked' : 'Locked'],
+    ['Release', activeDeployStep >= 3 ? 'Build path open' : 'Waiting'],
+    ['Monitor', activeDeployStep >= 4 ? 'Watch mode' : 'After rollout']
+  ]
+
   return (
     <section className="sec" ref={containerRef}>
       <SectionHeroBackdrop height={400} opacity={0.6} />
       <div className="wrap" style={{ position: 'relative', zIndex: 2 }}>
         
         <MotionReveal>
-          <div className="section-head">
-            <h5 className="accent-text">Module 5 - Chapter 1</h5>
-            <h2>Deploying on Play Store</h2>
-            <p style={{ maxWidth: '800px', fontSize: '1.2rem', color: '#c8c8e0', lineHeight: 1.6 }}>
-              Deploying your FlutterFlow app to the Google Play Store transforms your prototype into a live, downloadable Android experience for millions of users. 
-              This process leverages one-click builds via Codemagic.
-            </p>
+          <div style={{
+            position: 'relative',
+            overflow: 'hidden',
+            borderRadius: '34px',
+            padding: 'clamp(1.6rem, 4vw, 3.2rem)',
+            border: '1px solid rgba(0,245,212,0.22)',
+            background: 'radial-gradient(circle at 18% 18%, rgba(0,245,212,0.18), transparent 30%), radial-gradient(circle at 80% 10%, rgba(255,45,85,0.16), transparent 30%), linear-gradient(135deg, rgba(5,12,28,0.98), rgba(7,6,20,0.96))',
+            boxShadow: '0 28px 90px rgba(0,0,0,0.34)'
+          }}>
+            <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.06) 48%, transparent 58%)', transform: 'translateX(-30%)' }} />
+            <div style={{ position: 'relative', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '2rem', alignItems: 'center' }}>
+              <div>
+                <span className="chip" style={{ width: 'max-content', color: '#00f5d4', border: '1px solid rgba(0,245,212,0.28)', background: 'rgba(0,245,212,0.1)', marginBottom: '1rem' }}>
+                  Module 5 - Chapter 1
+                </span>
+                <TexturedMaskText
+                  text="Play Store Launch Control"
+                  className="textured-mask-heading"
+                  imageUrl="https://images.unsplash.com/photo-1517976487492-5750f3195933?q=80&w=2070&auto=format&fit=crop"
+                  style={{
+                    fontSize: 'clamp(4rem, 8vw, 7.6rem)',
+                    lineHeight: 0.86,
+                    letterSpacing: '-0.08em',
+                    fontWeight: 950,
+                    fontFamily: '"Trebuchet MS", "Gill Sans", "Avenir Next", sans-serif'
+                  }}
+                />
+                <p style={{ maxWidth: '820px', fontSize: '1.12rem', color: '#d7d7ea', lineHeight: 1.75, marginTop: '1.1rem' }}>
+                  Deploying your FlutterFlow app to Google Play turns a prototype into a real Android release. This page now works like a launch room: one step is active, every credential and rollout action has a clear place, and the supporting videos stay attached to the exact step where they matter.
+                </p>
+              </div>
+              <div style={{ display: 'grid', gap: '0.8rem' }}>
+                {launchSignals.map(([label, value], index) => (
+                  <motion.div
+                    key={label}
+                    animate={{ opacity: activeDeployStep + 1 >= index ? 1 : 0.58, x: [0, index % 2 === 0 ? 6 : -6, 0] }}
+                    transition={{ duration: 4 + index * 0.4, repeat: Infinity, ease: 'easeInOut' }}
+                    style={{
+                      padding: '0.95rem 1rem',
+                      borderRadius: '18px',
+                      background: 'rgba(255,255,255,0.055)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      gap: '1rem',
+                      color: '#fff'
+                    }}
+                  >
+                    <span style={{ color: '#a9a9c6', fontWeight: 700 }}>{label}</span>
+                    <span style={{ color: index % 2 === 0 ? '#00f5d4' : '#ff7d6b', fontWeight: 900 }}>{value}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
           </div>
         </MotionReveal>
 
-        {/* Play Store Steps - REDESIGNED */}
+        {/* Play Store Launch Control */}
         <MotionReveal delay={0.1}>
-          <div className="chapter-stack" style={{ marginBottom: '5rem' }}>
-            {playStoreSteps.map((step, idx) => (
-              <TiltCard key={idx} accent="#00f5d4" className="chapter-card gsap-child" style={{ maxWidth: '100%', display: 'flex', flexDirection: 'column', gap: '1.5rem', margin: '0' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '2rem', alignItems: 'center' }}>
-                  <div>
-                    <h3 style={{ color: '#fff', fontSize: '1.8rem', marginBottom: '1rem', fontWeight: 800 }}>{step.title}</h3>
-                    <p style={{ color: '#c8c8e0', fontSize: '1.1rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>{step.content}</p>
-                    
-                    <h4 style={{ color: '#00f5d4', fontSize: '1rem', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Action Steps</h4>
-                    <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: '0.8rem' }}>
-                      {step.steps.map((s, i) => (
-                        <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.8rem', background: 'rgba(255,255,255,0.03)', padding: '0.8rem 1.2rem', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                          <span style={{ color: '#ff2d55', fontWeight: 800, fontSize: '0.9rem' }}>0{i + 1}</span>
-                          <span style={{ color: '#fff', fontSize: '0.95rem', lineHeight: 1.5 }}>{s}</span>
-                        </li>
-                      ))}
-                    </ul>
+          <div style={{
+            margin: '2rem 0 5rem',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))',
+            gap: '1.3rem',
+            alignItems: 'stretch'
+          }}>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {playStoreSteps.map((step, index) => {
+                const isActive = index === activeDeployStep
+                return (
+                  <button
+                    key={step.title}
+                    type="button"
+                    onClick={() => setActiveDeployStep(index)}
+                    style={{
+                      textAlign: 'left',
+                      padding: '1rem',
+                      borderRadius: '20px',
+                      border: `1px solid ${isActive ? '#00f5d4' : 'rgba(255,255,255,0.08)'}`,
+                      background: isActive ? 'rgba(0,245,212,0.13)' : 'rgba(255,255,255,0.035)',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      boxShadow: isActive ? '0 18px 48px rgba(0,245,212,0.14)' : 'none'
+                    }}
+                  >
+                    <div style={{ color: isActive ? '#00f5d4' : '#7d8ea8', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.45rem' }}>
+                      Stage 0{index + 1}
+                    </div>
+                    <div style={{ fontWeight: 900, lineHeight: 1.35 }}>{step.title.replace(/^\d+\.\s*/, '')}</div>
+                  </button>
+                )
+              })}
+            </div>
+
+            <motion.div
+              key={activeDeployData.title}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.32 }}
+              style={{
+                overflow: 'hidden',
+                borderRadius: '30px',
+                border: '1px solid rgba(0,245,212,0.22)',
+                background: 'linear-gradient(145deg, rgba(0,245,212,0.09), rgba(255,45,85,0.07), rgba(255,255,255,0.035))',
+                boxShadow: '0 28px 80px rgba(0,0,0,0.28)'
+              }}
+            >
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '1.4rem', padding: '1.4rem' }}>
+                <div style={{ padding: '0.6rem' }}>
+                  <div style={{ color: '#00f5d4', fontSize: '0.76rem', letterSpacing: '0.18em', textTransform: 'uppercase', fontWeight: 900, marginBottom: '0.75rem' }}>
+                    Active launch stage
                   </div>
-                  
-                  {/* Visual Aid */}
-                  <div style={{ width: '400px', flexShrink: 0, borderRadius: '16px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.4)', position: 'relative' }}>
-                    <img src={step.image} alt={step.title} style={{ width: '100%', height: 'auto', display: 'block' }} />
-                    <a href={step.videoLink} target="_blank" rel="noopener noreferrer" style={{ position: 'absolute', bottom: 0, left: 0, width: '100%', background: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(10px)', padding: '0.8rem', display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#fff', textDecoration: 'none', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
-                      <span style={{ color: '#ff2d55', fontSize: '1.2rem' }}>▶️</span>
-                      <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>Watch: {step.videoDesc.split('-')[0].trim()}</span>
-                    </a>
+                  <h3 style={{ color: '#fff', fontSize: 'clamp(1.65rem, 3vw, 2.35rem)', marginBottom: '1rem', fontWeight: 900 }}>{activeDeployData.title}</h3>
+                  <p style={{ color: '#d7d7ea', fontSize: '1.02rem', lineHeight: 1.75, marginBottom: '1.2rem' }}>{activeDeployData.content}</p>
+
+                  <div style={{ display: 'grid', gap: '0.75rem' }}>
+                    {activeDeployData.steps.map((step, index) => (
+                      <div key={step} style={{ display: 'grid', gridTemplateColumns: '34px 1fr', gap: '0.8rem', alignItems: 'start', padding: '0.85rem', borderRadius: '16px', background: 'rgba(0,0,0,0.2)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                        <span style={{ width: '34px', height: '34px', borderRadius: '12px', display: 'grid', placeItems: 'center', background: 'rgba(0,245,212,0.14)', color: '#00f5d4', fontWeight: 900 }}>
+                          {index + 1}
+                        </span>
+                        <span style={{ color: '#fff', lineHeight: 1.55 }}>{step}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-              </TiltCard>
-            ))}
+
+                <div style={{ display: 'grid', gap: '1rem', alignContent: 'start' }}>
+                  <div style={{ borderRadius: '24px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.12)', background: '#050915', position: 'relative' }}>
+                    <img src={activeDeployData.image} alt={activeDeployData.title} style={{ width: '100%', display: 'block' }} />
+                    <div style={{ position: 'absolute', inset: 'auto 0 0 0', padding: '1rem', background: 'linear-gradient(180deg, transparent, rgba(0,0,0,0.82))' }}>
+                      <a href={activeDeployData.videoLink} target="_blank" rel="noopener noreferrer" className="arrow-link" style={{ color: '#fff', textDecoration: 'none', fontWeight: 900 }}>
+                        Watch guide: {activeDeployData.videoDesc} <span>→</span>
+                      </a>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.65rem' }}>
+                    {['AAB', 'Track', 'Review'].map((label, index) => (
+                      <div key={label} style={{ padding: '0.85rem', borderRadius: '16px', background: 'rgba(255,255,255,0.045)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
+                        <div style={{ color: index === 0 ? '#00f5d4' : index === 1 ? '#ffd166' : '#ff7d6b', fontWeight: 900 }}>{label}</div>
+                        <div style={{ color: '#a9a9c6', fontSize: '0.78rem', marginTop: '0.25rem' }}>checkpoint</div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
         </MotionReveal>
 
         {/* Relevant Projects Table / Grid */}
         <MotionReveal delay={0.2}>
-          <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 600 }}>Relevant Projects</h3>
-          <p style={{ color: '#a9a9c6', marginBottom: '2rem' }}>These open-source GitHub repos serve as hands-on examples. Clone them for demos or Run and Test projects.</p>
-          <div className="chapter-grid">
-            {relevantProjects.map((proj, i) => (
-              <NeonCard key={proj.name} className="gsap-child">
-                <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '0.8rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                    <h4 style={{ color: '#fff', fontSize: '1.15rem', fontWeight: 700, margin: 0 }}>{proj.name}</h4>
-                    <span style={{ background: '#7b2ff730', color: '#b388ff', padding: '0.2rem 0.6rem', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>{proj.module}</span>
-                  </div>
-                  <p style={{ color: '#c8c8e0', fontSize: '0.92rem', lineHeight: 1.5, flex: 1 }}>{proj.desc}</p>
-                  <a href={proj.link} className="arrow-link" style={{ fontSize: '0.9rem', color: '#00f5d4' }} target="_blank" rel="noopener noreferrer">
-                    View GitHub Repo <span>→</span>
-                  </a>
-                </div>
-              </NeonCard>
-            ))}
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'end', flexWrap: 'wrap', marginBottom: '1.5rem' }}>
+            <div>
+              <h3 style={{ color: '#fff', fontSize: 'clamp(1.8rem, 3vw, 2.55rem)', marginBottom: '0.65rem', fontWeight: 950, letterSpacing: '-0.04em' }}>Relevant Projects</h3>
+              <p style={{ color: '#a9a9c6', maxWidth: '860px', lineHeight: 1.7 }}>Open-source launch pads for testing real app structure, deployment readiness, and Run/Test workflows.</p>
+            </div>
+            <span style={{ padding: '0.8rem 1rem', borderRadius: '999px', color: '#00f5d4', border: '1px solid rgba(0,245,212,0.24)', background: 'rgba(0,245,212,0.08)', fontWeight: 900, letterSpacing: '0.08em', textTransform: 'uppercase', fontSize: '0.72rem' }}>
+              Bento repo dock
+            </span>
           </div>
+
+          <div className="repo-bento-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(12, 1fr)', gap: '1rem' }}>
+            {relevantProjects.map((proj, i) => {
+              const accents = ['#00f5d4', '#ff7d6b', '#ffd166', '#61a8ff', '#86ffb7']
+              const spans = [
+                { gridColumn: 'span 5', minHeight: '292px' },
+                { gridColumn: 'span 3', minHeight: '292px' },
+                { gridColumn: 'span 4', minHeight: '292px' },
+                { gridColumn: 'span 7', minHeight: '205px' },
+                { gridColumn: 'span 5', minHeight: '205px' }
+              ]
+              const accent = accents[i % accents.length]
+              const cardSpan = spans[i % spans.length]
+              return (
+                <motion.a
+                  key={proj.name}
+                  href={proj.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ y: -8, rotate: i % 2 === 0 ? -0.35 : 0.35 }}
+                  className="repo-bento-card gsap-child"
+                  style={{
+                    ...cardSpan,
+                    position: 'relative',
+                    overflow: 'hidden',
+                    padding: i === 0 ? '2rem' : '1.5rem',
+                    borderRadius: i === 0 ? '34px' : '28px',
+                    textDecoration: 'none',
+                    border: `1px solid ${accent}33`,
+                    background: `radial-gradient(circle at ${i % 2 === 0 ? '18% 18%' : '82% 20%'}, ${accent}24, transparent 35%), linear-gradient(145deg, rgba(6,10,26,0.98), rgba(12,8,30,0.94))`,
+                    boxShadow: `0 24px 70px ${accent}12`
+                  }}
+                >
+                  <div style={{ position: 'absolute', width: '160px', height: '160px', right: '-48px', bottom: '-48px', borderRadius: '999px', background: `${accent}18`, filter: 'blur(4px)' }} />
+                  <div style={{ position: 'relative', zIndex: 2, height: '100%', display: 'grid', alignContent: 'space-between', gap: '1.2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'flex-start' }}>
+                      <div>
+                        <div style={{ color: accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 950, marginBottom: '0.7rem' }}>Project 0{i + 1}</div>
+                        <h4 style={{ color: '#fff', fontSize: i === 0 ? 'clamp(1.7rem, 3vw, 2.35rem)' : 'clamp(1.2rem, 2vw, 1.55rem)', fontWeight: 950, lineHeight: 1.02, margin: 0, letterSpacing: '-0.04em' }}>{proj.name}</h4>
+                      </div>
+                      <span style={{ background: `${accent}1f`, color: accent, padding: '0.48rem 0.7rem', borderRadius: '12px', fontSize: '0.78rem', fontWeight: 900, border: `1px solid ${accent}28` }}>{proj.module}</span>
+                    </div>
+                    <div>
+                      <p style={{ color: '#c8c8e0', fontSize: i === 0 ? '1.02rem' : '0.94rem', lineHeight: 1.62, marginBottom: '1rem', maxWidth: i === 3 ? '720px' : '520px' }}>{proj.desc}</p>
+                      <span className="arrow-link" style={{ fontSize: '0.95rem', color: '#00f5d4', fontWeight: 900 }}>View GitHub Repo <span>→</span></span>
+                    </div>
+                  </div>
+                </motion.a>
+              )
+            })}
+          </div>
+          <style>{`
+            @media (max-width: 980px) {
+              .repo-bento-card {
+                grid-column: span 12 !important;
+                min-height: 220px !important;
+              }
+            }
+          `}</style>
         </MotionReveal>
 
         {/* Embedded Links */}
         <MotionReveal delay={0.2} style={{ marginTop: '5rem' }}>
           <h3 style={{ color: '#fff', fontSize: '1.5rem', marginBottom: '1.5rem', fontWeight: 600 }}>Embedded Links with Simulations</h3>
           <p style={{ color: '#a9a9c6', marginBottom: '2rem', maxWidth: '800px' }}>Interactive simulation links for testing logic, animations, and flows.</p>
-          <div className="chapter-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
+          <div className="embedded-link-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: '1.4rem', maxWidth: '1120px' }}>
             {embeddedLinks.map((link, i) => (
               <TerminalCard key={link.title} command={`open ${link.name.replace(/\s+/g, '_').toLowerCase()}`} className="gsap-child">
                 <div style={{ display: 'grid', gap: '0.6rem' }}>
@@ -7913,63 +8837,14 @@ function Module5_1Section() {
               </TerminalCard>
             ))}
           </div>
+          <style>{`
+            @media (max-width: 760px) {
+              .embedded-link-grid {
+                grid-template-columns: 1fr !important;
+              }
+            }
+          `}</style>
         </MotionReveal>
-
-        {/* Play Store Steps Sequence */}
-        <div style={{ marginTop: '6rem' }}>
-          {playStoreSteps.map((step, i) => {
-            const isEven = i % 2 === 0;
-            return (
-              <MotionReveal key={step.title} delay={0.1}>
-                <div 
-                  className="gsap-child"
-                  style={{ 
-                    display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', 
-                    gap: '3rem', alignItems: 'center', marginBottom: '5rem',
-                    direction: isEven ? 'ltr' : 'rtl'
-                  }}
-                >
-                  {/* Text Content */}
-                  <div style={{ direction: 'ltr' }}>
-                    <h3 style={{ color: '#fff', fontSize: '1.8rem', fontWeight: 800, marginBottom: '1.2rem', display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-                      <span style={{ fontSize: '1.2rem', color: '#f59e0b', background: '#f59e0b20', padding: '0.4rem 0.8rem', borderRadius: '8px' }}><i className="fas fa-play" /></span>
-                      {step.title}
-                    </h3>
-                    {step.content && <p style={{ color: '#c8c8e0', fontSize: '1.05rem', lineHeight: 1.7, marginBottom: '1.5rem' }}>{step.content}</p>}
-                    
-                    <div style={{ padding: '1.5rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '12px' }}>
-                      <h4 style={{ color: '#7b2ff7', fontSize: '1rem', letterSpacing: '1px', textTransform: 'uppercase', marginBottom: '1rem', fontWeight: 700 }}>Key Action Steps</h4>
-                      <ul style={{ display: 'grid', gap: '0.8rem', color: '#b0b0cc', fontSize: '0.95rem', margin: 0, paddingLeft: '1.2rem' }}>
-                        {step.steps.map((li, idx) => (
-                          <li key={idx} style={{ lineHeight: 1.5 }}>{li}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div style={{ marginTop: '1.5rem' }}>
-                      <a href={step.videoLink} className="arrow-link" style={{ color: '#ff2d55' }} target="_blank" rel="noopener noreferrer">
-                        <i className="fab fa-youtube" style={{ marginRight: '0.5rem' }}></i> {step.videoDesc} <span>→</span>
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Image Content */}
-                  <div style={{ direction: 'ltr' }}>
-                    <HoloCard style={{ padding: '0', overflow: 'hidden', height: '100%' }}>
-                      <div className="card-glass-tilt" style={{ border: 'none', background: 'transparent' }}>
-                        <img 
-                          src={step.image} 
-                          alt={step.title} 
-                          style={{ width: '100%', height: 'auto', display: 'block', borderBottom: '1px solid rgba(255,255,255,0.1)' }} 
-                        />
-                      </div>
-                    </HoloCard>
-                  </div>
-                </div>
-              </MotionReveal>
-            )
-          })}
-        </div>
 
       </div>
     </section>
