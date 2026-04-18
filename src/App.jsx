@@ -14,6 +14,19 @@ function ScrollToTop() {
 import { Canvas, useFrame } from '@react-three/fiber'
 import * as THREE from 'three'
 import gsap from 'gsap'
+
+/* ─── Mobile detection hook ─── */
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${breakpoint}px)`)
+    const handler = (e) => setIsMobile(e.matches)
+    setIsMobile(mql.matches)
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [breakpoint])
+  return isMobile
+}
 import './App.css'
 import CapstoneModule from './CapstoneModule'
 import ChapterActivities, { ActivityArtwork } from './ChapterActivities'
@@ -10291,6 +10304,7 @@ function DashboardSection() {
   const [activeFeat, setActiveFeat] = useState(0);
   const [activeAdminTab, setActiveAdminTab] = useState(adminFeatures[0]);
   const feat = dashboardFeatures[activeFeat];
+  const isMobile = useIsMobile();
 
   return (
     <section className="sec" id="dashboard-section" style={{ paddingTop: '0', paddingBottom: '80px' }}>
@@ -10383,225 +10397,387 @@ function DashboardSection() {
           }}>
             Dashboard Features
           </h2>
-          <p style={{ textAlign: 'center', color: '#b0b0cc', fontSize: '1.1rem', marginBottom: '3rem' }}>
-            Hover over any feature to expand its interactive panel ✦
+          <p style={{ textAlign: 'center', color: '#b0b0cc', fontSize: isMobile ? '0.95rem' : '1.1rem', marginBottom: isMobile ? '1.5rem' : '3rem' }}>
+            {isMobile ? 'Tap any feature to expand ✦' : 'Hover over any feature to expand its interactive panel ✦'}
           </p>
         </MotionReveal>
 
-        <div style={{ display: 'flex', height: '650px', gap: '1rem', width: '100%', marginBottom: '6rem' }}>
-          {dashboardFeatures.map((f, i) => {
-            const isActive = activeFeat === i;
-            return (
-              <motion.div
-                key={i}
-                layout
-                onMouseEnter={() => setActiveFeat(i)}
-                initial={{ flex: i === 0 ? 12 : 1 }}
-                animate={{ flex: isActive ? 12 : 1 }}
-                transition={{ type: 'spring', stiffness: 250, damping: 25 }}
-                style={{
-                  borderRadius: '24px',
-                  background: isActive ? `${f.color}15` : 'rgba(255,255,255,0.02)',
-                  border: isActive ? `1px solid ${f.color}50` : '1px solid rgba(255,255,255,0.08)',
-                  overflow: 'hidden',
-                  position: 'relative',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'flex-end',
-                  boxShadow: isActive ? `0 20px 60px -10px ${f.color}30` : 'none',
-                  minWidth: '60px',
-                }}
-              >
-                {/* Background Glow */}
-                {isActive && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.6 }}
-                    style={{
-                      position: 'absolute', top: '-10%', right: '-10%',
-                      width: '300px', height: '300px', borderRadius: '50%',
-                      background: `radial-gradient(circle, ${f.color}25 0%, transparent 70%)`,
-                      pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
-                    }}
-                  />
-                )}
+        {/* ── MOBILE: Vertical Expandable Accordion ── */}
+        {isMobile ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', width: '100%', marginBottom: '3rem' }}>
+            {dashboardFeatures.map((f, i) => {
+              const isActive = activeFeat === i;
+              return (
+                <motion.div
+                  key={i}
+                  layout
+                  onClick={() => setActiveFeat(isActive ? -1 : i)}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  style={{
+                    borderRadius: '16px',
+                    background: isActive ? `${f.color}12` : 'rgba(255,255,255,0.03)',
+                    border: isActive ? `1px solid ${f.color}40` : '1px solid rgba(255,255,255,0.08)',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    boxShadow: isActive ? `0 8px 30px -5px ${f.color}25` : 'none',
+                  }}
+                >
+                  {/* Collapsed Header Row */}
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: '0.75rem',
+                    padding: '1rem 1.25rem',
+                  }}>
+                    <div style={{
+                      width: '36px', height: '36px', borderRadius: '10px', flexShrink: 0,
+                      background: `${f.color}18`, border: `1px solid ${f.color}30`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      color: f.color, fontSize: '1rem',
+                    }}>✦</div>
+                    <span style={{ color: '#fff', fontWeight: 700, fontSize: '1rem', flex: 1 }}>{f.title}</span>
+                    <motion.span
+                      animate={{ rotate: isActive ? 180 : 0 }}
+                      transition={{ duration: 0.3 }}
+                      style={{ color: f.color, fontSize: '1.2rem', lineHeight: 1 }}
+                    >
+                      ▾
+                    </motion.span>
+                  </div>
 
-                {/* Collapsed Vertical Text */}
-                {!isActive && (
-                  <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
-                    transition={{ delay: 0.2 }}
-                    style={{ 
-                      width: '100%', height: '100%', display: 'flex', flexDirection: 'column', 
-                      alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '2rem' 
-                    }}
-                  >
-                    <div style={{ 
-                      writingMode: 'vertical-rl', transform: 'rotate(180deg)', 
-                      color: '#6c6c8e', fontWeight: 600, letterSpacing: '2px', 
-                      whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden', 
-                      maxHeight: '70%', fontSize: '0.9rem', marginBottom: '1.5rem',
-                      textTransform: 'uppercase'
-                    }}>
-                      {f.title}
-                    </div>
-                    <div style={{ color: f.color, fontSize: '1.2rem', opacity: 0.6 }}>✦</div>
-                  </motion.div>
-                )}
-
-                {/* Expanded Content View */}
-                {isActive && (
-                  <motion.div 
-                    initial={{ opacity: 0, x: -20 }} 
-                    animate={{ opacity: 1, x: 0 }} 
-                    transition={{ delay: 0.1, duration: 0.4 }}
-                    style={{ 
-                      minWidth: '600px', padding: '3rem', 
-                      display: 'flex', flexDirection: 'column', height: '100%', position: 'relative', zIndex: 1 
-                    }}
-                  >
-                    {f.image && (
-                      <div style={{ marginBottom: '1.5rem', width: '100%', borderRadius: '16px', overflow: 'hidden', border: `1px solid ${f.color}40`, flexShrink: 0 }}>
-                        <img src={f.image} alt={f.title} style={{ width: '100%', height: '320px', objectFit: 'cover', display: 'block' }} />
-                      </div>
-                    )}
-                    
-                    <div style={{ 
-                      display: 'inline-flex', alignItems: 'center', justifyContent: 'center', 
-                      width: '48px', height: '48px', borderRadius: '12px', 
-                      background: `${f.color}20`, border: `1px solid ${f.color}40`, 
-                      color: f.color, fontSize: '1.4rem', marginBottom: '1rem' 
-                    }}>
-                       ✦
-                    </div>
-                    
-                    <h3 style={{ fontSize: '2.5rem', color: '#fff', fontWeight: 800, marginBottom: '1rem' }}>
-                      {f.title}
-                    </h3>
-                    
-                    <p style={{ fontSize: '1.15rem', color: '#c8c8e0', lineHeight: 1.8, maxWidth: '80%', marginBottom: '2rem' }}>
-                      {f.desc}
-                    </p>
-
-                    {f.note && (
-                      <div style={{
-                        background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)',
-                        borderRadius: '16px', padding: '1.5rem', color: '#c8c8e0', fontSize: '1rem', lineHeight: 1.6,
-                        display: 'flex', gap: '1rem', maxWidth: '80%', marginTop: 'auto'
-                      }}>
-                        <span style={{ fontSize: '1.2rem' }}>💡</span>
-                        <div>
-                          <strong style={{ color: '#ffd700', display: 'block', marginBottom: '0.25rem' }}>Expert Tip:</strong> 
-                          {f.note}
+                  {/* Expanded Content */}
+                  <AnimatePresence initial={false}>
+                    {isActive && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ overflow: 'hidden' }}
+                      >
+                        <div style={{ padding: '0 1.25rem 1.25rem' }}>
+                          {f.image && (
+                            <div style={{ marginBottom: '1rem', borderRadius: '12px', overflow: 'hidden', border: `1px solid ${f.color}30` }}>
+                              <img src={f.image} alt={f.title} style={{ width: '100%', height: 'auto', maxHeight: '200px', objectFit: 'cover', display: 'block' }} />
+                            </div>
+                          )}
+                          <p style={{ fontSize: '0.9rem', color: '#c8c8e0', lineHeight: 1.7, margin: 0 }}>
+                            {f.desc}
+                          </p>
+                          {f.note && (
+                            <div style={{
+                              background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)',
+                              borderRadius: '12px', padding: '0.85rem 1rem', color: '#c8c8e0',
+                              fontSize: '0.85rem', lineHeight: 1.6, display: 'flex', gap: '0.6rem', marginTop: '0.75rem',
+                            }}>
+                              <span style={{ fontSize: '1rem' }}>💡</span>
+                              <div>
+                                <strong style={{ color: '#ffd700', display: 'block', marginBottom: '0.15rem', fontSize: '0.8rem' }}>Expert Tip:</strong>
+                                {f.note}
+                              </div>
+                            </div>
+                          )}
                         </div>
-                      </div>
+                      </motion.div>
                     )}
-                  </motion.div>
-                )}
-              </motion.div>
-            )
-          })}
-        </div>
+                  </AnimatePresence>
+                </motion.div>
+              )
+            })}
+          </div>
+        ) : (
+          /* ── DESKTOP: Horizontal Flex Accordion ── */
+          <div style={{ display: 'flex', height: '650px', gap: '1rem', width: '100%', marginBottom: '6rem' }}>
+            {dashboardFeatures.map((f, i) => {
+              const isActive = activeFeat === i;
+              return (
+                <motion.div
+                  key={i}
+                  layout
+                  onMouseEnter={() => setActiveFeat(i)}
+                  initial={{ flex: i === 0 ? 12 : 1 }}
+                  animate={{ flex: isActive ? 12 : 1 }}
+                  transition={{ type: 'spring', stiffness: 250, damping: 25 }}
+                  style={{
+                    borderRadius: '24px',
+                    background: isActive ? `${f.color}15` : 'rgba(255,255,255,0.02)',
+                    border: isActive ? `1px solid ${f.color}50` : '1px solid rgba(255,255,255,0.08)',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'flex-end',
+                    boxShadow: isActive ? `0 20px 60px -10px ${f.color}30` : 'none',
+                    minWidth: '60px',
+                  }}
+                >
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ duration: 0.6 }}
+                      style={{
+                        position: 'absolute', top: '-10%', right: '-10%',
+                        width: '300px', height: '300px', borderRadius: '50%',
+                        background: `radial-gradient(circle, ${f.color}25 0%, transparent 70%)`,
+                        pointerEvents: 'none', filter: 'blur(60px)', zIndex: 0
+                      }}
+                    />
+                  )}
+
+                  {!isActive && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      style={{
+                        width: '100%', height: '100%', display: 'flex', flexDirection: 'column',
+                        alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '2rem'
+                      }}
+                    >
+                      <div style={{
+                        writingMode: 'vertical-rl', transform: 'rotate(180deg)',
+                        color: '#6c6c8e', fontWeight: 600, letterSpacing: '2px',
+                        whiteSpace: 'nowrap', textOverflow: 'ellipsis', overflow: 'hidden',
+                        maxHeight: '70%', fontSize: '0.9rem', marginBottom: '1.5rem',
+                        textTransform: 'uppercase'
+                      }}>
+                        {f.title}
+                      </div>
+                      <div style={{ color: f.color, fontSize: '1.2rem', opacity: 0.6 }}>✦</div>
+                    </motion.div>
+                  )}
+
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1, duration: 0.4 }}
+                      style={{
+                        minWidth: '600px', padding: '3rem',
+                        display: 'flex', flexDirection: 'column', height: '100%', position: 'relative', zIndex: 1
+                      }}
+                    >
+                      {f.image && (
+                        <div style={{ marginBottom: '1.5rem', width: '100%', borderRadius: '16px', overflow: 'hidden', border: `1px solid ${f.color}40`, flexShrink: 0 }}>
+                          <img src={f.image} alt={f.title} style={{ width: '100%', height: '320px', objectFit: 'cover', display: 'block' }} />
+                        </div>
+                      )}
+
+                      <div style={{
+                        display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                        width: '48px', height: '48px', borderRadius: '12px',
+                        background: `${f.color}20`, border: `1px solid ${f.color}40`,
+                        color: f.color, fontSize: '1.4rem', marginBottom: '1rem'
+                      }}>
+                         ✦
+                      </div>
+
+                      <h3 style={{ fontSize: '2.5rem', color: '#fff', fontWeight: 800, marginBottom: '1rem' }}>
+                        {f.title}
+                      </h3>
+
+                      <p style={{ fontSize: '1.15rem', color: '#c8c8e0', lineHeight: 1.8, maxWidth: '80%', marginBottom: '2rem' }}>
+                        {f.desc}
+                      </p>
+
+                      {f.note && (
+                        <div style={{
+                          background: 'rgba(255,215,0,0.05)', border: '1px solid rgba(255,215,0,0.15)',
+                          borderRadius: '16px', padding: '1.5rem', color: '#c8c8e0', fontSize: '1rem', lineHeight: 1.6,
+                          display: 'flex', gap: '1rem', maxWidth: '80%', marginTop: 'auto'
+                        }}>
+                          <span style={{ fontSize: '1.2rem' }}>💡</span>
+                          <div>
+                            <strong style={{ color: '#ffd700', display: 'block', marginBottom: '0.25rem' }}>Expert Tip:</strong>
+                            {f.note}
+                          </div>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </div>
+        )}
 
         {/* ── Mac OS Command Center UI ── */}
         <MotionReveal>
           <div style={{
-            width: '100%', maxWidth: '1200px', margin: '0 auto 6rem',
+            width: '100%', maxWidth: '1200px', margin: isMobile ? '0 auto 3rem' : '0 auto 6rem',
             background: 'rgba(15, 15, 25, 0.6)', backdropFilter: 'blur(20px)',
-            borderRadius: '24px', border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: isMobile ? '16px' : '24px', border: '1px solid rgba(255,255,255,0.08)',
             boxShadow: '0 40px 100px rgba(0,0,0,0.5)', overflow: 'hidden',
-            display: 'flex', flexDirection: 'column', height: '600px'
+            display: 'flex', flexDirection: 'column', height: isMobile ? 'auto' : '600px',
+            minHeight: isMobile ? 'auto' : '600px',
           }}>
-            
+
             {/* Native OS Title Bar */}
             <div style={{
-              height: '48px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)',
-              display: 'flex', alignItems: 'center', padding: '0 20px', gap: '8px'
+              height: '40px', background: 'rgba(255,255,255,0.03)', borderBottom: '1px solid rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', padding: '0 16px', gap: '6px', flexShrink: 0,
             }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }} />
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }} />
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }} />
-              <div style={{ margin: '0 auto', color: '#6c6c8e', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '1px' }}>
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ff5f56' }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#ffbd2e' }} />
+              <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#27c93f' }} />
+              <div style={{ margin: '0 auto', color: '#6c6c8e', fontSize: isMobile ? '0.75rem' : '0.9rem', fontWeight: 600, letterSpacing: '1px' }}>
                 System Administration
               </div>
             </div>
 
-            <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-              
-              {/* Sidebar Navigation */}
-              <div style={{
-                width: '320px', background: 'rgba(0,0,0,0.2)', borderRight: '1px solid rgba(255,255,255,0.06)',
-                padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto'
-              }}>
-                <div style={{ color: '#6c6c8e', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', paddingLeft: '1rem', letterSpacing: '1px' }}>
-                  Control Panel
+            {isMobile ? (
+              /* ── MOBILE: Top scrollable tabs + stacked content ── */
+              <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                {/* Horizontal scrollable tab bar */}
+                <div style={{
+                  display: 'flex', gap: '0.5rem', overflowX: 'auto', WebkitOverflowScrolling: 'touch',
+                  padding: '0.75rem 1rem', borderBottom: '1px solid rgba(255,255,255,0.06)',
+                  background: 'rgba(0,0,0,0.15)', flexShrink: 0,
+                }}>
+                  {adminFeatures.map((feat) => {
+                    const isActive = activeAdminTab.id === feat.id;
+                    return (
+                      <motion.div
+                        key={feat.id}
+                        onClick={() => setActiveAdminTab(feat)}
+                        whileTap={{ scale: 0.95 }}
+                        style={{
+                          padding: '0.6rem 1rem', borderRadius: '10px', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', gap: '0.5rem',
+                          background: isActive ? `${feat.color}18` : 'transparent',
+                          border: isActive ? `1px solid ${feat.color}35` : '1px solid transparent',
+                          whiteSpace: 'nowrap', flexShrink: 0,
+                          transition: 'all 0.3s ease',
+                        }}
+                      >
+                        <span style={{ fontSize: '1.1rem' }}>{feat.icon}</span>
+                        <span style={{ color: isActive ? '#fff' : '#8e8ea0', fontWeight: isActive ? 600 : 500, fontSize: '0.8rem' }}>
+                          {feat.title}
+                        </span>
+                      </motion.div>
+                    )
+                  })}
                 </div>
-                {adminFeatures.map((feat) => {
-                  const isActive = activeAdminTab.id === feat.id;
-                  return (
-                    <motion.div
-                      key={feat.id}
-                      onClick={() => setActiveAdminTab(feat)}
-                      whileHover={{ x: 4, backgroundColor: isActive ? `${feat.color}20` : 'rgba(255,255,255,0.05)' }}
+
+                {/* Content area */}
+                <div style={{ padding: '1.25rem', flex: 1 }}>
+                  <motion.div
+                    key={activeAdminTab.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.35 }}
+                    style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <div style={{
+                        width: '44px', height: '44px', borderRadius: '12px', flexShrink: 0,
+                        background: `${activeAdminTab.color}18`, color: activeAdminTab.color,
+                        fontSize: '1.4rem', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        border: `1px solid ${activeAdminTab.color}30`,
+                      }}>
+                        {activeAdminTab.icon}
+                      </div>
+                      <h2 style={{ fontSize: '1.3rem', color: '#fff', fontWeight: 800, margin: 0 }}>
+                        {activeAdminTab.title}
+                      </h2>
+                    </div>
+                    <p style={{ color: '#c8c8e0', fontSize: '0.9rem', lineHeight: 1.7, margin: 0 }}>
+                      {activeAdminTab.desc}
+                    </p>
+
+                    {activeAdminTab.image && (
+                      <div style={{ borderRadius: '12px', overflow: 'hidden', border: `1px solid ${activeAdminTab.color}30` }}>
+                        <img src={activeAdminTab.image} alt={activeAdminTab.title} style={{ width: '100%', height: 'auto', maxHeight: '160px', objectFit: 'cover', display: 'block' }} />
+                      </div>
+                    )}
+
+                    <motion.button
+                      whileTap={{ scale: 0.95 }}
                       style={{
-                        padding: '1rem 1.25rem', borderRadius: '12px', cursor: 'pointer',
-                        display: 'flex', alignItems: 'center', gap: '1rem',
-                        background: isActive ? `${feat.color}15` : 'transparent',
-                        border: isActive ? `1px solid ${feat.color}40` : '1px solid transparent',
-                        transition: 'all 0.3s ease'
+                        alignSelf: 'flex-start', padding: '0.75rem 1.5rem', borderRadius: '10px',
+                        background: activeAdminTab.color, color: '#fff', fontWeight: 700, fontSize: '0.9rem',
+                        cursor: 'pointer', border: 'none', boxShadow: `0 6px 20px ${activeAdminTab.color}35`,
+                        display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
                       }}
                     >
-                      <span style={{ fontSize: '1.4rem' }}>{feat.icon}</span>
-                      <span style={{ color: isActive ? '#fff' : '#b0b0cc', fontWeight: isActive ? 600 : 500, fontSize: '1rem' }}>
-                        {feat.title}
-                      </span>
-                    </motion.div>
-                  )
-                })}
+                      Access {activeAdminTab.title} <span>→</span>
+                    </motion.button>
+                  </motion.div>
+                </div>
               </div>
-
-              {/* Main Content Area */}
-              <div style={{ flex: 1, padding: '4rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
-                <motion.div
-                  key={activeAdminTab.id}
-                  initial={{ opacity: 0, y: 15 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4 }}
-                  style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-                >
-                  <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '16px', background: `${activeAdminTab.color}20`, color: activeAdminTab.color, fontSize: '2rem', marginBottom: '1.5rem', border: `1px solid ${activeAdminTab.color}40` }}>
-                    {activeAdminTab.icon}
+            ) : (
+              /* ── DESKTOP: Sidebar + Content ── */
+              <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
+                <div style={{
+                  width: '320px', background: 'rgba(0,0,0,0.2)', borderRight: '1px solid rgba(255,255,255,0.06)',
+                  padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', overflowY: 'auto'
+                }}>
+                  <div style={{ color: '#6c6c8e', fontSize: '0.8rem', fontWeight: 700, textTransform: 'uppercase', marginBottom: '0.5rem', paddingLeft: '1rem', letterSpacing: '1px' }}>
+                    Control Panel
                   </div>
-                  <h2 style={{ fontSize: '2.5rem', color: '#fff', fontWeight: 800, marginBottom: '1.5rem' }}>
-                    {activeAdminTab.title}
-                  </h2>
-                  <p style={{ color: '#c8c8e0', fontSize: '1.2rem', lineHeight: 1.8, maxWidth: '800px', marginBottom: '2rem' }}>
-                    {activeAdminTab.desc}
-                  </p>
-                  
-                  {activeAdminTab.image && (
-                    <div style={{ marginTop: 'auto', borderRadius: '16px', overflow: 'hidden', border: `1px solid ${activeAdminTab.color}40`, boxShadow: `0 20px 40px ${activeAdminTab.color}20` }}>
-                      <img src={activeAdminTab.image} alt={activeAdminTab.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', display: 'block' }} />
-                    </div>
-                  )}
+                  {adminFeatures.map((feat) => {
+                    const isActive = activeAdminTab.id === feat.id;
+                    return (
+                      <motion.div
+                        key={feat.id}
+                        onClick={() => setActiveAdminTab(feat)}
+                        whileHover={{ x: 4, backgroundColor: isActive ? `${feat.color}20` : 'rgba(255,255,255,0.05)' }}
+                        style={{
+                          padding: '1rem 1.25rem', borderRadius: '12px', cursor: 'pointer',
+                          display: 'flex', alignItems: 'center', gap: '1rem',
+                          background: isActive ? `${feat.color}15` : 'transparent',
+                          border: isActive ? `1px solid ${feat.color}40` : '1px solid transparent',
+                          transition: 'all 0.3s ease'
+                        }}
+                      >
+                        <span style={{ fontSize: '1.4rem' }}>{feat.icon}</span>
+                        <span style={{ color: isActive ? '#fff' : '#b0b0cc', fontWeight: isActive ? 600 : 500, fontSize: '1rem' }}>
+                          {feat.title}
+                        </span>
+                      </motion.div>
+                    )
+                  })}
+                </div>
 
-                  <motion.button 
-                    whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
-                    style={{
-                      marginTop: activeAdminTab.image ? '1.5rem' : 'auto', alignSelf: 'flex-start',
-                      padding: '1rem 2rem', borderRadius: '12px', background: activeAdminTab.color, color: '#fff',
-                      fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', border: 'none',
-                      boxShadow: `0 10px 30px ${activeAdminTab.color}40`, display: 'inline-flex', alignItems: 'center', gap: '0.5rem'
-                    }}
+                <div style={{ flex: 1, padding: '4rem', display: 'flex', flexDirection: 'column', position: 'relative' }}>
+                  <motion.div
+                    key={activeAdminTab.id}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                    style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
                   >
-                    Access {activeAdminTab.title} <span>→</span>
-                  </motion.button>
-                </motion.div>
-              </div>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '64px', height: '64px', borderRadius: '16px', background: `${activeAdminTab.color}20`, color: activeAdminTab.color, fontSize: '2rem', marginBottom: '1.5rem', border: `1px solid ${activeAdminTab.color}40` }}>
+                      {activeAdminTab.icon}
+                    </div>
+                    <h2 style={{ fontSize: '2.5rem', color: '#fff', fontWeight: 800, marginBottom: '1.5rem' }}>
+                      {activeAdminTab.title}
+                    </h2>
+                    <p style={{ color: '#c8c8e0', fontSize: '1.2rem', lineHeight: 1.8, maxWidth: '800px', marginBottom: '2rem' }}>
+                      {activeAdminTab.desc}
+                    </p>
 
-            </div>
+                    {activeAdminTab.image && (
+                      <div style={{ marginTop: 'auto', borderRadius: '16px', overflow: 'hidden', border: `1px solid ${activeAdminTab.color}40`, boxShadow: `0 20px 40px ${activeAdminTab.color}20` }}>
+                        <img src={activeAdminTab.image} alt={activeAdminTab.title} style={{ width: '100%', maxHeight: '200px', objectFit: 'cover', display: 'block' }} />
+                      </div>
+                    )}
+
+                    <motion.button
+                      whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
+                      style={{
+                        marginTop: activeAdminTab.image ? '1.5rem' : 'auto', alignSelf: 'flex-start',
+                        padding: '1rem 2rem', borderRadius: '12px', background: activeAdminTab.color, color: '#fff',
+                        fontWeight: 700, fontSize: '1.1rem', cursor: 'pointer', border: 'none',
+                        boxShadow: `0 10px 30px ${activeAdminTab.color}40`, display: 'inline-flex', alignItems: 'center', gap: '0.5rem'
+                      }}
+                    >
+                      Access {activeAdminTab.title} <span>→</span>
+                    </motion.button>
+                  </motion.div>
+                </div>
+              </div>
+            )}
           </div>
         </MotionReveal>
 
