@@ -4646,8 +4646,30 @@ function TimeVault3DActivity({ activity, accent }) {
           border: `1px solid ${hexToRgba(accent, 0.24)}`,
           boxShadow: `0 20px 60px ${hexToRgba(accent, 0.1)}`
         }}>
-          <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
-            {isDone ? 'All crises resolved' : `Crisis ${currentCrisis + 1} of ${activity.crises.length}`}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', gap: '1rem' }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              {isDone ? 'All crises resolved' : `Crisis ${currentCrisis + 1} of ${activity.crises.length}`}
+            </div>
+            {!isDone && crisis && (
+              <button 
+                onClick={() => {
+                  setResolvedTool(crisis.answer)
+                  if (currentCrisis < activity.crises.length - 1) {
+                    setTimeout(() => {
+                      setCurrentCrisis(prev => prev + 1)
+                      setResolvedTool(null)
+                    }, 600)
+                  } else {
+                    setTimeout(() => setIsDone(true), 600)
+                  }
+                }}
+                style={{ padding: '0.4rem 0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.08)', color: '#fff', border: `1px solid ${hexToRgba(accent, 0.3)}`, cursor: 'pointer', fontSize: '0.75rem', fontWeight: 800, whiteSpace: 'nowrap' }}
+                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)' }}
+                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+              >
+                Skip ⏭
+              </button>
+            )}
           </div>
           <AnimatePresence mode="wait">
             <motion.div
@@ -4940,8 +4962,20 @@ function ControlTower3DActivity({ activity, accent }) {
           background: 'linear-gradient(155deg, rgba(8,12,28,0.98), rgba(5,14,24,0.96))',
           border: `1px solid ${hexToRgba(accent, 0.24)}`,
         }}>
-          <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
-            {isDone ? 'All cubes routed' : 'Active data cube'}
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', gap: '1rem' }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
+              {isDone ? 'All cubes routed' : 'Active data cube'}
+            </div>
+            {!isDone && current && (
+              <button 
+                onClick={() => setRouted([...routed, current])}
+                style={{ padding: '0.4rem 0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.08)', color: '#fff', border: `1px solid ${hexToRgba(accent, 0.3)}`, cursor: 'pointer', fontSize: '0.75rem', fontWeight: 800, whiteSpace: 'nowrap' }}
+                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)' }}
+                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
+              >
+                Skip ⏭
+              </button>
+            )}
           </div>
           <AnimatePresence mode="wait">
             <motion.div
