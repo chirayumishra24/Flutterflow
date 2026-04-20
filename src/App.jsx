@@ -12,6 +12,7 @@ function ScrollToTop() {
   return null;
 }
 import { Canvas, useFrame } from '@react-three/fiber'
+import { Float, MeshDistortMaterial, Sparkles } from '@react-three/drei'
 import * as THREE from 'three'
 import gsap from 'gsap'
 
@@ -5372,110 +5373,289 @@ function PageDesignSystem() {
         </MotionReveal>
       </div>
 
-      {/* Color System */}
-      <div style={{ marginTop: '6rem' }}>
-        <MotionReveal>
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-            <SlideInText text="Palette Lab" style={{ fontSize: '2.2rem', color: '#fff', marginBottom: '1rem', fontWeight: 800, textAlign: 'center' }} />
-            <p style={{ color: '#b0b0cc', fontSize: '1.05rem', lineHeight: 1.75, maxWidth: '800px', margin: '0 auto' }}>
-              Bring in palettes seamlessly through direct UI, AI generation, or image extraction to craft the perfect atmosphere.
-            </p>
-          </div>
-        </MotionReveal>
+      {/* ═══ Color Forge ═══ */}
+      <div style={{ marginTop: '6rem', position: 'relative' }}>
+        {/* Animated background mesh */}
+        <motion.div
+          animate={{
+            background: [
+              `radial-gradient(ellipse at 20% 50%, ${colorSources[activeColorSource].accent}18 0%, transparent 50%), radial-gradient(ellipse at 80% 30%, rgba(123,47,247,0.12) 0%, transparent 45%)`,
+              `radial-gradient(ellipse at 60% 20%, ${colorSources[activeColorSource].accent}22 0%, transparent 55%), radial-gradient(ellipse at 30% 70%, rgba(255,45,85,0.14) 0%, transparent 40%)`,
+              `radial-gradient(ellipse at 20% 50%, ${colorSources[activeColorSource].accent}18 0%, transparent 50%), radial-gradient(ellipse at 80% 30%, rgba(123,47,247,0.12) 0%, transparent 45%)`
+            ]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+          style={{ position: 'absolute', inset: '-80px -40px', borderRadius: '60px', filter: 'blur(40px)', pointerEvents: 'none', zIndex: 0 }}
+        />
 
-        <MotionReveal>
-          <div style={{ borderRadius: '32px', padding: '1.4rem', background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(8,10,22,0.95))', border: '1px solid rgba(255,255,255,0.08)', marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.8rem', marginBottom: '1rem' }}>
-              {colorSources.map((source, index) => {
-                const isActive = index === activeColorSource
-                return (
-                  <button
-                    key={source.title}
-                    type="button"
-                    onClick={() => setActiveColorSource(index)}
-                    style={{ padding: '0.8rem 1rem', borderRadius: '999px', border: `1px solid ${isActive ? source.accent : 'rgba(255,255,255,0.08)'}`, background: isActive ? `${source.accent}16` : 'rgba(255,255,255,0.04)', color: '#fff', cursor: 'pointer', fontWeight: 700 }}
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          {/* Forge Header */}
+          <MotionReveal>
+            <div style={{ textAlign: 'center', marginBottom: '3.5rem' }}>
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
+                style={{ width: '64px', height: '64px', margin: '0 auto 1.5rem', position: 'relative' }}
+              >
+                <div style={{ position: 'absolute', inset: 0, borderRadius: '16px', border: '2px solid rgba(255,45,85,0.4)', transform: 'rotate(0deg)' }} />
+                <div style={{ position: 'absolute', inset: '4px', borderRadius: '14px', border: '2px solid rgba(0,245,212,0.4)', transform: 'rotate(15deg)' }} />
+                <div style={{ position: 'absolute', inset: '8px', borderRadius: '12px', border: '2px solid rgba(166,124,255,0.4)', transform: 'rotate(30deg)' }} />
+                <div style={{ position: 'absolute', inset: '14px', borderRadius: '50%', background: `radial-gradient(circle, ${colorSources[activeColorSource].accent}, transparent)`, opacity: 0.6 }} />
+              </motion.div>
+              <TexturedMaskText
+                text="Color Forge"
+                imageUrl="https://images.unsplash.com/photo-1550684376-efcbd6e3f031?q=80&w=2070&auto=format&fit=crop"
+                style={{ fontSize: 'clamp(2.4rem, 5vw, 3.6rem)', fontWeight: 900, lineHeight: 1, margin: '0 auto 1rem' }}
+              />
+              <p style={{ color: '#b8c4e0', fontSize: '1.1rem', lineHeight: 1.8, maxWidth: '700px', margin: '0 auto' }}>
+                Forge your palettes through direct token editing, image extraction, or AI synthesis — each method feeds the same unified color system.
+              </p>
+            </div>
+          </MotionReveal>
+
+          {/* Source selection + 3D orb + detail panel */}
+          <MotionReveal>
+            <div style={{
+              borderRadius: '36px',
+              overflow: 'hidden',
+              border: `1px solid ${colorSources[activeColorSource].accent}44`,
+              background: 'linear-gradient(165deg, rgba(8,12,28,0.98) 0%, rgba(4,8,18,0.96) 100%)',
+              boxShadow: `0 40px 100px ${colorSources[activeColorSource].accent}15, inset 0 1px 0 rgba(255,255,255,0.06)`,
+              transition: 'border-color 0.6s, box-shadow 0.6s'
+            }}>
+              {/* Top bar with source tabs */}
+              <div style={{
+                padding: '1.2rem 1.5rem',
+                borderBottom: '1px solid rgba(255,255,255,0.06)',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap'
+              }}>
+                <div style={{ color: '#8ea0cc', fontSize: '0.72rem', letterSpacing: '0.2em', textTransform: 'uppercase', fontWeight: 800 }}>
+                  Color Source Pipeline
+                </div>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  {colorSources.map((source, index) => {
+                    const isActive = index === activeColorSource
+                    return (
+                      <motion.button
+                        key={source.title}
+                        type="button"
+                        onClick={() => setActiveColorSource(index)}
+                        whileHover={{ scale: 1.06, y: -2 }}
+                        whileTap={{ scale: 0.97 }}
+                        style={{
+                          padding: '0.65rem 1.1rem',
+                          borderRadius: '14px',
+                          border: `1.5px solid ${isActive ? source.accent : 'rgba(255,255,255,0.08)'}`,
+                          background: isActive
+                            ? `linear-gradient(135deg, ${source.accent}28, ${source.accent}10)`
+                            : 'rgba(255,255,255,0.03)',
+                          color: isActive ? '#fff' : '#96a8c4',
+                          cursor: 'pointer',
+                          fontWeight: 800,
+                          fontSize: '0.82rem',
+                          backdropFilter: 'blur(8px)',
+                          boxShadow: isActive ? `0 8px 24px ${source.accent}25` : 'none',
+                          transition: 'background 0.3s, border-color 0.3s, box-shadow 0.3s'
+                        }}
+                      >
+                        {source.title}
+                      </motion.button>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* Main content: 3D orb + detail */}
+              <div style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 320px) minmax(0, 1fr)', minHeight: '380px' }}>
+                {/* 3D Color Orb */}
+                <div style={{ position: 'relative', borderRight: '1px solid rgba(255,255,255,0.05)' }}>
+                  <div style={{ position: 'absolute', inset: 0 }}>
+                    <Canvas camera={{ position: [0, 0, 4], fov: 45 }} dpr={[1, 1.5]} style={{ background: 'transparent' }}>
+                      <ambientLight intensity={0.4} />
+                      <pointLight position={[3, 3, 3]} intensity={1.5} color={colorSources[activeColorSource].accent} />
+                      <pointLight position={[-3, -2, 2]} intensity={0.8} color="#7b2ff7" />
+                      <Float speed={2} rotationIntensity={0.8} floatIntensity={1.2}>
+                        <mesh>
+                          <icosahedronGeometry args={[1.15, 3]} />
+                          <MeshDistortMaterial
+                            color={colorSources[activeColorSource].accent}
+                            emissive={colorSources[activeColorSource].accent}
+                            emissiveIntensity={0.3}
+                            roughness={0.15}
+                            metalness={0.9}
+                            distort={0.35}
+                            speed={3}
+                          />
+                        </mesh>
+                      </Float>
+                      <Sparkles count={40} scale={4} size={2} speed={0.4} color={colorSources[activeColorSource].accent} />
+                    </Canvas>
+                  </div>
+                  {/* Overlay label */}
+                  <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', textAlign: 'center' }}>
+                    <motion.div
+                      key={activeColorSource}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      style={{
+                        padding: '0.5rem 0.8rem',
+                        borderRadius: '12px',
+                        background: 'rgba(4,8,18,0.85)',
+                        backdropFilter: 'blur(12px)',
+                        border: `1px solid ${colorSources[activeColorSource].accent}44`,
+                        color: colorSources[activeColorSource].accent,
+                        fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase'
+                      }}
+                    >
+                      {colorSources[activeColorSource].title}
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Detail panel */}
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={colorSources[activeColorSource].title}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ padding: '1.8rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}
                   >
-                    {source.title}
-                  </button>
+                    <div>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '0.35rem 0.8rem',
+                        borderRadius: '999px',
+                        background: `${colorSources[activeColorSource].accent}15`,
+                        border: `1px solid ${colorSources[activeColorSource].accent}35`,
+                        color: colorSources[activeColorSource].accent,
+                        fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase',
+                        marginBottom: '0.8rem'
+                      }}>
+                        Active Source
+                      </div>
+                      <h3 style={{ color: '#fff', fontSize: '1.75rem', fontWeight: 800, margin: '0 0 0.6rem', lineHeight: 1.2 }}>
+                        {colorSources[activeColorSource].title}
+                      </h3>
+                      <p style={{ color: '#c8d5ef', fontSize: '1.02rem', lineHeight: 1.75, margin: 0, maxWidth: '560px' }}>
+                        {colorSources[activeColorSource].desc}
+                      </p>
+                    </div>
+
+                    {/* Live swatch strip */}
+                    <div style={{ display: 'flex', gap: '0.6rem', alignItems: 'center' }}>
+                      {['#08111f', colorSources[activeColorSource].accent, '#eaf3ff', '#15243d'].map((swatch, i) => (
+                        <motion.div
+                          key={`${swatch}-${i}`}
+                          initial={{ scale: 0.8, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          transition={{ delay: i * 0.08, duration: 0.3 }}
+                          style={{
+                            width: '48px', height: '48px',
+                            borderRadius: '14px',
+                            background: swatch,
+                            border: `2px solid ${i === 1 ? `${swatch}cc` : 'rgba(255,255,255,0.1)'}`,
+                            boxShadow: i === 1 ? `0 6px 20px ${swatch}40` : 'none',
+                            cursor: 'pointer',
+                            transition: 'transform 0.2s'
+                          }}
+                        />
+                      ))}
+                      <div style={{ marginLeft: '0.5rem', color: '#6b7fa0', fontSize: '0.78rem', fontWeight: 700 }}>
+                        Generated palette
+                      </div>
+                    </div>
+
+                    {/* Embeds */}
+                    <EmbedGallery items={colorSources[activeColorSource].links} compact minWidth={260} style={{ marginTop: '0.5rem' }} />
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </div>
+          </MotionReveal>
+
+          {/* Method cards - orbital grid */}
+          <div style={{ marginTop: '3rem' }}>
+            <MotionReveal>
+              <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                <h3 style={{ color: '#fff', fontSize: '1.5rem', fontWeight: 800, margin: '0 0 0.5rem' }}>Five Ways to Forge</h3>
+                <p style={{ color: '#96a8c4', fontSize: '0.95rem' }}>Each path feeds into the same unified token system.</p>
+              </div>
+            </MotionReveal>
+
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '1.2rem',
+            }}>
+              {[
+                { title: 'Add / Replace Colors', desc: 'Tweak the 16 predefined standard semantic colors or add completely custom tokens.', icon: '🎯', links: [{ href: 'https://demo.arcade.software/TM3a3VZXOAqip3SiayYS?embed&show_copy_link=true', label: 'Add Color' }, { href: 'https://demo.arcade.software/l7w7ZcWyULeWPZ3isSSf?embed&show_copy_link=true', label: 'Update Color' }] },
+                { title: 'Explore Usage', desc: 'Scan your project for ad-hoc unlinked hex codes and instantly lift them into your global semantic palette.', icon: '🔍', links: [{ href: 'https://demo.arcade.software/hisiTB9yPaaJCYQmHowL?embed&show_copy_link=true', label: 'Demo' }] },
+                { title: 'Import from Coolors', desc: 'Found a perfect palette on Coolors.co? Just export the object code and paste it right into FlutterFlow.', icon: '🌈', links: [{ href: 'https://demo.arcade.software/3DVzE5PVlDbxEm77zvI6?embed&show_copy_link=true', label: 'Demo' }] },
+                { title: 'Extract from Image', desc: 'Upload a mood board or hero photo and let FlutterFlow isolate the dominant and accent colors automatically.', icon: '🖼️', links: [{ href: 'https://demo.arcade.software/ASEzke6PpaugRWSqRh3X?embed&show_copy_link=true', label: 'Demo' }] },
+                { title: 'AI Generation', desc: 'Describe a feeling or scene (e.g. "Neon Cyberpunk Cafe") and AI will synthesize a complete dark/light palette.', icon: '✨', links: [{ href: 'https://www.loom.com/embed/629f5ee88e26466eaa07b956a7c8a963?sid=38a0ec79-0fa6-4de6-a5fe-58a016f40921', label: 'Video Guide' }] }
+              ].map((item, i) => {
+                const accentColors = ['#ff2d55', '#00f5d4', '#ffd700', '#a67cff', '#ff9f0a']
+                const accent = accentColors[i]
+                return (
+                  <MotionReveal key={item.title} delay={i * 0.08}>
+                    <motion.div
+                      whileHover={{ y: -8, scale: 1.02 }}
+                      transition={{ duration: 0.3 }}
+                      style={{
+                        height: '100%',
+                        padding: '1.6rem',
+                        borderRadius: '28px',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        background: `linear-gradient(160deg, ${accent}12 0%, rgba(8,12,24,0.96) 50%, ${accent}08 100%)`,
+                        border: `1px solid ${accent}30`,
+                        boxShadow: `0 16px 48px ${accent}12`,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '0.8rem',
+                        cursor: 'default'
+                      }}
+                    >
+                      {/* Corner glow */}
+                      <div style={{ position: 'absolute', top: '-30px', right: '-30px', width: '120px', height: '120px', borderRadius: '50%', background: `radial-gradient(circle, ${accent}25 0%, transparent 70%)`, pointerEvents: 'none' }} />
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <div style={{
+                          width: '48px', height: '48px', borderRadius: '16px',
+                          background: `${accent}18`, display: 'grid', placeItems: 'center',
+                          fontSize: '1.4rem', border: `1px solid ${accent}30`
+                        }}>
+                          {item.icon}
+                        </div>
+                        <div style={{
+                          padding: '0.3rem 0.65rem', borderRadius: '999px',
+                          background: `${accent}12`, border: `1px solid ${accent}25`,
+                          color: accent, fontSize: '0.65rem', fontWeight: 800,
+                          letterSpacing: '0.14em', textTransform: 'uppercase'
+                        }}>
+                          Method {i + 1}
+                        </div>
+                      </div>
+                      
+                      <h3 style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 800, margin: 0, lineHeight: 1.3 }}>{item.title}</h3>
+                      <p style={{ color: '#b8c4dd', fontSize: '0.9rem', lineHeight: 1.65, margin: 0, flex: 1 }}>{item.desc}</p>
+                      
+                      <div style={{ display: 'flex', gap: '0.7rem', flexWrap: 'wrap' }}>
+                        {item.links.map(link => (
+                          <a key={link.label} href={link.href} className="arrow-link" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.82rem' }}>
+                            {link.label} <span>→</span>
+                          </a>
+                        ))}
+                      </div>
+                      <EmbedGallery items={item.links} compact minWidth={240} />
+                    </motion.div>
+                  </MotionReveal>
                 )
               })}
             </div>
-            <motion.div
-              key={colorSources[activeColorSource].title}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-              className="chapter-split"
-              style={{ alignItems: 'stretch', gap: '1.4rem' }}
-            >
-              <div className="split-col" style={{ display: 'grid', gap: '1rem' }}>
-                <div style={{ color: colorSources[activeColorSource].accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Active source</div>
-                <div style={{ color: '#fff', fontSize: '1.6rem', lineHeight: 1.2, fontWeight: 800 }}>{colorSources[activeColorSource].title}</div>
-                <p style={{ color: '#cdd8f0', lineHeight: 1.75, fontSize: '1rem' }}>{colorSources[activeColorSource].desc}</p>
-                <div className="responsive-grid" style={{ gap: '0.8rem', maxWidth: '520px'  }}>
-                  {['#08111f', colorSources[activeColorSource].accent, '#eaf3ff', '#15243d'].map((swatch, i) => (
-                    <div key={`${swatch}-${i}`} style={{ borderRadius: '20px', background: swatch, aspectRatio: '1 / 1', border: '1px solid rgba(255,255,255,0.1)' }} />
-                  ))}
-                </div>
-              </div>
-              <div className="split-col">
-                <EmbedGallery items={colorSources[activeColorSource].links} compact minWidth={280} style={{ marginTop: 0 }} />
-              </div>
-            </motion.div>
           </div>
-        </MotionReveal>
-
-        <div className="chapter-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))' }}>
-          {[
-            {
-              title: 'Add / Replace Colors',
-              desc: 'Tweak the 16 predefined standard semantic colors or add completely custom tokens.',
-              action: 'View Demos',
-              links: [
-                { href: 'https://demo.arcade.software/TM3a3VZXOAqip3SiayYS?embed&show_copy_link=true', label: 'Add Color' },
-                { href: 'https://demo.arcade.software/l7w7ZcWyULeWPZ3isSSf?embed&show_copy_link=true', label: 'Update Color' }
-              ]
-            },
-            {
-              title: 'Explore Usage',
-              desc: 'Scan your project for ad-hoc unlinked hex codes and instantly lift them into your global semantic palette.',
-              action: 'View Demo',
-              links: [{ href: 'https://demo.arcade.software/hisiTB9yPaaJCYQmHowL?embed&show_copy_link=true', label: 'Demo' }]
-            },
-            {
-              title: 'Import from Coolors',
-              desc: 'Found a perfect palette on Coolors.co? Just export the object code and paste it right into FlutterFlow.',
-              action: 'View Demo',
-              links: [{ href: 'https://demo.arcade.software/3DVzE5PVlDbxEm77zvI6?embed&show_copy_link=true', label: 'Demo' }]
-            },
-            {
-              title: 'Extract from Image',
-              desc: 'Upload a mood board or hero photo and let FlutterFlow isolate the dominant and accent colors automatically.',
-              action: 'View Demo',
-              links: [{ href: 'https://demo.arcade.software/ASEzke6PpaugRWSqRh3X?embed&show_copy_link=true', label: 'Demo' }]
-            },
-            {
-              title: 'AI Generation',
-              desc: 'Describe a feeling or scene (e.g. "Neon Cyberpunk Cafe") and AI will synthesize a complete dark/light palette.',
-              action: 'View Guide',
-              links: [{ href: 'https://www.loom.com/embed/629f5ee88e26466eaa07b956a7c8a963?sid=38a0ec79-0fa6-4de6-a5fe-58a016f40921', label: 'Video Guide' }]
-            }
-          ].map((item, i) => (
-            <MotionReveal key={item.title} delay={i * 0.1}>
-              <TiltCard accent={['#ff2d55', '#00f5d4', '#ffd700', '#a67cff', '#ff9f0a'][i % 5]} style={{ height: '100%' }}>
-                <h3 style={{ color: '#fff', fontSize: '1.3rem', marginBottom: '0.6rem' }}>{item.title}</h3>
-                <p style={{ color: '#c8c8e0', fontSize: '0.95rem', lineHeight: 1.6, marginBottom: '1.5rem' }}>{item.desc}</p>
-                <div style={{ display: 'flex', gap: '0.8rem', flexWrap: 'wrap', marginTop: 'auto' }}>
-                  {item.links.map(link => (
-                    <a key={link.label} href={link.href} className="arrow-link" target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem' }}>
-                      {link.label} <span>→</span>
-                    </a>
-                  ))}
-                </div>
-                <EmbedGallery items={item.links} compact minWidth={240} />
-              </TiltCard>
-            </MotionReveal>
-          ))}
         </div>
       </div>
 

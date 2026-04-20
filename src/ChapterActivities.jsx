@@ -436,18 +436,18 @@ chapterActivities['4-1'] = {
 
 chapterActivities['4-2'] = {
   accent: '#ff9a5c',
-  subtitle: 'Choose the correct recovery or history action — read the scenario carefully.',
+  subtitle: 'Unlock the time vault by matching each crisis to the correct history crystal.',
   activity: {
-    type: 'time_machine',
+    type: 'time_vault_3d',
     visualKind: 'audit',
-    title: 'History Recovery Console',
-    instructions: 'Read the active scenario, then choose the safest history action: inspect, checkpoint, explain, or restore.',
-    success: 'Every timeline crisis resolved with surgical precision!',
+    title: 'Version Time Vault',
+    instructions: 'Each crisis scenario needs the right tool crystal. Click the matching crystal to slot it into the vault and progress to the next crisis.',
+    success: 'Every timeline crisis resolved — the vault is fully unlocked!',
     tools: [
-      { id: 'peek', label: 'Peek', desc: 'View older work without changing or replacing anything.' },
-      { id: 'commit', label: 'Commits', desc: 'Create traceable checkpoints the team can review.' },
-      { id: 'deprecated', label: 'Deprecated Versions', desc: 'Acknowledge the old version system that is no longer the workflow.' },
-      { id: 'restore', label: 'Restore', desc: 'Permanently bring back an older state, replacing current work.' },
+      { id: 'peek', label: 'Peek', desc: 'View older work without changing or replacing anything.', color: '#61a8ff' },
+      { id: 'commit', label: 'Commits', desc: 'Create traceable checkpoints the team can review.', color: '#86ffb7' },
+      { id: 'deprecated', label: 'Deprecated Versions', desc: 'Acknowledge the old version system that is no longer the workflow.', color: '#ffd166' },
+      { id: 'restore', label: 'Restore', desc: 'Permanently bring back an older state, replacing current work.', color: '#ff7d6b' },
     ],
     crises: [
       { id: 'c1', prompt: 'The client wants to compare yesterday\'s header color to today\'s without losing any current work.', answer: 'peek' },
@@ -461,28 +461,28 @@ chapterActivities['4-2'] = {
 
 chapterActivities['4-3'] = {
   accent: '#6cf0a8',
-  subtitle: 'Sort environment targets — some are tricky to classify.',
+  subtitle: 'Route data cubes to the correct server tower in the 3D control room.',
   activity: {
-    type: 'server_deploy',
+    type: 'control_tower_3d',
     visualKind: 'configure',
-    title: 'Environment Router',
-    instructions: 'Route each config packet to Development, Staging, or Production based on how risky and public it is.',
-    success: 'All endpoints are correctly routed to the right environments!',
-    racks: [
-      { id: 'dev', label: 'Development', color: '#61a8ff' },
-      { id: 'staging', label: 'Staging', color: '#ffd166' },
-      { id: 'prod', label: 'Production', color: '#ff2d55' },
+    title: 'Environment Control Tower',
+    instructions: 'Each data cube carries a config label. Click the correct server tower (Development, Staging, or Production) to route it. Wrong towers reject the cube!',
+    success: 'All data cubes routed — the control tower is fully synchronized!',
+    towers: [
+      { id: 'dev', label: 'Development', color: '#61a8ff', desc: 'Build + experiment' },
+      { id: 'staging', label: 'Staging', color: '#ffd166', desc: 'Mirror + verify' },
+      { id: 'prod', label: 'Production', color: '#ff2d55', desc: 'Serve + protect' },
     ],
-    disks: [
-      { id: 'd1', label: 'Experimental API base URL for new feature testing', rackId: 'dev' },
-      { id: 'd2', label: 'Local-only mock database used during development', rackId: 'dev' },
-      { id: 'd3', label: 'Near-real backend that mirrors production for final QA', rackId: 'staging' },
-      { id: 'd4', label: 'Prelaunch Firebase project used for sign-off testing', rackId: 'staging' },
-      { id: 'd5', label: 'Live Stripe payments endpoint handling real money', rackId: 'prod' },
-      { id: 'd6', label: 'Final customer-facing web domain with SSL', rackId: 'prod' },
-      { id: 'd7', label: 'Test Stripe endpoint with sandbox API keys', rackId: 'staging' },
-      { id: 'd8', label: 'Hot-reload debug server running on localhost', rackId: 'dev' },
-      { id: 'd9', label: 'CDN-cached production asset delivery pipeline', rackId: 'prod' },
+    cubes: [
+      { id: 'd1', label: 'Experimental API base URL for new feature testing', towerId: 'dev' },
+      { id: 'd2', label: 'Local-only mock database used during development', towerId: 'dev' },
+      { id: 'd3', label: 'Near-real backend that mirrors production for final QA', towerId: 'staging' },
+      { id: 'd4', label: 'Prelaunch Firebase project used for sign-off testing', towerId: 'staging' },
+      { id: 'd5', label: 'Live Stripe payments endpoint handling real money', towerId: 'prod' },
+      { id: 'd6', label: 'Final customer-facing web domain with SSL', towerId: 'prod' },
+      { id: 'd7', label: 'Test Stripe endpoint with sandbox API keys', towerId: 'staging' },
+      { id: 'd8', label: 'Hot-reload debug server running on localhost', towerId: 'dev' },
+      { id: 'd9', label: 'CDN-cached production asset delivery pipeline', towerId: 'prod' },
     ],
   },
 }
@@ -760,7 +760,9 @@ function getActivityTypeLabel(type) {
     toolbelt: 'Utility Toolbelt',
     branch_graph: 'Git Graph',
     time_machine: 'Time Machine',
+    time_vault_3d: 'Version Time Vault',
     server_deploy: 'Server Deploy',
+    control_tower_3d: 'Control Tower',
     launchpad: 'Launchpad',
   }
 
@@ -2040,7 +2042,7 @@ return (
                   {isNext && <Sparkles position={[0, 0.5, 0]} count={15} scale={1} size={2} color={color} speed={2} />}
                   
                   {/* Label */}
-                  <Text position={[0, -0.2, 0]} fontSize={0.12} color="#fff" font={undefined}>
+                  <Text position={[0, -0.45, 0]} fontSize={0.12} color="#fff" font={undefined} maxWidth={1.2} textAlign="center" anchorY="top">
                     {station.label}
                   </Text>
                 </group>
@@ -4442,6 +4444,587 @@ function ServerDeployActivity({ activity, accent }) {
     </div>
   )
 }
+// --- Chapter 4-2: Version Time Vault (3D) ---
+function VaultCrystal3D({ tool, index, total, isActive, isError, isResolved, onClick }) {
+  const meshRef = useRef()
+  const angle = (index / total) * Math.PI * 2
+
+  useFrame((state) => {
+    if (!meshRef.current) return
+    const t = state.clock.getElapsedTime()
+    const radius = 2.2
+    meshRef.current.position.x = Math.cos(angle + t * 0.3) * radius
+    meshRef.current.position.z = Math.sin(angle + t * 0.3) * radius
+    meshRef.current.position.y = Math.sin(t * 1.2 + index * 1.5) * 0.3 + 0.5
+    meshRef.current.rotation.y = t * 0.5
+    meshRef.current.rotation.z = Math.sin(t * 0.8 + index) * 0.2
+  })
+
+  const color = tool.color || '#ffffff'
+  const emissiveIntensity = isActive ? 0.8 : isResolved ? 1.2 : isError ? 0.3 : 0.4
+
+  return (
+    <group 
+      ref={meshRef} 
+      onClick={onClick} 
+      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
+      onPointerLeave={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto' }}
+    >
+      <mesh>
+        <octahedronGeometry args={[0.35, 0]} />
+        <meshPhysicalMaterial
+          color={isError ? '#ff2d55' : isResolved ? '#86ffb7' : color}
+          emissive={isError ? '#ff2d55' : isResolved ? '#86ffb7' : color}
+          emissiveIntensity={emissiveIntensity}
+          roughness={0.1}
+          metalness={0.8}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+          transparent
+          opacity={0.9}
+        />
+      </mesh>
+      <Text
+        position={[0, -0.55, 0]}
+        fontSize={0.15}
+        color={color}
+        anchorX="center"
+        anchorY="middle"
+        font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2"
+      >
+        {tool.label.split(' ')[0]}
+      </Text>
+    </group>
+  )
+}
+
+function VaultCore3D({ progress, accent }) {
+  const meshRef = useRef()
+  const ringRefs = useRef([])
+
+  useFrame((state) => {
+    if (!meshRef.current) return
+    const t = state.clock.getElapsedTime()
+    meshRef.current.rotation.y = t * 0.15
+    meshRef.current.rotation.x = Math.sin(t * 0.1) * 0.1
+    ringRefs.current.forEach((ring, i) => {
+      if (ring) {
+        ring.rotation.z = t * (0.2 + i * 0.15) * (i % 2 === 0 ? 1 : -1)
+      }
+    })
+  })
+
+  return (
+    <group ref={meshRef}>
+      {/* Central vault sphere */}
+      <mesh>
+        <sphereGeometry args={[0.55, 32, 32]} />
+        <meshPhysicalMaterial
+          color="#141a2e"
+          emissive={accent}
+          emissiveIntensity={progress * 0.5}
+          roughness={0.2}
+          metalness={0.95}
+          clearcoat={1}
+        />
+      </mesh>
+      {/* Concentric rings */}
+      {[0.9, 1.2, 1.5].map((radius, i) => (
+        <mesh key={i} ref={el => ringRefs.current[i] = el} rotation={[Math.PI / 2 + i * 0.3, i * 0.4, 0]}>
+          <torusGeometry args={[radius, 0.025, 8, 64]} />
+          <meshStandardMaterial
+            color={i < Math.ceil(progress * 3) ? accent : '#2a3050'}
+            emissive={i < Math.ceil(progress * 3) ? accent : '#000000'}
+            emissiveIntensity={i < Math.ceil(progress * 3) ? 0.6 : 0}
+            transparent
+            opacity={0.7}
+          />
+        </mesh>
+      ))}
+    </group>
+  )
+}
+
+function TimeVault3DActivity({ activity, accent }) {
+  const [currentCrisis, setCurrentCrisis] = useState(0)
+  const [isDone, setIsDone] = useState(false)
+  const [errorTool, setErrorTool] = useState(null)
+  const [resolvedTool, setResolvedTool] = useState(null)
+
+  const crisis = activity.crises[currentCrisis]
+
+  const handleToolClick = (toolId) => {
+    if (isDone || resolvedTool) return
+    if (toolId === crisis.answer) {
+      setResolvedTool(toolId)
+      if (currentCrisis < activity.crises.length - 1) {
+        setTimeout(() => {
+          setCurrentCrisis(prev => prev + 1)
+          setResolvedTool(null)
+        }, 600)
+      } else {
+        setIsDone(true)
+      }
+    } else {
+      setErrorTool(toolId)
+      setTimeout(() => setErrorTool(null), 600)
+    }
+  }
+
+  const progress = isDone ? 1 : currentCrisis / activity.crises.length
+
+  const showCelebration = useCelebration(isDone, () => {
+    setCurrentCrisis(0)
+    setIsDone(false)
+    setErrorTool(null)
+    setResolvedTool(null)
+  })
+
+  return (
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.5rem' }}>
+      {/* 3D Vault Scene */}
+      <div style={{
+        height: '420px',
+        borderRadius: '28px',
+        overflow: 'hidden',
+        border: `1px solid ${hexToRgba(accent, 0.3)}`,
+        background: 'linear-gradient(180deg, rgba(8,12,28,0.98) 0%, rgba(4,8,18,0.96) 100%)',
+        boxShadow: `0 30px 80px ${hexToRgba(accent, 0.15)}`,
+        position: 'relative'
+      }}>
+        <Canvas camera={{ position: [0, 1.5, 5.5], fov: 50 }} dpr={[1, 1.5]}>
+          <ambientLight intensity={0.3} />
+          <pointLight position={[4, 4, 4]} intensity={2} color={accent} />
+          <pointLight position={[-3, -2, 3]} intensity={1} color="#7b2ff7" />
+
+          <VaultCore3D progress={progress} accent={accent} />
+
+          {activity.tools.map((tool, i) => (
+            <VaultCrystal3D
+              key={tool.id}
+              tool={tool}
+              index={i}
+              total={activity.tools.length}
+              isActive={crisis && crisis.answer === tool.id && !isDone}
+              isError={errorTool === tool.id}
+              isResolved={resolvedTool === tool.id || isDone}
+              onClick={(e) => { e.stopPropagation(); handleToolClick(tool.id) }}
+            />
+          ))}
+
+          <Sparkles count={60} scale={6} size={1.5} speed={0.3} color={accent} opacity={0.5} />
+          <ContactShadows position={[0, -1.5, 0]} opacity={0.4} blur={2} far={4} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate={false} maxPolarAngle={Math.PI / 1.8} minPolarAngle={Math.PI / 4} />
+        </Canvas>
+
+        {/* Progress overlay */}
+        <div style={{ position: 'absolute', top: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+          <div style={{ padding: '0.5rem 1rem', borderRadius: '14px', background: 'rgba(4,8,18,0.85)', backdropFilter: 'blur(10px)', border: `1px solid ${hexToRgba(accent, 0.25)}` }}>
+            <div style={{ color: accent, fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Vault Progress</div>
+            <div style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 900 }}>{currentCrisis + (isDone ? 1 : 0)} / {activity.crises.length}</div>
+          </div>
+          <div style={{ display: 'flex', gap: '0.35rem' }}>
+            {activity.crises.map((_, i) => (
+              <div key={i} style={{
+                width: i <= currentCrisis - 1 || isDone ? '24px' : '10px', height: '10px',
+                borderRadius: '999px',
+                background: i <= currentCrisis - 1 || isDone ? accent : i === currentCrisis && !isDone ? `${accent}66` : 'rgba(255,255,255,0.15)',
+                transition: 'all 0.3s'
+              }} />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Crisis + Tool UI */}
+      <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start' }}>
+        {/* Crisis panel */}
+        <div style={{
+          borderRadius: '24px',
+          padding: '1.4rem',
+          background: 'linear-gradient(155deg, rgba(8,12,28,0.98), rgba(5,14,24,0.96))',
+          border: `1px solid ${hexToRgba(accent, 0.24)}`,
+          boxShadow: `0 20px 60px ${hexToRgba(accent, 0.1)}`
+        }}>
+          <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+            {isDone ? 'All crises resolved' : `Crisis ${currentCrisis + 1} of ${activity.crises.length}`}
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentCrisis}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              style={{ color: '#fff', fontSize: '1.08rem', lineHeight: 1.7, fontWeight: 600 }}
+            >
+              {isDone ? activity.success : crisis?.prompt}
+            </motion.div>
+          </AnimatePresence>
+
+          {errorTool && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              style={{ marginTop: '1rem', padding: '0.8rem', borderRadius: '14px', background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.25)', color: '#ff95a4', fontSize: '0.85rem' }}
+            >
+              Wrong crystal — re-read the scenario carefully.
+            </motion.div>
+          )}
+          {resolvedTool && !isDone && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              style={{ marginTop: '1rem', padding: '0.8rem', borderRadius: '14px', background: 'rgba(134,255,183,0.1)', border: '1px solid rgba(134,255,183,0.25)', color: '#86ffb7', fontSize: '0.85rem' }}
+            >
+              Correct! Crystal locked into the vault.
+            </motion.div>
+          )}
+        </div>
+
+        {/* Tool crystal buttons */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+          {activity.tools.map((tool) => {
+            const isError = errorTool === tool.id
+            const isResolved = resolvedTool === tool.id
+            return (
+              <motion.button
+                key={tool.id}
+                type="button"
+                onClick={() => handleToolClick(tool.id)}
+                whileHover={{ y: -4, scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                className={isError ? 'jam-shake' : ''}
+                style={{
+                  padding: '1.1rem',
+                  borderRadius: '22px',
+                  textAlign: 'left',
+                  cursor: isDone ? 'default' : 'pointer',
+                  background: isResolved ? 'linear-gradient(145deg, rgba(134,255,183,0.12), rgba(255,255,255,0.03))' : isError ? 'linear-gradient(145deg, rgba(255,45,85,0.12), rgba(255,255,255,0.03))' : `linear-gradient(145deg, ${hexToRgba(tool.color, 0.12)}, rgba(255,255,255,0.03))`,
+                  border: `1px solid ${isResolved ? 'rgba(134,255,183,0.3)' : isError ? 'rgba(255,45,85,0.3)' : hexToRgba(tool.color, 0.35)}`,
+                  color: '#fff'
+                }}
+              >
+                <div style={{ width: '40px', height: '40px', borderRadius: '14px', display: 'grid', placeItems: 'center', background: hexToRgba(tool.color, 0.15), color: tool.color, fontWeight: 900, fontSize: '0.8rem', marginBottom: '0.6rem', border: `1px solid ${hexToRgba(tool.color, 0.25)}` }}>
+                  {tool.label.charAt(0)}
+                </div>
+                <div style={{ fontWeight: 800, marginBottom: '0.3rem', fontSize: '0.95rem' }}>{tool.label}</div>
+                <div style={{ color: '#96a8c4', fontSize: '0.8rem', lineHeight: 1.5 }}>{tool.desc}</div>
+              </motion.button>
+            )
+          })}
+        </div>
+      </div>
+
+      <CelebrationOverlay active={showCelebration} />
+    </div>
+  )
+}
+
+// --- Chapter 4-3: Environment Control Tower (3D) ---
+function ServerTower3D({ tower, index, total, isActive, routedCount, onClick }) {
+  const groupRef = useRef()
+  const glowRef = useRef()
+  const angle = (index / total) * Math.PI - Math.PI / 2
+
+  useFrame((state) => {
+    if (!groupRef.current) return
+    const t = state.clock.getElapsedTime()
+    if (glowRef.current) {
+      glowRef.current.material.emissiveIntensity = 0.3 + Math.sin(t * 2 + index) * 0.15
+    }
+  })
+
+  const x = Math.cos(angle) * 2.8
+  const z = Math.sin(angle) * 1.5
+
+  return (
+    <group 
+      ref={groupRef} 
+      position={[x, 0, z]} 
+      onClick={onClick}
+      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
+      onPointerLeave={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto' }}
+    >
+      {/* Base platform */}
+      <mesh position={[0, -0.8, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+        <cylinderGeometry args={[0.5, 0.6, 0.1, 32]} />
+        <meshPhysicalMaterial color="#0a1020" metalness={0.9} roughness={0.2} />
+      </mesh>
+      {/* Server tower body */}
+      <RoundedBox args={[0.65, 1.6, 0.5]} radius={0.08} position={[0, 0.05, 0]}>
+        <meshPhysicalMaterial
+          color={isActive ? tower.color : '#151d30'}
+          emissive={tower.color}
+          emissiveIntensity={isActive ? 0.4 : 0.15}
+          roughness={0.3}
+          metalness={0.8}
+          clearcoat={0.5}
+        />
+      </RoundedBox>
+      {/* Server rack lines */}
+      {[0.4, 0.1, -0.2, -0.5].map((y, i) => (
+        <mesh key={i} position={[0, y, 0.26]}>
+          <boxGeometry args={[0.5, 0.06, 0.02]} />
+          <meshStandardMaterial
+            color={i < routedCount ? tower.color : '#1a2240'}
+            emissive={i < routedCount ? tower.color : '#000'}
+            emissiveIntensity={i < routedCount ? 0.8 : 0}
+          />
+        </mesh>
+      ))}
+      {/* Top glow indicator */}
+      <mesh ref={glowRef} position={[0, 0.95, 0]}>
+        <sphereGeometry args={[0.08, 16, 16]} />
+        <meshStandardMaterial
+          color={tower.color}
+          emissive={tower.color}
+          emissiveIntensity={0.5}
+        />
+      </mesh>
+      {/* Label */}
+      <Text
+        position={[0, -1.05, 0]}
+        fontSize={0.14}
+        color={tower.color}
+        anchorX="center"
+        anchorY="middle"
+        font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2"
+      >
+        {tower.label}
+      </Text>
+    </group>
+  )
+}
+
+function FloatingDataCube3D({ label, color }) {
+  const meshRef = useRef()
+
+  useFrame((state) => {
+    if (!meshRef.current) return
+    const t = state.clock.getElapsedTime()
+    meshRef.current.position.y = 2 + Math.sin(t * 1.5) * 0.15
+    meshRef.current.rotation.x = t * 0.3
+    meshRef.current.rotation.z = t * 0.2
+  })
+
+  // Truncate label for 3D display
+  const shortLabel = label.length > 20 ? label.substring(0, 20) + '...' : label
+
+  return (
+    <group ref={meshRef} position={[0, 2, 0]}>
+      <RoundedBox args={[0.5, 0.5, 0.5]} radius={0.06}>
+        <meshPhysicalMaterial
+          color={color || '#6cf0a8'}
+          emissive={color || '#6cf0a8'}
+          emissiveIntensity={0.4}
+          roughness={0.15}
+          metalness={0.7}
+          clearcoat={1}
+          transparent
+          opacity={0.85}
+        />
+      </RoundedBox>
+      <Text position={[0, 0, 0.26]} fontSize={0.07} color="#fff" maxWidth={0.4} textAlign="center" anchorX="center" anchorY="middle" font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2">
+        {shortLabel}
+      </Text>
+      <Text position={[0, 0, -0.26]} rotation={[0, Math.PI, 0]} fontSize={0.07} color="#fff" maxWidth={0.4} textAlign="center" anchorX="center" anchorY="middle" font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2">
+        {shortLabel}
+      </Text>
+    </group>
+  )
+}
+
+function ControlTower3DActivity({ activity, accent }) {
+  const [routed, setRouted] = useState([])
+  const [errorTower, setErrorTower] = useState(null)
+
+  const pending = activity.cubes.filter(c => !routed.some(r => r.id === c.id))
+  const current = pending[0]
+  const isDone = pending.length === 0
+
+  const handleTowerClick = (towerId) => {
+    if (isDone || !current) return
+    if (towerId === current.towerId) {
+      setRouted([...routed, current])
+    } else {
+      setErrorTower(towerId)
+      setTimeout(() => setErrorTower(null), 600)
+    }
+  }
+
+  const showCelebration = useCelebration(isDone, () => {
+    setRouted([])
+    setErrorTower(null)
+  })
+
+  const getRoutedCount = (towerId) => routed.filter(c => c.towerId === towerId).length
+
+  return (
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.5rem' }}>
+      {/* 3D Server Room Scene */}
+      <div style={{
+        height: '420px',
+        borderRadius: '28px',
+        overflow: 'hidden',
+        border: `1px solid ${hexToRgba(accent, 0.3)}`,
+        background: 'linear-gradient(180deg, rgba(4,10,22,0.98) 0%, rgba(3,6,14,0.96) 100%)',
+        boxShadow: `0 30px 80px ${hexToRgba(accent, 0.12)}`,
+        position: 'relative'
+      }}>
+        <Canvas camera={{ position: [0, 2.2, 5], fov: 50 }} dpr={[1, 1.5]}>
+          <ambientLight intensity={0.25} />
+          <pointLight position={[0, 5, 3]} intensity={2} color={accent} />
+          <pointLight position={[-3, 1, -2]} intensity={0.8} color="#4361ee" />
+          <pointLight position={[3, 1, -2]} intensity={0.8} color="#ff2d55" />
+
+          {/* Floor grid */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.85, 0]}>
+            <planeGeometry args={[10, 10]} />
+            <meshStandardMaterial color="#060a14" metalness={0.9} roughness={0.3} />
+          </mesh>
+
+          {/* Server towers */}
+          {activity.towers.map((tower, i) => (
+            <ServerTower3D
+              key={tower.id}
+              tower={tower}
+              index={i}
+              total={activity.towers.length}
+              isActive={!isDone}
+              routedCount={getRoutedCount(tower.id)}
+              onClick={(e) => { e.stopPropagation(); handleTowerClick(tower.id) }}
+            />
+          ))}
+
+          {/* Floating data cube (current) */}
+          {current && (
+            <FloatingDataCube3D
+              label={current.label}
+              color={accent}
+            />
+          )}
+
+          <Sparkles count={40} scale={7} size={1.2} speed={0.2} color={accent} opacity={0.4} />
+          <ContactShadows position={[0, -0.84, 0]} opacity={0.5} blur={2} far={5} />
+          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} maxPolarAngle={Math.PI / 2.2} minPolarAngle={Math.PI / 5} />
+        </Canvas>
+
+        {/* Throughput overlay */}
+        <div style={{ position: 'absolute', top: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
+          <div style={{ padding: '0.5rem 1rem', borderRadius: '14px', background: 'rgba(4,8,18,0.88)', backdropFilter: 'blur(10px)', border: `1px solid ${hexToRgba(accent, 0.25)}` }}>
+            <div style={{ color: accent, fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Throughput</div>
+            <div style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 900 }}>{routed.length} / {activity.cubes.length}</div>
+          </div>
+          <div style={{ padding: '0.5rem 1rem', borderRadius: '14px', background: 'rgba(4,8,18,0.88)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <div style={{ color: '#8fa6ce', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Status</div>
+            <div style={{ color: isDone ? '#86ffb7' : '#fff', fontSize: '0.9rem', fontWeight: 800 }}>{isDone ? 'Synchronized' : 'Routing'}</div>
+          </div>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', height: '6px', borderRadius: '999px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden', pointerEvents: 'none' }}>
+          <motion.div
+            initial={false}
+            animate={{ width: `${(routed.length / activity.cubes.length) * 100}%` }}
+            style={{ height: '100%', borderRadius: '999px', background: `linear-gradient(90deg, ${accent}, #86ffb7)` }}
+          />
+        </div>
+      </div>
+
+      {/* Data cube + Tower selector */}
+      <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start' }}>
+        {/* Current data cube */}
+        <div style={{
+          borderRadius: '24px',
+          padding: '1.4rem',
+          background: 'linear-gradient(155deg, rgba(8,12,28,0.98), rgba(5,14,24,0.96))',
+          border: `1px solid ${hexToRgba(accent, 0.24)}`,
+        }}>
+          <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+            {isDone ? 'All cubes routed' : 'Active data cube'}
+          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current?.id || 'done'}
+              initial={{ opacity: 0, y: 14 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              style={{ color: '#fff', fontSize: '1.08rem', lineHeight: 1.7, fontWeight: 600, marginBottom: '1rem' }}
+            >
+              {isDone ? activity.success : current?.label}
+            </motion.div>
+          </AnimatePresence>
+
+          {/* Queued cubes */}
+          {!isDone && pending.length > 1 && (
+            <div style={{ display: 'grid', gap: '0.5rem', marginTop: '0.5rem' }}>
+              <div style={{ color: '#6f83a9', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Up next</div>
+              {pending.slice(1, 3).map((cube, i) => (
+                <div key={cube.id} style={{ padding: '0.6rem 0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', color: '#96a8c4', fontSize: '0.84rem', lineHeight: 1.5 }}>
+                  {cube.label}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {errorTower && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              style={{ marginTop: '1rem', padding: '0.8rem', borderRadius: '14px', background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.25)', color: '#ff95a4', fontSize: '0.85rem' }}
+            >
+              Wrong tower — think about whether this is local, rehearsal, or live.
+            </motion.div>
+          )}
+        </div>
+
+        {/* Tower buttons */}
+        <div style={{ display: 'grid', gap: '0.8rem' }}>
+          {activity.towers.map((tower) => {
+            const count = getRoutedCount(tower.id)
+            const isError = errorTower === tower.id
+            return (
+              <motion.button
+                key={tower.id}
+                type="button"
+                onClick={() => handleTowerClick(tower.id)}
+                whileHover={{ x: 6, scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={isError ? 'jam-shake' : ''}
+                style={{
+                  padding: '1.1rem',
+                  borderRadius: '22px',
+                  textAlign: 'left',
+                  cursor: isDone ? 'default' : 'pointer',
+                  display: 'grid',
+                  gridTemplateColumns: '50px 1fr 44px',
+                  gap: '0.9rem',
+                  alignItems: 'center',
+                  background: isError ? 'linear-gradient(145deg, rgba(255,45,85,0.12), rgba(255,255,255,0.03))' : `linear-gradient(145deg, ${hexToRgba(tower.color, 0.12)}, rgba(255,255,255,0.03))`,
+                  border: `1px solid ${isError ? 'rgba(255,45,85,0.3)' : hexToRgba(tower.color, 0.35)}`,
+                  color: '#fff'
+                }}
+              >
+                <div style={{ width: '50px', height: '50px', borderRadius: '16px', display: 'grid', placeItems: 'center', background: hexToRgba(tower.color, 0.15), color: tower.color, fontWeight: 950, border: `1px solid ${hexToRgba(tower.color, 0.25)}` }}>
+                  {tower.label.charAt(0)}
+                </div>
+                <div>
+                  <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.15rem' }}>{tower.label}</div>
+                  <div style={{ color: '#96a8c4', fontSize: '0.82rem' }}>{tower.desc}</div>
+                </div>
+                <div style={{ width: '44px', height: '44px', borderRadius: '14px', display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.05)', fontWeight: 900, fontSize: '1.1rem' }}>
+                  {count}
+                </div>
+              </motion.button>
+            )
+          })}
+        </div>
+      </div>
+
+      <CelebrationOverlay active={showCelebration} />
+    </div>
+  )
+}
 
 // --- Chapter 4-4: Launchpad Selector (3D) ---
 function LaunchpadActivity({ activity, accent }) {
@@ -4607,7 +5190,9 @@ function ActivityBody({ activity, accent }) {
   if (activity.type === 'toolbelt') return <ToolbeltActivity activity={activity} accent={accent} />
   if (activity.type === 'branch_graph') return <BranchGraphActivity activity={activity} accent={accent} />
   if (activity.type === 'time_machine') return <TimeMachineActivity activity={activity} accent={accent} />
+  if (activity.type === 'time_vault_3d') return <TimeVault3DActivity activity={activity} accent={accent} />
   if (activity.type === 'server_deploy') return <ServerDeployActivity activity={activity} accent={accent} />
+  if (activity.type === 'control_tower_3d') return <ControlTower3DActivity activity={activity} accent={accent} />
   if (activity.type === 'launchpad') return <LaunchpadActivity activity={activity} accent={accent} />
   return null
 }
