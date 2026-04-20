@@ -79,8 +79,9 @@ const problemStatements = [
 
 const GlassCard = ({ children, delay = 0, style = {}, className="" }) => (
   <motion.div 
-    initial={false}
-    animate={{ opacity: 1, y: 0 }}
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, margin: "-20px" }}
     transition={{ delay, duration: 0.35 }}
     className={className}
     style={{ 
@@ -99,23 +100,25 @@ const GlassCard = ({ children, delay = 0, style = {}, className="" }) => (
 
 const SectionTitle = ({ children, icon, color = "#fff", delay = 0, style={} }) => (
   <motion.h3 
-    initial={false}
-    animate={{ opacity: 1, x: 0 }}
+    initial={{ opacity: 0, x: -20 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true, margin: "-20px" }}
     transition={{ delay, duration: 0.35 }}
     style={{ 
-      fontSize: '2rem', fontWeight: 800, color, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px',
+      fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: 800, color, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px',
       ...style
     }}
   >
-    {icon && <span style={{ fontSize: '2.5rem', filter: `drop-shadow(0 0 10px ${color}80)` }}>{icon}</span>}
+    {icon && <span style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', filter: `drop-shadow(0 0 10px ${color}80)` }}>{icon}</span>}
     {children}
   </motion.h3>
 );
 
 const ListItem = ({ children, color = "#ff2d55", icon = "✦", delay = 0 }) => (
   <motion.li 
-    initial={false}
-    animate={{ opacity: 1, x: 0 }}
+    initial={{ opacity: 0, x: -10 }}
+    whileInView={{ opacity: 1, x: 0 }}
+    viewport={{ once: true, margin: "-20px" }}
     transition={{ delay, duration: 0.25 }}
     style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: '#b0b0cc', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '0.8rem' }}
   >
@@ -193,7 +196,7 @@ export default function CapstoneModule() {
     <div style={{ backgroundColor: '#0f0f13', minHeight: '100vh', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', overflowX: 'hidden' }}>
       
       {/* ─── FULL-WIDTH HERO ─── */}
-      <div style={{ position: 'relative', width: '100%', padding: '8rem 4rem 6rem', background: 'linear-gradient(180deg, rgba(123, 47, 247, 0.15) 0%, rgba(15, 15, 19, 1) 100%)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+      <div style={{ position: 'relative', width: '100%', padding: 'clamp(6rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem)', background: 'linear-gradient(180deg, rgba(123, 47, 247, 0.15) 0%, rgba(15, 15, 19, 1) 100%)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
         <div style={{ position: 'absolute', top: -200, right: '10%', width: '800px', height: '800px', background: 'radial-gradient(circle, rgba(123,47,247,0.1) 0%, rgba(0,0,0,0) 70%)', zIndex: 0 }} />
         <div style={{ position: 'absolute', bottom: -100, left: '5%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,45,85,0.08) 0%, rgba(0,0,0,0) 70%)', zIndex: 0 }} />
         
@@ -212,13 +215,13 @@ export default function CapstoneModule() {
       </div>
 
       {/* ─── MAIN CONTENT CONTAINER (Expansive Width) ─── */}
-      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '4rem 4rem 8rem', display: 'flex', flexDirection: 'column', gap: '6rem' }}>
+      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem) 8rem', display: 'flex', flexDirection: 'column', gap: 'clamp(4rem, 8vw, 6rem)' }}>
         
         {/* Objective & Phases Section (Offset Layout) */}
         <div className="responsive-grid" style={{ gap: '3rem'  }}>
           
-          <div style={{ gridColumn: 'span 7' }}>
-            <SectionTitle icon="🎯" color="#5ac8fa" style={{ fontSize: '2.5rem' }}>Project Objective</SectionTitle>
+          <div style={{ flex: '1 1 min(100%, 500px)', minWidth: 0 }}>
+            <SectionTitle icon="🎯" color="#5ac8fa" style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>Project Objective</SectionTitle>
             <p style={{ color: '#ffffff', fontSize: '1.25rem', marginBottom: '2rem', fontWeight: 500, lineHeight: 1.6 }}>
               Your capstone must be a comprehensive, real-world solution. <br/>
               Ensure your application integrates these core pillars:
@@ -235,10 +238,10 @@ export default function CapstoneModule() {
             </div>
           </div>
 
-          <div style={{ gridColumn: 'span 5' }}>
-            <GlassCard style={{ height: '100%', borderLeft: '4px solid #ffcc00', padding: '3rem' }}>
+          <div style={{ flex: '1 1 min(100%, 400px)', minWidth: 0 }}>
+            <GlassCard style={{ height: '100%', borderLeft: '4px solid #ffcc00', padding: 'clamp(1.5rem, 5vw, 3rem)' }}>
               <SectionTitle icon="⏱️" color="#ffcc00" style={{ fontSize: '1.5rem' }}>Timeline</SectionTitle>
-              <h4 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginBottom: '1rem' }}>2–4 Weeks</h4>
+              <h4 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', fontWeight: 900, color: '#fff', marginBottom: '1rem' }}>2–4 Weeks</h4>
               <p style={{ color: '#b0b0cc', lineHeight: 1.6 }}>Take your time to polish the UI, fix edge cases, and ensure the backend logic is bulletproof before the final submission.</p>
               
               <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
@@ -260,10 +263,10 @@ export default function CapstoneModule() {
         </div>
 
         {/* ─── FULL-WIDTH INTEGRATED WHEEL & IDEAS SECTION ─── */}
-        <section style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'rgba(255,255,255,0.02)', padding: '6rem 0', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 4rem' }}>
+        <section style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'rgba(255,255,255,0.02)', padding: 'clamp(4rem, 8vw, 6rem) 0', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+          <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
             <div style={{ textAlign: 'left', marginBottom: '4rem' }}>
-              <SectionTitle icon="💡" color="#ff2d55" style={{ fontSize: '3rem' }}>Suggested Ideas</SectionTitle>
+              <SectionTitle icon="💡" color="#ff2d55" style={{ fontSize: 'clamp(2.5rem, 6vw, 3rem)' }}>Suggested Ideas</SectionTitle>
               <p style={{ color: '#b0b0cc', fontSize: '1.2rem', maxWidth: '800px' }}>
                 Pick a starting point that aligns with your passion. Each of these templates contains the complexity required to showcase your expertise.
               </p>
@@ -291,10 +294,10 @@ export default function CapstoneModule() {
                </div>
 
                {/* Integrated Wheel Design */}
-               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: '4rem 2rem', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)' }}>
+               <div style={{ flex: '1 1 min(100%, 300px)', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <h3 style={{ color: '#fff', fontSize: '1.8rem', fontWeight: 900, marginBottom: '2.5rem', textAlign: 'center' }}>Can't decide? <br/><span style={{ color: '#7b2ff7' }}>Let fate select.</span></h3>
                   
-                  <div style={{ position: 'relative', width: '300px', height: '300px', marginBottom: '3rem' }}>
+                  <div style={{ position: 'relative', width: 'min(90vw, 300px)', height: 'min(90vw, 300px)', marginBottom: '3rem' }}>
                     <div style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '15px solid transparent', borderRight: '15px solid transparent', borderTop: '30px solid #fff', zIndex: 10, filter: 'drop-shadow(0px 5px 10px rgba(0,0,0,0.8))' }} />
                     
                     <motion.div
@@ -346,7 +349,7 @@ export default function CapstoneModule() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     style={{
-                      padding: '1.2rem 4rem', fontSize: '1.3rem', fontWeight: 900, borderRadius: '50px', textTransform: 'uppercase', letterSpacing: '2px',
+                      padding: 'clamp(1rem, 3vw, 1.2rem) clamp(1.5rem, 5vw, 4rem)', fontSize: 'clamp(1rem, 3vw, 1.3rem)', fontWeight: 900, borderRadius: '50px', textTransform: 'uppercase', letterSpacing: '2px',
                       border: 'none', background: 'linear-gradient(135deg, #7b2ff7, #ff2d55)', color: '#fff', cursor: spinning ? 'not-allowed' : 'pointer',
                       boxShadow: '0 20px 40px rgba(123, 47, 247, 0.4)', transition: 'all 0.3s'
                     }}
@@ -362,12 +365,12 @@ export default function CapstoneModule() {
                 <motion.div initial={false} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: '4rem' }}>
                    <GlassCard style={{ borderLeft: `8px solid ${selectedTopic.themeColor}`, background: `${selectedTopic.themeColor}10` }}>
                       <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <div style={{ flex: 1, minWidth: '300px' }}>
+                        <div style={{ flex: '1 1 min(100%, 300px)' }}>
                            <span style={{ color: selectedTopic.themeColor, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem' }}>{spinning ? 'Current Assignment' : 'Official Assignment'}</span>
-                           <h2 style={{ fontSize: '3rem', fontWeight: 900, margin: '1rem 0' }}>{selectedTopic.title}</h2>
+                           <h2 style={{ fontSize: 'clamp(2rem, 6vw, 3rem)', fontWeight: 900, margin: '1rem 0' }}>{selectedTopic.title}</h2>
                            <p style={{ color: '#d0d0e0', fontSize: '1.2rem', lineHeight: 1.6 }}>{selectedTopic.description}</p>
                         </div>
-                        <div style={{ flex: 1, minWidth: '300px', background: 'rgba(0,0,0,0.2)', padding: '2rem', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                        <div style={{ flex: '1 1 min(100%, 300px)', background: 'rgba(0,0,0,0.2)', padding: 'clamp(1rem, 4vw, 2rem)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
                            <h4 style={{ color: '#fff', fontWeight: 900, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Engineering Requirements:</h4>
                            <ul style={{ listStyle: 'none', padding: 0 }}>
                               {selectedTopic.requirements.map((req, i) => (
@@ -384,8 +387,8 @@ export default function CapstoneModule() {
         </section>
 
         {/* ─── REFERENCES & BONUS SECTION (Left Aligned Columns) ─── */}
-        <div className="responsive-grid" style={{ gap: '4rem'  }}>
-           <div style={{ gridColumn: 'span 4' }}>
+        <div className="responsive-grid" style={{ gap: 'clamp(2rem, 5vw, 4rem)'  }}>
+           <div style={{ flex: '1 1 min(100%, 300px)', minWidth: 0 }}>
               <SectionTitle icon="🔗" color="#4cd964">Resources</SectionTitle>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                  {[
@@ -401,8 +404,8 @@ export default function CapstoneModule() {
               </div>
            </div>
 
-           <div style={{ gridColumn: 'span 8' }}>
-              <GlassCard style={{ background: 'linear-gradient(135deg, rgba(255,149,0,0.1), transparent)', borderTop: '4px solid #ff9500' }}>
+           <div style={{ flex: '1 1 min(100%, 500px)', minWidth: 0 }}>
+              <GlassCard style={{ background: 'linear-gradient(135deg, rgba(255,149,0,0.1), transparent)', borderTop: '4px solid #ff9500', padding: 'clamp(1.5rem, 5vw, 3rem)' }}>
                  <SectionTitle icon="🔥" color="#ff9500">Elite Bonus Challenges</SectionTitle>
                  <div className="responsive-grid" style={{ gap: '2rem'  }}>
                     <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px' }}>
@@ -439,7 +442,7 @@ export default function CapstoneModule() {
             </div>
 
             {!submitted ? (
-               <form onSubmit={handleSubmit} className="responsive-grid" style={{ gap: '1.5rem'  }}>
+               <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.5rem' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                      <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>Project URL *</label>
                      <input required type="url" value={ffLink} onChange={e=>setFfLink(e.target.value)} placeholder="FlutterFlow Link" style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
@@ -456,7 +459,7 @@ export default function CapstoneModule() {
                      <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>Demo Video *</label>
                      <input required type="url" value={demoLink} onChange={e=>setDemoLink(e.target.value)} placeholder="Loom/Drive Video" style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
                   </div>
-                  <button type="submit" style={{ gridColumn: 'span 2', marginTop: '1rem', padding: '1.5rem', background: '#fff', color: '#000', fontWeight: 900, fontSize: '1.2rem', borderRadius: '16px', border: 'none', cursor: 'pointer', transition: '0.2s' }} onMouseOver={e=>e.currentTarget.style.transform='scale(1.01)'} onMouseOut={e=>e.currentTarget.style.transform='scale(1)'}>
+                  <button type="submit" style={{ gridColumn: '1 / -1', marginTop: '1rem', padding: 'clamp(1rem, 3vw, 1.5rem)', background: '#fff', color: '#000', fontWeight: 900, fontSize: 'clamp(1rem, 3vw, 1.2rem)', borderRadius: '16px', border: 'none', cursor: 'pointer', transition: '0.2s' }} onMouseOver={e=>e.currentTarget.style.transform='scale(1.01)'} onMouseOut={e=>e.currentTarget.style.transform='scale(1)'}>
                     Initialize Final Submission
                   </button>
                </form>
@@ -471,7 +474,7 @@ export default function CapstoneModule() {
         </GlassCard>
 
         {/* Dynamic Footer Tips */}
-        <div style={{ padding: '3rem', background: 'rgba(255,255,255,0.02)', borderRadius: '100px', display: 'flex', gap: '3rem', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
+        <div style={{ padding: 'clamp(1.5rem, 4vw, 3rem)', background: 'rgba(255,255,255,0.02)', borderRadius: '100px', display: 'flex', flexWrap: 'wrap', gap: 'clamp(1rem, 4vw, 3rem)', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
            <div style={{ display: 'flex', gap: '0.5rem', color: '#ff2d55', fontWeight: 800 }}><span>01</span> Test Locally</div>
            <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#333' }} />
            <div style={{ display: 'flex', gap: '0.5rem', color: '#7b2ff7', fontWeight: 800 }}><span>02</span> Iterate Design</div>

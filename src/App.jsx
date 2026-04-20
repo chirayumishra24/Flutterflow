@@ -4056,8 +4056,8 @@ function PageWhatIsProject() {
   // A Blueprint / IDE highly unique styling theme
   return (
     <div style={{
-      padding: '100px 40px',
-      margin: '40px 0',
+      padding: 'clamp(2rem, 5vw, 6rem) clamp(1rem, 5vw, 2.5rem)',
+      margin: 'clamp(1.5rem, 5vw, 2.5rem) 0',
       backgroundColor: 'rgba(10, 13, 20, 0.3)',
       backdropFilter: 'blur(8px)',
       backgroundImage: 'linear-gradient(rgba(45, 100, 255, 0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(45, 100, 255, 0.04) 1px, transparent 1px)',
@@ -4076,7 +4076,7 @@ function PageWhatIsProject() {
 
       <MotionReveal>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: '2rem' }}>
-          <div style={{ flex: '1 1 500px' }}>
+          <div style={{ flex: '1 1 min(100%, 500px)' }}>
             <div style={{ 
               display: 'inline-block', padding: '4px 12px', background: 'rgba(45, 100, 255, 0.15)', 
               color: '#4db8ff', fontSize: '0.9rem', marginBottom: '1.5rem', border: '1px solid rgba(45, 100, 255, 0.3)',
@@ -4103,7 +4103,7 @@ function PageWhatIsProject() {
           </div>
 
           <div style={{
-            flex: '0 1 350px',
+            flex: '1 1 min(100%, 350px)',
             background: 'rgba(0,0,0,0.4)',
             border: '1px solid rgba(45, 100, 255, 0.3)',
             padding: '1.5rem',
@@ -4205,7 +4205,7 @@ function PageWhatIsProject() {
           background: 'linear-gradient(135deg, rgba(45, 100, 255, 0.1), rgba(0, 245, 212, 0.05))',
           padding: '2rem', borderRadius: '16px', border: '1px solid rgba(45, 100, 255, 0.2)'
         }}>
-          <div style={{ flex: '1 1 300px' }}>
+          <div style={{ flex: '1 1 min(100%, 300px)' }}>
             <h2 style={{ fontSize: '1.4rem', color: '#fff', marginBottom: '0.8rem', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: '8px' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2d64ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
               Included in Generated Code
@@ -4657,7 +4657,7 @@ function PageGeneralSettings() {
   const active = assetShowcase[activeAsset]
 
   return (
-    <div style={{ paddingTop: '80px', paddingBottom: '80px', overflow: 'hidden' }}>
+    <div style={{ paddingTop: 'clamp(3rem, 6vw, 80px)', paddingBottom: 'clamp(3rem, 6vw, 80px)', overflow: 'hidden' }}>
       <MotionReveal>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1.5rem', padding: '0 5%' }}>
           <span className="chip" style={{ color: '#ffd700', border: '1px solid rgba(255, 215, 0, 0.3)', background: 'rgba(255, 215, 0, 0.12)' }}>
@@ -4698,7 +4698,7 @@ function PageGeneralSettings() {
                whileHover={{ y: -8, scale: 1.02 }}
                style={{ 
                  scrollSnapAlign: 'start',
-                 flex: '0 0 300px',
+                 flex: '0 0 min(80vw, 300px)',
                  background: 'linear-gradient(160deg, rgba(20,22,40,0.95) 0%, rgba(10,12,24,0.98) 100%)',
                  border: '1px solid rgba(255,255,255,0.08)',
                  borderRadius: '24px',
@@ -4723,7 +4723,7 @@ function PageGeneralSettings() {
              whileHover={{ y: -8, scale: 1.02 }}
              style={{ 
                scrollSnapAlign: 'start',
-               flex: '0 0 380px',
+               flex: '0 0 min(85vw, 380px)',
                background: 'linear-gradient(160deg, rgba(0,245,212,0.12) 0%, rgba(10,12,24,0.98) 100%)',
                border: '1px solid rgba(0,245,212,0.25)',
                borderRadius: '24px',
@@ -4801,8 +4801,8 @@ function PageGeneralSettings() {
                    boxShadow: `0 30px 60px rgba(0,0,0,0.5), inset 0 1px 0 ${active.accent}30`
                  }}
                >
-                 <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'flex-start' }}>
-                    <div style={{ flex: 1 }}>
+                 <div style={{ display: 'flex', gap: '2.5rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+                    <div style={{ flex: '1 1 min(100%, 400px)', minWidth: 0 }}>
                       <div style={{ fontSize: '0.8rem', letterSpacing: '0.2em', textTransform: 'uppercase', color: active.accent, fontWeight: 700, marginBottom: '1rem' }}>
                         Configuration Workflow
                       </div>
@@ -4825,7 +4825,7 @@ function PageGeneralSettings() {
                       </div>
                     </div>
 
-                    <div style={{ flex: '0 0 320px' }}>
+                    <div style={{ flex: '1 1 min(100%, 320px)', minWidth: 0 }}>
                       <div style={{ 
                         borderRadius: '20px', overflow: 'hidden', 
                         border: `1px solid ${active.accent}40`,
@@ -4880,7 +4880,7 @@ function PageProjectSetup() {
   ]
 
   return (
-    <div style={{ paddingTop: '80px', paddingBottom: '0', overflowX: 'hidden' }}>
+    <div style={{ paddingTop: 'clamp(3rem, 6vw, 80px)', paddingBottom: '0', overflowX: 'hidden' }}>
       {/* Immersive Header */}
       <div style={{ padding: '0 5%', marginBottom: '4rem' }}>
         <MotionReveal>
@@ -4943,7 +4943,7 @@ function PageProjectSetup() {
              <p style={{ color: '#8892b0', fontSize: '1.1rem' }}>Define low-level SDK constraints for native binaries.</p>
            </div>
            
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', overflow: 'hidden' }}>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '2px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '24px', overflow: 'hidden' }}>
              {platformSettings.map((plat) => (
                 <div key={plat.platform} style={{ background: '#0d1020', padding: '3rem 2rem', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', transition: 'background 0.3s ease' }} onMouseOver={e => e.currentTarget.style.background = '#151930'} onMouseOut={e => e.currentTarget.style.background = '#0d1020'}>
                    <h3 style={{ color: '#fff', fontSize: '2rem', fontWeight: 800, marginBottom: '2rem', letterSpacing: '0.1em' }}>{plat.platform}</h3>
@@ -4975,7 +4975,7 @@ function PageProjectSetup() {
            
            <div style={{ display: 'flex', padding: '0 5%', gap: '2rem', overflowX: 'auto', scrollSnapType: 'x mandatory', paddingBottom: '2rem' }}>
               {walkthroughStages.map((stage) => (
-                <div key={stage.id} style={{ scrollSnapAlign: 'start', flex: '0 0 400px', borderRadius: '24px', overflow: 'hidden', background: '#0a0c18', border: '1px solid rgba(255,255,255,0.1)', position: 'relative' }}>
+                <div key={stage.id} style={{ scrollSnapAlign: 'start', flex: '0 0 min(90vw, 400px)', borderRadius: '24px', overflow: 'hidden', background: '#0a0c18', border: '1px solid rgba(255,255,255,0.1)', position: 'relative' }}>
                    <div style={{ height: '220px', background: 'rgba(255,255,255,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '4rem' }}>
                      {stage.icon}
                    </div>
@@ -5109,7 +5109,7 @@ function PageDesignSystem() {
   ]
 
   return (
-    <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+    <div style={{ paddingTop: 'clamp(3rem, 6vw, 80px)', paddingBottom: 'clamp(3rem, 6vw, 80px)' }}>
       <MotionReveal>
         <div style={{
           position: 'relative',
@@ -5272,7 +5272,7 @@ function PageDesignSystem() {
             >
               <div style={{ color: foundationModes[activeFoundation].accent, fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', fontWeight: 800 }}>Active lane</div>
               <div style={{ color: '#fff', fontSize: '1.55rem', lineHeight: 1.2, fontWeight: 800 }}>{foundationModes[activeFoundation].title}</div>
-              <div className="chapter-grid tight" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+              <div className="chapter-grid tight" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))', gap: '1rem' }}>
                 <div style={{ padding: '1rem', borderRadius: '24px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
                   <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.75rem' }}>Why use it</div>
                   <BulletList items={foundationModes[activeFoundation].bullets} dense />
@@ -5846,7 +5846,7 @@ function PageStateManagement() {
   const activeRebuildCard = rebuildTypes[activeRebuild]
 
   return (
-    <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+    <div style={{ paddingTop: 'clamp(3rem, 6vw, 80px)', paddingBottom: 'clamp(3rem, 6vw, 80px)' }}>
       <MotionReveal>
         <div style={{ position: 'relative', overflow: 'hidden', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.08)', background: 'linear-gradient(145deg, rgba(7,8,24,0.98) 0%, rgba(17,12,33,0.96) 48%, rgba(6,22,34,0.98) 100%)', padding: '2rem', boxShadow: '0 40px 120px rgba(0,0,0,0.34)' }}>
           <motion.div
