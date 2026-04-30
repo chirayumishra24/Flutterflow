@@ -436,53 +436,115 @@ chapterActivities['4-1'] = {
 
 chapterActivities['4-2'] = {
   accent: '#ff9a5c',
-  subtitle: 'Unlock the time vault by matching each crisis to the correct history crystal.',
+  subtitle: 'Pick the best saving or recovery move for each situation.',
   activity: {
-    type: 'time_vault_3d',
+    type: 'time_machine',
     visualKind: 'audit',
-    title: 'Version Time Vault',
-    instructions: 'Each crisis scenario needs the right tool crystal. Click the matching crystal to slot it into the vault and progress to the next crisis.',
-    success: 'Every timeline crisis resolved — the vault is fully unlocked!',
+    title: 'Version Decision Desk',
+    instructions: 'Read each situation and click the single best option. Keep it simple: inspect, save progress, use automatic backups, or restore.',
+    success: 'You can now tell when to use Peek, Commits, Snapshots, and Restore.',
+    toolThemes: {
+      peek: { tint: '#61a8ff', mode: 'Inspect safely without changing current work' },
+      commit: { tint: '#86ffb7', mode: 'Create a clear branch checkpoint' },
+      snapshot: { tint: '#a67cff', mode: 'Use automatic backup history' },
+      restore: { tint: '#ff7d6b', mode: 'Replace the current state with an older one' },
+    },
     tools: [
-      { id: 'peek', label: 'Peek', desc: 'View older work without changing or replacing anything.', color: '#61a8ff' },
-      { id: 'commit', label: 'Commits', desc: 'Create traceable checkpoints the team can review.', color: '#86ffb7' },
-      { id: 'deprecated', label: 'Deprecated Versions', desc: 'Acknowledge the old version system that is no longer the workflow.', color: '#ffd166' },
-      { id: 'restore', label: 'Restore', desc: 'Permanently bring back an older state, replacing current work.', color: '#ff7d6b' },
+      { id: 'peek', label: 'Peek', desc: 'Open older work safely for review without changing the current project.' },
+      { id: 'commit', label: 'Create Commit', desc: 'Save a deliberate checkpoint on the active branch for review or collaboration.' },
+      { id: 'snapshot', label: 'Snapshots', desc: 'Use automatic backup history when you need a fallback and no manual save exists.' },
+      { id: 'restore', label: 'Restore', desc: 'Bring an older state back as the live version after you are sure it is the right one.' },
     ],
     crises: [
-      { id: 'c1', prompt: 'The client wants to compare yesterday\'s header color to today\'s without losing any current work.', answer: 'peek' },
-      { id: 'c2', prompt: 'Three developers are working simultaneously and need traceable save points to review each other\'s progress.', answer: 'commit' },
-      { id: 'c3', prompt: 'After a full team review, a broken release must be permanently rolled back to the last stable state.', answer: 'restore' },
-      { id: 'c4', prompt: 'Your PM asks why the old "Save Version" button is gone. You need to explain what replaced it.', answer: 'deprecated' },
-      { id: 'c5', prompt: 'A designer wants to inspect the old onboarding flow side-by-side with the new one, but NOT revert anything.', answer: 'peek' },
+      { id: 'c1', prompt: 'You want to compare last week\'s saved work with today\'s screen, but nothing in the current project should change.', answer: 'peek' },
+      { id: 'c2', prompt: 'Your team needs a named save point on the branch before review starts so everyone can trace what changed.', answer: 'commit' },
+      { id: 'c3', prompt: 'Nobody created a manual checkpoint, and you need FlutterFlow\'s automatic backup safety net to recover older work.', answer: 'snapshot' },
+      { id: 'c4', prompt: 'After approval from the team, you need an older working state to become the live project again.', answer: 'restore' },
+      { id: 'c5', prompt: 'Which option is best when you forgot to save manually but still need built-in backup coverage from earlier project states?', answer: 'snapshot' },
     ],
   },
 }
 
 chapterActivities['4-3'] = {
   accent: '#6cf0a8',
-  subtitle: 'Route data cubes to the correct server tower in the 3D control room.',
+  subtitle: 'Resolve environment incidents by choosing the right lane, workflow surface, and exposure policy.',
   activity: {
-    type: 'control_tower_3d',
+    type: 'env_incident_console',
     visualKind: 'configure',
-    title: 'Environment Control Tower',
-    instructions: 'Each data cube carries a config label. Click the correct server tower (Development, Staging, or Production) to route it. Wrong towers reject the cube!',
-    success: 'All data cubes routed — the control tower is fully synchronized!',
-    towers: [
-      { id: 'dev', label: 'Development', color: '#61a8ff', desc: 'Build + experiment' },
-      { id: 'staging', label: 'Staging', color: '#ffd166', desc: 'Mirror + verify' },
-      { id: 'prod', label: 'Production', color: '#ff2d55', desc: 'Serve + protect' },
+    title: 'Environment Incident Console',
+    instructions: 'For each incident, choose the right environment, where that choice shows up most directly, and whether the value is safe for client exposure.',
+    success: 'Every incident is resolved - your environment console is fully calibrated!',
+    environments: [
+      { id: 'dev', label: 'Development', color: '#61a8ff', role: 'Build + experiment', desc: 'Use mock, local, and unstable services while actively building or debugging.' },
+      { id: 'staging', label: 'Staging', color: '#ffd166', role: 'Mirror + verify', desc: 'Use production-like systems for QA, sign-off, and release rehearsal.' },
+      { id: 'prod', label: 'Production', color: '#ff2d55', role: 'Serve + protect', desc: 'Use live systems, real users, public traffic, and real money.' },
     ],
-    cubes: [
-      { id: 'd1', label: 'Experimental API base URL for new feature testing', towerId: 'dev' },
-      { id: 'd2', label: 'Local-only mock database used during development', towerId: 'dev' },
-      { id: 'd3', label: 'Near-real backend that mirrors production for final QA', towerId: 'staging' },
-      { id: 'd4', label: 'Prelaunch Firebase project used for sign-off testing', towerId: 'staging' },
-      { id: 'd5', label: 'Live Stripe payments endpoint handling real money', towerId: 'prod' },
-      { id: 'd6', label: 'Final customer-facing web domain with SSL', towerId: 'prod' },
-      { id: 'd7', label: 'Test Stripe endpoint with sandbox API keys', towerId: 'staging' },
-      { id: 'd8', label: 'Hot-reload debug server running on localhost', towerId: 'dev' },
-      { id: 'd9', label: 'CDN-cached production asset delivery pipeline', towerId: 'prod' },
+    surfaces: [
+      { id: 'session', label: 'Test/Run Sessions', color: '#00f5d4', desc: 'Browser sessions launched in Test Mode or Run Mode connect to the selected environment.' },
+      { id: 'local', label: 'Local Run', color: '#86ffb7', desc: 'Physical-device and local debugging follow the active environment while you iterate.' },
+      { id: 'export', label: 'Code Export', color: '#a67cff', desc: 'Generated helpers and environment files carry non-private values into exported code.' },
+      { id: 'deploy', label: 'Deployment', color: '#ff9a5c', desc: 'Release settings decide which environment powers the published build.' },
+    ],
+    exposureModes: [
+      { id: 'client_safe', label: 'Client-Safe', color: '#61a8ff', desc: 'Non-private values can appear in generated environment helpers used by the client.' },
+      { id: 'server_only', label: 'Server-Only / Private', color: '#ff7d6b', desc: 'Private credentials must stay out of client code and flow through server-side logic only.' },
+    ],
+    incidents: [
+      {
+        id: 'e1',
+        title: 'Experimental browser test',
+        prompt: 'A developer is testing a harmless experimental API base URL in FlutterFlow Test Mode and needs that browser session pointed at the right backend.',
+        valueLabel: 'apiUrl = https://dev-api.example.test',
+        targetEnv: 'dev',
+        targetSurface: 'session',
+        targetExposure: 'client_safe',
+        tags: ['browser testing', 'experimental backend', 'non-private value'],
+        rationale: 'This belongs to Development because the work is experimental, the most direct effect is in Test/Run sessions, and a harmless base URL is safe to expose as a non-private client value.'
+      },
+      {
+        id: 'e2',
+        title: 'Staging release rehearsal',
+        prompt: 'QA is rehearsing a near-production checkout flow on staging before sign-off, and the build must point to the correct backend when released for that pass.',
+        valueLabel: 'release target = staging checkout backend',
+        targetEnv: 'staging',
+        targetSurface: 'deploy',
+        targetExposure: 'client_safe',
+        tags: ['qa rehearsal', 'sign-off', 'production-like backend'],
+        rationale: 'Staging is correct because this is a pre-release rehearsal, deployment is the key surface because the released build must point at staging, and the target URL itself is a non-private client-safe value.'
+      },
+      {
+        id: 'e3',
+        title: 'On-device debugging',
+        prompt: 'A developer is debugging a login issue on a physical phone and wants the selected environment to follow that device session during Local Run.',
+        valueLabel: 'mobile session backend selection',
+        targetEnv: 'dev',
+        targetSurface: 'local',
+        targetExposure: 'client_safe',
+        tags: ['device debugging', 'local run', 'development flow'],
+        rationale: 'Development is the right lane for active debugging, Local Run is the direct surface because the device session follows the active environment, and the environment selection itself is not private.'
+      },
+      {
+        id: 'e4',
+        title: 'Exported apiUrl helper',
+        prompt: 'Exported code needs a non-private apiUrl that changes per environment so the generated app can read the current staging endpoint through FlutterFlow environment helpers.',
+        valueLabel: 'apiUrl in environment.json / FFDevEnvironmentValues',
+        targetEnv: 'staging',
+        targetSurface: 'export',
+        targetExposure: 'client_safe',
+        tags: ['code export', 'generated helpers', 'non-private environment value'],
+        rationale: 'Staging is correct because the app should read the staging endpoint, export is the key surface because generated files and helper getters are involved, and a non-private apiUrl is allowed in client-safe environment helpers.'
+      },
+      {
+        id: 'e5',
+        title: 'Private Stripe secret',
+        prompt: 'A Stripe secret credential must never ship in client code, even though the live Production backend still needs it for real payments.',
+        valueLabel: 'STRIPE_SECRET_KEY',
+        targetEnv: 'prod',
+        targetSurface: 'export',
+        targetExposure: 'server_only',
+        tags: ['real payments', 'private credential', 'production'],
+        rationale: 'Production is the right environment because the secret belongs to live payments, export is the crucial surface because generated client code must not contain it, and the value must remain server-only/private.'
+      }
     ],
   },
 }
@@ -760,9 +822,10 @@ function getActivityTypeLabel(type) {
     toolbelt: 'Utility Toolbelt',
     branch_graph: 'Git Graph',
     time_machine: 'Time Machine',
+    history_rescue: 'History Rescue',
+    env_incident_console: 'Incident Console',
     time_vault_3d: 'Version Time Vault',
     server_deploy: 'Server Deploy',
-    control_tower_3d: 'Control Tower',
     launchpad: 'Launchpad',
   }
 
@@ -797,6 +860,7 @@ function shuffleArray(items) {
 function getCrisisToolIcon(toolId) {
   if (toolId === 'peek') return 'VIEW'
   if (toolId === 'commit') return 'LOG'
+  if (toolId === 'snapshot') return 'SNAP'
   if (toolId === 'deprecated') return 'OLD'
   if (toolId === 'restore') return 'REST'
   return 'TOOL'
@@ -4026,12 +4090,14 @@ function TimeMachineActivity({ activity, accent }) {
 
   const crisis = activity.crises[currentCrisis]
   const activeAnswer = crisis?.answer
-  const toolThemes = {
+  const defaultToolThemes = {
     peek: { tint: '#61a8ff', mode: 'Inspect without changing history' },
     commit: { tint: '#86ffb7', mode: 'Create a shared checkpoint' },
+    snapshot: { tint: '#a67cff', mode: 'Use automatic backup history' },
     deprecated: { tint: '#ffd166', mode: 'Explain the legacy workflow shift' },
     restore: { tint: '#ff7d6b', mode: 'Replace the present with a prior state' },
   }
+  const toolThemes = activity.toolThemes || defaultToolThemes
 
   const resetActivity = () => {
     setCurrentCrisis(0)
@@ -4109,8 +4175,8 @@ function TimeMachineActivity({ activity, accent }) {
               <div style={{ color: '#8fa6ce', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.15em', fontWeight: 800, marginBottom: '0.35rem' }}>
                 Best-fit lens
               </div>
-              <div style={{ color: activeAnswer ? toolThemes[activeAnswer].tint : '#fff', fontSize: '0.94rem', fontWeight: 800 }}>
-                {activeAnswer ? toolThemes[activeAnswer].mode : 'Mission cleared'}
+              <div style={{ color: activeAnswer ? (toolThemes[activeAnswer]?.tint || accent) : '#fff', fontSize: '0.94rem', fontWeight: 800 }}>
+                {activeAnswer ? (toolThemes[activeAnswer]?.mode || activity.tools.find((tool) => tool.id === activeAnswer)?.desc || 'Review the scenario') : 'Mission cleared'}
               </div>
             </div>
           </div>
@@ -4132,7 +4198,7 @@ function TimeMachineActivity({ activity, accent }) {
 
             <div className="responsive-grid" style={{ gap: '0.85rem'  }}>
               {activity.tools.map((tool) => {
-                const theme = toolThemes[tool.id]
+                const theme = toolThemes[tool.id] || { tint: tool.color || accent, mode: tool.desc }
                 const isError = errorTool === tool.id
                 const isResolved = resolvedTool === tool.id
                 const isCurrent = activeAnswer === tool.id && !isDone
@@ -4162,7 +4228,7 @@ function TimeMachineActivity({ activity, accent }) {
                         {getCrisisToolIcon(tool.id)}
                       </div>
                       <div style={{ padding: '0.35rem 0.6rem', borderRadius: '999px', fontSize: '0.68rem', color: theme.tint, background: hexToRgba(theme.tint, 0.1), letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
-                        {theme.mode.split(' ')[0]}
+                        {(theme.mode || tool.label).split(' ')[0]}
                       </div>
                     </div>
                     <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.4rem' }}>{tool.label}</div>
@@ -4177,7 +4243,7 @@ function TimeMachineActivity({ activity, accent }) {
 
             <div className="responsive-grid" style={{ gap: '0.75rem'  }}>
               {activity.tools.map((tool) => {
-                const theme = toolThemes[tool.id]
+                const theme = toolThemes[tool.id] || { tint: tool.color || accent, mode: tool.desc }
                 return (
                   <div key={tool.id} style={{ padding: '0.85rem', borderRadius: '18px', background: 'rgba(255,255,255,0.035)', border: '1px solid rgba(255,255,255,0.08)', textAlign: 'center' }}>
                     <div style={{ color: theme.tint, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.13em', fontWeight: 800, marginBottom: '0.3rem' }}>{tool.label}</div>
@@ -4209,10 +4275,10 @@ function TimeMachineActivity({ activity, accent }) {
                 </div>
                 <div style={{ color: '#dce5f8', fontSize: '0.92rem', lineHeight: 1.68 }}>
                   {resolvedTool
-                    ? `"${activity.tools.find((tool) => tool.id === resolvedTool)?.label}" fits because the request is about ${toolThemes[resolvedTool].mode.toLowerCase()}, not a different kind of timeline change.`
+                    ? `"${activity.tools.find((tool) => tool.id === resolvedTool)?.label}" fits because the request is about ${(toolThemes[resolvedTool]?.mode || 'the correct history move').toLowerCase()}.`
                     : errorTool
-                      ? 'Separate the intent first: inspect old work, create a checkpoint, explain the legacy workflow, or truly replace the current state. The wrong choice means the intent and the action do not match.'
-                      : 'Start by asking one question: do you need to look, save, explain, or replace? Once that intent is clear, the right tool becomes obvious.'}
+                      ? 'Keep the decision simple: do you need to inspect safely, create a checkpoint, rely on automatic backups, or replace the current state?'
+                      : 'Start with one question: do you need to inspect, save progress, use backup history, or restore an older state?'}
                 </div>
               </motion.div>
             )}
@@ -4223,6 +4289,441 @@ function TimeMachineActivity({ activity, accent }) {
               {activity.success}
             </div>
           )}
+        </div>
+      </div>
+
+      <CelebrationOverlay active={showCelebration} />
+    </div>
+  )
+}
+
+// --- Chapter 4-2: History Rescue Console ---
+function HistoryRescueActivity({ activity, accent }) {
+  const [currentIncident, setCurrentIncident] = useState(0)
+  const [selectedLane, setSelectedLane] = useState(null)
+  const [selectedAction, setSelectedAction] = useState(null)
+  const [integrity, setIntegrity] = useState(100)
+  const [resultState, setResultState] = useState(null)
+  const [missionLog, setMissionLog] = useState([])
+  const [resolvedIncidents, setResolvedIncidents] = useState([])
+  const [isDone, setIsDone] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
+
+  const incident = activity.incidents[currentIncident]
+  const totalIncidents = activity.incidents.length
+  const progress = isDone ? 1 : resolvedIncidents.length / totalIncidents
+  const lane = activity.lanes.find((item) => item.id === selectedLane)
+  const action = activity.actions.find((item) => item.id === selectedAction)
+  const combo = activity.combos.find((item) => item.laneId === selectedLane && item.actionId === selectedAction)
+  const readyToExecute = Boolean(lane && action && !isTransitioning && !isDone)
+
+  const resetActivity = () => {
+    setCurrentIncident(0)
+    setSelectedLane(null)
+    setSelectedAction(null)
+    setIntegrity(100)
+    setResultState(null)
+    setMissionLog([])
+    setResolvedIncidents([])
+    setIsDone(false)
+    setIsTransitioning(false)
+  }
+
+  const handleExecute = () => {
+    if (!incident || isDone || isTransitioning) return
+
+    if (!lane || !action) {
+      setResultState({
+        kind: 'warning',
+        title: 'Incomplete rescue plan',
+        body: 'Choose both a history lane and an action before launching the rescue.',
+      })
+      return
+    }
+
+    const isCorrect = lane.id === incident.laneId && action.id === incident.actionId
+
+    if (isCorrect) {
+      const successEntry = {
+        id: `${incident.id}-success`,
+        kind: 'success',
+        title: incident.title,
+        detail: `${lane.label} + ${action.label}`,
+      }
+
+      setResolvedIncidents((prev) => [...prev, incident.id])
+      setMissionLog((prev) => [successEntry, ...prev].slice(0, 4))
+      setIntegrity((prev) => Math.min(100, prev + 4))
+      setResultState({
+        kind: 'success',
+        title: 'Rescue approved',
+        body: incident.rationale,
+      })
+
+      if (currentIncident === totalIncidents - 1) {
+        setIsDone(true)
+        return
+      }
+
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentIncident((prev) => prev + 1)
+        setSelectedLane(null)
+        setSelectedAction(null)
+        setResultState(null)
+        setIsTransitioning(false)
+      }, 1100)
+      return
+    }
+
+    const failureEntry = {
+      id: `${incident.id}-${lane.id}-${action.id}-error`,
+      kind: 'error',
+      title: incident.title,
+      detail: `${lane.label} + ${action.label}`,
+    }
+
+    setMissionLog((prev) => [failureEntry, ...prev].slice(0, 4))
+    setIntegrity((prev) => Math.max(40, prev - 12))
+    setResultState({
+      kind: 'error',
+      title: 'Unsafe rescue path',
+      body: combo
+        ? `${lane.label} + ${action.label} would ${combo.desc.toLowerCase()}, but this incident needs you to ${incident.goal}.`
+        : `${lane.label} + ${action.label} is not a reliable pairing here. This incident needs you to ${incident.goal}.`,
+    })
+  }
+
+  const showCelebration = useCelebration(isDone, resetActivity)
+
+  return (
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.25rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.8rem' }}>
+        {activity.incidents.map((item, index) => {
+          const isResolved = resolvedIncidents.includes(item.id)
+          const isActive = index === currentIncident && !isDone
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.04 }}
+              style={{
+                minHeight: '104px',
+                padding: '0.95rem 1rem',
+                borderRadius: '20px',
+                border: `1px solid ${isResolved ? 'rgba(134,255,183,0.26)' : isActive ? hexToRgba(accent, 0.4) : 'rgba(255,255,255,0.08)'}`,
+                background: isResolved ? 'linear-gradient(145deg, rgba(134,255,183,0.12), rgba(255,255,255,0.03))' : isActive ? `linear-gradient(145deg, ${hexToRgba(accent, 0.16)}, rgba(255,255,255,0.03))` : 'rgba(255,255,255,0.03)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.65rem', marginBottom: '0.45rem' }}>
+                <div style={{ color: isResolved ? '#86ffb7' : isActive ? accent : '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em' }}>
+                  {isResolved ? 'Resolved' : isActive ? 'Live incident' : 'Queued'}
+                </div>
+                <div style={{ color: '#fff', fontWeight: 800 }}>{String(index + 1).padStart(2, '0')}</div>
+              </div>
+              <div style={{ color: '#dbe5f6', lineHeight: 1.5, fontSize: '0.84rem' }}>
+                {item.title}
+              </div>
+            </motion.div>
+          )
+        })}
+      </div>
+
+      <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start' }}>
+        <div style={{
+          borderRadius: '28px',
+          padding: '1.25rem',
+          background: 'radial-gradient(circle at 15% 18%, rgba(255,154,92,0.16), transparent 28%), linear-gradient(155deg, rgba(14,10,22,0.98), rgba(6,12,24,0.96))',
+          border: `1px solid ${hexToRgba(accent, 0.24)}`,
+          boxShadow: `0 24px 64px ${hexToRgba(accent, 0.12)}`,
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+            <div>
+              <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.35rem' }}>
+                Rescue brief
+              </div>
+              <div style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 800 }}>
+                {isDone ? 'All incidents stabilized' : `${incident.title} · ${currentIncident + 1}/${totalIncidents}`}
+              </div>
+            </div>
+            <div style={{ minWidth: '180px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8ea4c8', fontSize: '0.76rem', marginBottom: '0.45rem' }}>
+                <span>Timeline integrity</span>
+                <span>{integrity}%</span>
+              </div>
+              <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                <div style={{ width: `${integrity}%`, height: '100%', borderRadius: '999px', background: integrity > 75 ? 'linear-gradient(90deg, #86ffb7, #61a8ff)' : integrity > 55 ? 'linear-gradient(90deg, #ffd166, #ff9a5c)' : 'linear-gradient(90deg, #ff7d6b, #ff2d55)', transition: 'width 0.3s ease' }} />
+              </div>
+            </div>
+          </div>
+
+          <div style={{ borderRadius: '24px', padding: '1.1rem', background: 'rgba(255,255,255,0.04)', border: `1px solid ${hexToRgba(accent, 0.2)}` }}>
+            <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
+              Incident prompt
+            </div>
+            <div style={{ color: '#fff', lineHeight: 1.75, fontSize: '1rem', fontWeight: 600 }}>
+              {isDone ? activity.success : incident.prompt}
+            </div>
+            {!isDone && (
+              <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+                {incident.tags.map((tag) => (
+                  <span key={tag} style={{ padding: '0.42rem 0.72rem', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.05)', color: '#dce5f8', fontSize: '0.72rem', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 700 }}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div style={{ marginTop: '1rem', display: 'grid', gap: '0.8rem' }}>
+            <div style={{ borderRadius: '20px', padding: '0.95rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.35rem' }}>
+                Selected lane
+              </div>
+              <div style={{ color: lane ? lane.accent : '#fff', fontWeight: 800 }}>
+                {lane ? `${lane.label} · ${lane.badge}` : 'Waiting for lane selection'}
+              </div>
+            </div>
+            <div style={{ borderRadius: '20px', padding: '0.95rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.35rem' }}>
+                Selected action
+              </div>
+              <div style={{ color: action ? action.accent : '#fff', fontWeight: 800 }}>
+                {action ? `${action.label} · ${action.risk}` : 'Waiting for action selection'}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gap: '1rem' }}>
+          <div style={{
+            borderRadius: '26px',
+            padding: '1.1rem',
+            background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+            border: `1px solid ${hexToRgba(accent, 0.2)}`,
+          }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+              Choose history lane
+            </div>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {activity.lanes.map((item) => {
+                const isSelected = item.id === selectedLane
+                return (
+                  <motion.button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      if (isDone || isTransitioning) return
+                      setSelectedLane(item.id)
+                      setResultState(null)
+                    }}
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.99 }}
+                    style={{
+                      textAlign: 'left',
+                      padding: '1rem',
+                      borderRadius: '22px',
+                      cursor: isDone ? 'default' : 'pointer',
+                      border: `1px solid ${isSelected ? item.accent : 'rgba(255,255,255,0.08)'}`,
+                      background: isSelected ? `${item.accent}16` : 'rgba(255,255,255,0.03)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem', alignItems: 'start' }}>
+                      <div style={{ color: item.accent, fontWeight: 800, fontSize: '0.98rem' }}>{item.label}</div>
+                      <div style={{ padding: '0.3rem 0.55rem', borderRadius: '999px', background: hexToRgba(item.accent, 0.12), color: item.accent, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                        {item.badge}
+                      </div>
+                    </div>
+                    <div style={{ color: '#c7d4eb', lineHeight: 1.58, fontSize: '0.84rem' }}>{item.desc}</div>
+                  </motion.button>
+                )
+              })}
+            </div>
+          </div>
+
+          <div style={{
+            borderRadius: '26px',
+            padding: '1.1rem',
+            background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+            border: `1px solid ${hexToRgba(accent, 0.2)}`,
+          }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+              Choose action
+            </div>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {activity.actions.map((item) => {
+                const isSelected = item.id === selectedAction
+                return (
+                  <motion.button
+                    key={item.id}
+                    type="button"
+                    onClick={() => {
+                      if (isDone || isTransitioning) return
+                      setSelectedAction(item.id)
+                      setResultState(null)
+                    }}
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.99 }}
+                    style={{
+                      textAlign: 'left',
+                      padding: '1rem',
+                      borderRadius: '22px',
+                      cursor: isDone ? 'default' : 'pointer',
+                      border: `1px solid ${isSelected ? item.accent : 'rgba(255,255,255,0.08)'}`,
+                      background: isSelected ? `${item.accent}16` : 'rgba(255,255,255,0.03)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem', alignItems: 'start' }}>
+                      <div style={{ color: item.accent, fontWeight: 800, fontSize: '0.98rem' }}>{item.label}</div>
+                      <div style={{ padding: '0.3rem 0.55rem', borderRadius: '999px', background: hexToRgba(item.accent, 0.12), color: item.accent, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                        {item.risk}
+                      </div>
+                    </div>
+                    <div style={{ color: '#c7d4eb', lineHeight: 1.58, fontSize: '0.84rem' }}>{item.desc}</div>
+                  </motion.button>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="responsive-grid" style={{ gap: '1rem', alignItems: 'start' }}>
+        <div style={{
+          borderRadius: '24px',
+          padding: '1.1rem',
+          background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(6,16,24,0.95))',
+          border: `1px solid ${combo ? hexToRgba(combo.tone, 0.28) : 'rgba(255,255,255,0.08)'}`,
+        }}>
+          <div style={{ color: combo ? combo.tone : '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
+            Launch preview
+          </div>
+          <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+            {combo ? combo.label : 'Assemble a recovery path'}
+          </div>
+          <div style={{ color: '#dbe5f6', lineHeight: 1.65, fontSize: '0.9rem' }}>
+            {combo
+              ? combo.desc
+              : 'The preview engine updates when both a history lane and an action are selected.'}
+          </div>
+          {incident && !isDone && (
+            <div style={{ marginTop: '0.9rem', padding: '0.8rem 0.9rem', borderRadius: '18px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ color: '#8ea4c8', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.13em', fontWeight: 800, marginBottom: '0.3rem' }}>
+                Mission goal
+              </div>
+              <div style={{ color: '#fff', lineHeight: 1.58 }}>{incident.goal}</div>
+            </div>
+          )}
+        </div>
+
+        <div style={{
+          borderRadius: '24px',
+          padding: '1.1rem',
+          background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(12,10,24,0.95))',
+          border: `1px solid ${resultState ? (resultState.kind === 'success' ? 'rgba(134,255,183,0.28)' : resultState.kind === 'error' ? 'rgba(255,125,107,0.28)' : 'rgba(255,209,102,0.28)') : 'rgba(255,255,255,0.08)'}`,
+        }}>
+          <div style={{ color: resultState ? (resultState.kind === 'success' ? '#86ffb7' : resultState.kind === 'error' ? '#ff7d6b' : '#ffd166') : '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
+            Console feedback
+          </div>
+          <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+            {resultState ? resultState.title : 'Awaiting execution'}
+          </div>
+          <div style={{ color: '#dbe5f6', lineHeight: 1.65, fontSize: '0.9rem' }}>
+            {resultState ? resultState.body : 'Build a rescue plan, then launch it. The console will explain whether the path is safe.'}
+          </div>
+        </div>
+
+        <div style={{
+          borderRadius: '24px',
+          padding: '1.1rem',
+          background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+          border: `1px solid ${hexToRgba(accent, 0.18)}`,
+        }}>
+          <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+            Controls
+          </div>
+          <div style={{ display: 'grid', gap: '0.7rem' }}>
+            <button
+              type="button"
+              onClick={handleExecute}
+              disabled={!readyToExecute}
+              style={{
+                padding: '0.95rem 1rem',
+                borderRadius: '18px',
+                border: 'none',
+                cursor: readyToExecute ? 'pointer' : 'not-allowed',
+                background: readyToExecute ? `linear-gradient(135deg, ${accent}, #ff5c8d)` : 'rgba(255,255,255,0.08)',
+                color: readyToExecute ? '#08111d' : '#94a8cb',
+                fontWeight: 900,
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+              }}
+            >
+              {isTransitioning ? 'Routing next incident...' : 'Execute rescue'}
+            </button>
+            <button
+              type="button"
+              onClick={resetActivity}
+              style={{
+                padding: '0.9rem 1rem',
+                borderRadius: '18px',
+                border: '1px solid rgba(255,255,255,0.12)',
+                background: 'rgba(255,255,255,0.03)',
+                color: '#fff',
+                fontWeight: 700,
+                cursor: 'pointer',
+              }}
+            >
+              Reset console
+            </button>
+            <div style={{ padding: '0.85rem 0.95rem', borderRadius: '18px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.45rem' }}>
+                <span style={{ color: '#8ea4c8', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.13em', fontWeight: 800 }}>Progress</span>
+                <span style={{ color: '#fff', fontWeight: 800 }}>{resolvedIncidents.length} / {totalIncidents}</span>
+              </div>
+              <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                <div style={{ width: `${progress * 100}%`, height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #61a8ff, #86ffb7)', transition: 'width 0.3s ease' }} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        borderRadius: '24px',
+        padding: '1.1rem',
+        background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+        border: `1px solid ${hexToRgba(accent, 0.18)}`,
+      }}>
+        <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+          Mission log
+        </div>
+        <div style={{ display: 'grid', gap: '0.75rem' }}>
+          {missionLog.length === 0 && (
+            <div style={{ color: '#9aaed0', lineHeight: 1.6 }}>
+              No incidents logged yet. Your last four rescue attempts will appear here.
+            </div>
+          )}
+          {missionLog.map((entry) => (
+            <div
+              key={entry.id}
+              style={{
+                padding: '0.9rem 1rem',
+                borderRadius: '18px',
+                background: entry.kind === 'success' ? 'rgba(134,255,183,0.08)' : 'rgba(255,125,107,0.08)',
+                border: `1px solid ${entry.kind === 'success' ? 'rgba(134,255,183,0.22)' : 'rgba(255,125,107,0.22)'}`,
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.8rem', marginBottom: '0.25rem' }}>
+                <div style={{ color: '#fff', fontWeight: 800 }}>{entry.title}</div>
+                <div style={{ color: entry.kind === 'success' ? '#86ffb7' : '#ff7d6b', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                  {entry.kind === 'success' ? 'Accepted' : 'Rejected'}
+                </div>
+              </div>
+              <div style={{ color: '#c7d4eb', fontSize: '0.86rem', lineHeight: 1.55 }}>{entry.detail}</div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -4742,316 +5243,629 @@ function TimeVault3DActivity({ activity, accent }) {
   )
 }
 
-// --- Chapter 4-3: Environment Control Tower (3D) ---
-function ServerTower3D({ tower, index, total, isActive, routedCount, onClick }) {
-  const groupRef = useRef()
-  const glowRef = useRef()
-  const angle = (index / total) * Math.PI - Math.PI / 2
+// --- Chapter 4-3: Environment Incident Console ---
+function EnvironmentIncidentConsoleActivity({ activity, accent }) {
+  const [currentIncident, setCurrentIncident] = useState(0)
+  const [selectedEnv, setSelectedEnv] = useState(null)
+  const [selectedSurface, setSelectedSurface] = useState(null)
+  const [selectedExposure, setSelectedExposure] = useState(null)
+  const [integrity, setIntegrity] = useState(100)
+  const [resultState, setResultState] = useState(null)
+  const [missionLog, setMissionLog] = useState([])
+  const [resolvedIncidents, setResolvedIncidents] = useState([])
+  const [isDone, setIsDone] = useState(false)
+  const [isTransitioning, setIsTransitioning] = useState(false)
 
-  useFrame((state) => {
-    if (!groupRef.current) return
-    const t = state.clock.getElapsedTime()
-    if (glowRef.current) {
-      glowRef.current.material.emissiveIntensity = 0.3 + Math.sin(t * 2 + index) * 0.15
-    }
-  })
-
-  const x = Math.cos(angle) * 2.8
-  const z = Math.sin(angle) * 1.5
-
-  return (
-    <group 
-      ref={groupRef} 
-      position={[x, 0, z]} 
-      onClick={onClick}
-      onPointerEnter={(e) => { e.stopPropagation(); document.body.style.cursor = 'pointer' }}
-      onPointerLeave={(e) => { e.stopPropagation(); document.body.style.cursor = 'auto' }}
-    >
-      {/* Base platform */}
-      <mesh position={[0, -0.8, 0]} rotation={[-Math.PI / 2, 0, 0]}>
-        <cylinderGeometry args={[0.5, 0.6, 0.1, 32]} />
-        <meshPhysicalMaterial color="#0a1020" metalness={0.9} roughness={0.2} />
-      </mesh>
-      {/* Server tower body */}
-      <RoundedBox args={[0.65, 1.6, 0.5]} radius={0.08} position={[0, 0.05, 0]}>
-        <meshPhysicalMaterial
-          color={isActive ? tower.color : '#151d30'}
-          emissive={tower.color}
-          emissiveIntensity={isActive ? 0.4 : 0.15}
-          roughness={0.3}
-          metalness={0.8}
-          clearcoat={0.5}
-        />
-      </RoundedBox>
-      {/* Server rack lines */}
-      {[0.4, 0.1, -0.2, -0.5].map((y, i) => (
-        <mesh key={i} position={[0, y, 0.26]}>
-          <boxGeometry args={[0.5, 0.06, 0.02]} />
-          <meshStandardMaterial
-            color={i < routedCount ? tower.color : '#1a2240'}
-            emissive={i < routedCount ? tower.color : '#000'}
-            emissiveIntensity={i < routedCount ? 0.8 : 0}
-          />
-        </mesh>
-      ))}
-      {/* Top glow indicator */}
-      <mesh ref={glowRef} position={[0, 0.95, 0]}>
-        <sphereGeometry args={[0.08, 16, 16]} />
-        <meshStandardMaterial
-          color={tower.color}
-          emissive={tower.color}
-          emissiveIntensity={0.5}
-        />
-      </mesh>
-      {/* Label */}
-      <Text
-        position={[0, -1.05, 0]}
-        fontSize={0.14}
-        color={tower.color}
-        anchorX="center"
-        anchorY="middle"
-        font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2"
-      >
-        {tower.label}
-      </Text>
-    </group>
-  )
-}
-
-function FloatingDataCube3D({ label, color }) {
-  const meshRef = useRef()
-
-  useFrame((state) => {
-    if (!meshRef.current) return
-    const t = state.clock.getElapsedTime()
-    meshRef.current.position.y = 2 + Math.sin(t * 1.5) * 0.15
-    meshRef.current.rotation.x = t * 0.3
-    meshRef.current.rotation.z = t * 0.2
-  })
-
-  // Truncate label for 3D display
-  const shortLabel = label.length > 20 ? label.substring(0, 20) + '...' : label
-
-  return (
-    <group ref={meshRef} position={[0, 2, 0]}>
-      <RoundedBox args={[0.5, 0.5, 0.5]} radius={0.06}>
-        <meshPhysicalMaterial
-          color={color || '#6cf0a8'}
-          emissive={color || '#6cf0a8'}
-          emissiveIntensity={0.4}
-          roughness={0.15}
-          metalness={0.7}
-          clearcoat={1}
-          transparent
-          opacity={0.85}
-        />
-      </RoundedBox>
-      <Text position={[0, 0, 0.26]} fontSize={0.07} color="#fff" maxWidth={0.4} textAlign="center" anchorX="center" anchorY="middle" font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2">
-        {shortLabel}
-      </Text>
-      <Text position={[0, 0, -0.26]} rotation={[0, Math.PI, 0]} fontSize={0.07} color="#fff" maxWidth={0.4} textAlign="center" anchorX="center" anchorY="middle" font="https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuLyfAZ9hiA.woff2">
-        {shortLabel}
-      </Text>
-    </group>
-  )
-}
-
-function ControlTower3DActivity({ activity, accent }) {
-  const [routed, setRouted] = useState([])
-  const [errorTower, setErrorTower] = useState(null)
-
-  const pending = activity.cubes.filter(c => !routed.some(r => r.id === c.id))
-  const current = pending[0]
-  const isDone = pending.length === 0
-
-  const handleTowerClick = (towerId) => {
-    if (isDone || !current) return
-    if (towerId === current.towerId) {
-      setRouted([...routed, current])
-    } else {
-      setErrorTower(towerId)
-      setTimeout(() => setErrorTower(null), 600)
-    }
+  const incident = activity.incidents[currentIncident]
+  const totalIncidents = activity.incidents.length
+  const progress = isDone ? 1 : resolvedIncidents.length / totalIncidents
+  const selectedEnvironment = activity.environments.find((item) => item.id === selectedEnv)
+  const selectedSurfaceItem = activity.surfaces.find((item) => item.id === selectedSurface)
+  const selectedExposureMode = activity.exposureModes.find((item) => item.id === selectedExposure)
+  const readyToExecute = Boolean(selectedEnvironment && selectedSurfaceItem && selectedExposureMode && !isTransitioning && !isDone)
+  const envSignals = {
+    dev: { code: 'DEV-01', note: 'Experimental lane' },
+    staging: { code: 'STG-02', note: 'Release rehearsal' },
+    prod: { code: 'PRD-03', note: 'Live traffic lane' },
+  }
+  const surfaceSignals = {
+    session: { code: 'RUN', note: 'Browser session' },
+    local: { code: 'LOCAL', note: 'Device runtime' },
+    export: { code: 'EXPORT', note: 'Generated files' },
+    deploy: { code: 'DEPLOY', note: 'Release target' },
+  }
+  const exposureSignals = {
+    client_safe: { code: 'CLIENT', note: 'Safe in client helpers' },
+    server_only: { code: 'PRIVATE', note: 'Server-side only' },
   }
 
-  const showCelebration = useCelebration(isDone, () => {
-    setRouted([])
-    setErrorTower(null)
-  })
+  const resetActivity = () => {
+    setCurrentIncident(0)
+    setSelectedEnv(null)
+    setSelectedSurface(null)
+    setSelectedExposure(null)
+    setIntegrity(100)
+    setResultState(null)
+    setMissionLog([])
+    setResolvedIncidents([])
+    setIsDone(false)
+    setIsTransitioning(false)
+  }
 
-  const getRoutedCount = (towerId) => routed.filter(c => c.towerId === towerId).length
+  const getMismatchHints = () => {
+    if (!incident) return []
+
+    const hints = []
+
+    if (selectedEnvironment && selectedEnvironment.id !== incident.targetEnv) {
+      const correctEnvironment = activity.environments.find((item) => item.id === incident.targetEnv)
+      hints.push(`Use ${correctEnvironment?.label} because this incident belongs to ${correctEnvironment?.role.toLowerCase()}.`)
+    }
+
+    if (selectedSurfaceItem && selectedSurfaceItem.id !== incident.targetSurface) {
+      const correctSurface = activity.surfaces.find((item) => item.id === incident.targetSurface)
+      hints.push(`The main impact shows up in ${correctSurface?.label}, not ${selectedSurfaceItem.label}.`)
+    }
+
+    if (selectedExposureMode && selectedExposureMode.id !== incident.targetExposure) {
+      const correctExposure = activity.exposureModes.find((item) => item.id === incident.targetExposure)
+      hints.push(`Treat this value as ${correctExposure?.label.toLowerCase()} for this scenario.`)
+    }
+
+    return hints
+  }
+
+  const handleExecute = () => {
+    if (!incident || isDone || isTransitioning) return
+
+    if (!selectedEnvironment || !selectedSurfaceItem || !selectedExposureMode) {
+      setResultState({
+        kind: 'warning',
+        title: 'Incomplete incident plan',
+        body: 'Select an environment, a workflow surface, and an exposure policy before executing the console response.',
+      })
+      return
+    }
+
+    const isCorrect =
+      selectedEnvironment.id === incident.targetEnv &&
+      selectedSurfaceItem.id === incident.targetSurface &&
+      selectedExposureMode.id === incident.targetExposure
+
+    if (isCorrect) {
+      const acceptedEntry = {
+        id: `${incident.id}-accepted`,
+        kind: 'success',
+        title: incident.title,
+        detail: `${selectedEnvironment.label} / ${selectedSurfaceItem.label} / ${selectedExposureMode.label}`,
+      }
+
+      setResolvedIncidents((prev) => [...prev, incident.id])
+      setMissionLog((prev) => [acceptedEntry, ...prev].slice(0, 4))
+      setIntegrity((prev) => Math.min(100, prev + 4))
+      setResultState({
+        kind: 'success',
+        title: 'Incident resolved',
+        body: incident.rationale,
+      })
+
+      if (currentIncident === totalIncidents - 1) {
+        setIsDone(true)
+        return
+      }
+
+      setIsTransitioning(true)
+      setTimeout(() => {
+        setCurrentIncident((prev) => prev + 1)
+        setSelectedEnv(null)
+        setSelectedSurface(null)
+        setSelectedExposure(null)
+        setResultState(null)
+        setIsTransitioning(false)
+      }, 1100)
+      return
+    }
+
+    const rejectedEntry = {
+      id: `${incident.id}-${selectedEnvironment.id}-${selectedSurfaceItem.id}-${selectedExposureMode.id}`,
+      kind: 'error',
+      title: incident.title,
+      detail: `${selectedEnvironment.label} / ${selectedSurfaceItem.label} / ${selectedExposureMode.label}`,
+    }
+
+    const hints = getMismatchHints()
+    const explanation = hints.length ? `${hints.join(' ')} ${incident.rationale}` : incident.rationale
+
+    setMissionLog((prev) => [rejectedEntry, ...prev].slice(0, 4))
+    setIntegrity((prev) => Math.max(40, prev - 12))
+    setResultState({
+      kind: 'error',
+      title: 'Plan rejected',
+      body: explanation,
+    })
+  }
+
+  const showCelebration = useCelebration(isDone, resetActivity)
 
   return (
-    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.5rem' }}>
-      {/* 3D Server Room Scene */}
-      <div style={{
-        height: '420px',
-        borderRadius: '28px',
-        overflow: 'hidden',
-        border: `1px solid ${hexToRgba(accent, 0.3)}`,
-        background: 'linear-gradient(180deg, rgba(4,10,22,0.98) 0%, rgba(3,6,14,0.96) 100%)',
-        boxShadow: `0 30px 80px ${hexToRgba(accent, 0.12)}`,
-        position: 'relative'
-      }}>
-        <Canvas camera={{ position: [0, 2.2, 5], fov: 50 }} dpr={[1, 1.5]}>
-          <ambientLight intensity={0.25} />
-          <pointLight position={[0, 5, 3]} intensity={2} color={accent} />
-          <pointLight position={[-3, 1, -2]} intensity={0.8} color="#4361ee" />
-          <pointLight position={[3, 1, -2]} intensity={0.8} color="#ff2d55" />
-
-          {/* Floor grid */}
-          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -0.85, 0]}>
-            <planeGeometry args={[10, 10]} />
-            <meshStandardMaterial color="#060a14" metalness={0.9} roughness={0.3} />
-          </mesh>
-
-          {/* Server towers */}
-          {activity.towers.map((tower, i) => (
-            <ServerTower3D
-              key={tower.id}
-              tower={tower}
-              index={i}
-              total={activity.towers.length}
-              isActive={!isDone}
-              routedCount={getRoutedCount(tower.id)}
-              onClick={(e) => { e.stopPropagation(); handleTowerClick(tower.id) }}
-            />
-          ))}
-
-          {/* Floating data cube (current) */}
-          {current && (
-            <FloatingDataCube3D
-              label={current.label}
-              color={accent}
-            />
-          )}
-
-          <Sparkles count={40} scale={7} size={1.2} speed={0.2} color={accent} opacity={0.4} />
-          <ContactShadows position={[0, -0.84, 0]} opacity={0.5} blur={2} far={5} />
-          <OrbitControls enableZoom={false} enablePan={false} autoRotate autoRotateSpeed={0.5} maxPolarAngle={Math.PI / 2.2} minPolarAngle={Math.PI / 5} />
-        </Canvas>
-
-        {/* Throughput overlay */}
-        <div style={{ position: 'absolute', top: '1rem', left: '1rem', right: '1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', pointerEvents: 'none' }}>
-          <div style={{ padding: '0.5rem 1rem', borderRadius: '14px', background: 'rgba(4,8,18,0.88)', backdropFilter: 'blur(10px)', border: `1px solid ${hexToRgba(accent, 0.25)}` }}>
-            <div style={{ color: accent, fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Throughput</div>
-            <div style={{ color: '#fff', fontSize: '1.1rem', fontWeight: 900 }}>{routed.length} / {activity.cubes.length}</div>
-          </div>
-          <div style={{ padding: '0.5rem 1rem', borderRadius: '14px', background: 'rgba(4,8,18,0.88)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <div style={{ color: '#8fa6ce', fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>Status</div>
-            <div style={{ color: isDone ? '#86ffb7' : '#fff', fontSize: '0.9rem', fontWeight: 800 }}>{isDone ? 'Synchronized' : 'Routing'}</div>
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem', height: '6px', borderRadius: '999px', background: 'rgba(255,255,255,0.08)', overflow: 'hidden', pointerEvents: 'none' }}>
-          <motion.div
-            initial={false}
-            animate={{ width: `${(routed.length / activity.cubes.length) * 100}%` }}
-            style={{ height: '100%', borderRadius: '999px', background: `linear-gradient(90deg, ${accent}, #86ffb7)` }}
-          />
-        </div>
+    <div style={{ marginTop: '1.5rem', display: 'grid', gap: '1.25rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.8rem' }}>
+        {activity.incidents.map((item, index) => {
+          const isResolved = resolvedIncidents.includes(item.id)
+          const isActive = index === currentIncident && !isDone
+          return (
+            <motion.div
+              key={item.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.04 }}
+              style={{
+                minHeight: '104px',
+                padding: '0.95rem 1rem',
+                borderRadius: '20px',
+                border: `1px solid ${isResolved ? 'rgba(134,255,183,0.26)' : isActive ? hexToRgba(accent, 0.4) : 'rgba(255,255,255,0.08)'}`,
+                background: isResolved ? 'linear-gradient(145deg, rgba(134,255,183,0.12), rgba(255,255,255,0.03))' : isActive ? `linear-gradient(145deg, ${hexToRgba(accent, 0.16)}, rgba(255,255,255,0.03))` : 'rgba(255,255,255,0.03)',
+              }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.65rem', marginBottom: '0.45rem' }}>
+                <div style={{ color: isResolved ? '#86ffb7' : isActive ? accent : '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em' }}>
+                  {isResolved ? 'Resolved' : isActive ? 'Live incident' : 'Queued'}
+                </div>
+                <div style={{ color: '#fff', fontWeight: 800 }}>{String(index + 1).padStart(2, '0')}</div>
+              </div>
+              <div style={{ color: '#dbe5f6', lineHeight: 1.5, fontSize: '0.84rem' }}>{item.title}</div>
+            </motion.div>
+          )
+        })}
       </div>
 
-      {/* Data cube + Tower selector */}
-      <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start' }}>
-        {/* Current data cube */}
-        <div style={{
-          borderRadius: '24px',
-          padding: '1.4rem',
-          background: 'linear-gradient(155deg, rgba(8,12,28,0.98), rgba(5,14,24,0.96))',
-          border: `1px solid ${hexToRgba(accent, 0.24)}`,
-        }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', gap: '1rem' }}>
-            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.15em', textTransform: 'uppercase' }}>
-              {isDone ? 'All cubes routed' : 'Active data cube'}
+      <div style={{
+        borderRadius: '30px',
+        overflow: 'hidden',
+        border: `1px solid ${hexToRgba(accent, 0.24)}`,
+        background: 'radial-gradient(circle at 12% 18%, rgba(108,240,168,0.18), transparent 24%), radial-gradient(circle at 88% 16%, rgba(97,168,255,0.14), transparent 22%), linear-gradient(155deg, rgba(6,12,24,0.99), rgba(5,20,28,0.97))',
+        boxShadow: `0 30px 80px ${hexToRgba(accent, 0.12)}`,
+      }}>
+        <div style={{ padding: '1.1rem 1.15rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+          <div>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.35rem' }}>
+              Environment command wall
             </div>
-            {!isDone && current && (
-              <button 
-                onClick={() => setRouted([...routed, current])}
-                style={{ padding: '0.4rem 0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.08)', color: '#fff', border: `1px solid ${hexToRgba(accent, 0.3)}`, cursor: 'pointer', fontSize: '0.75rem', fontWeight: 800, whiteSpace: 'nowrap' }}
-                onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.15)' }}
-                onMouseOut={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.08)' }}
-              >
-                Skip ⏭
-              </button>
-            )}
+            <div style={{ color: '#fff', fontSize: '1.12rem', fontWeight: 800 }}>
+              {isDone ? 'All incidents stabilized' : `${incident.title} · ${currentIncident + 1}/${totalIncidents}`}
+            </div>
           </div>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={current?.id || 'done'}
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              style={{ color: '#fff', fontSize: '1.08rem', lineHeight: 1.7, fontWeight: 600, marginBottom: '1rem' }}
-            >
-              {isDone ? activity.success : current?.label}
-            </motion.div>
-          </AnimatePresence>
+          <div style={{ minWidth: '220px', flex: '0 0 240px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8ea4c8', fontSize: '0.76rem', marginBottom: '0.45rem' }}>
+              <span>Integrity</span>
+              <span>{integrity}%</span>
+            </div>
+            <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+              <div style={{ width: `${integrity}%`, height: '100%', borderRadius: '999px', background: integrity > 75 ? 'linear-gradient(90deg, #86ffb7, #61a8ff)' : integrity > 55 ? 'linear-gradient(90deg, #ffd166, #ff9a5c)' : 'linear-gradient(90deg, #ff7d6b, #ff2d55)', transition: 'width 0.3s ease' }} />
+            </div>
+          </div>
+        </div>
 
-          {/* Queued cubes */}
-          {!isDone && pending.length > 1 && (
-            <div style={{ display: 'grid', gap: '0.5rem', marginTop: '0.5rem' }}>
-              <div style={{ color: '#6f83a9', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Up next</div>
-              {pending.slice(1, 3).map((cube, i) => (
-                <div key={cube.id} style={{ padding: '0.6rem 0.8rem', borderRadius: '12px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)', color: '#96a8c4', fontSize: '0.84rem', lineHeight: 1.5 }}>
-                  {cube.label}
+        <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start', padding: '1.2rem' }}>
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            <div style={{ borderRadius: '26px', padding: '1.15rem', background: 'rgba(255,255,255,0.035)', border: `1px solid ${hexToRgba(accent, 0.18)}` }}>
+              <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
+                Live incident
+              </div>
+              <div style={{ color: '#fff', lineHeight: 1.75, fontSize: '1rem', fontWeight: 600 }}>
+                {isDone ? activity.success : incident.prompt}
+              </div>
+              {!isDone && (
+                <>
+                  <div style={{ marginTop: '1rem', padding: '1rem', borderRadius: '18px', background: 'linear-gradient(135deg, rgba(97,168,255,0.12), rgba(255,255,255,0.02))', border: '1px solid rgba(97,168,255,0.2)' }}>
+                    <div style={{ color: '#8ea4c8', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.13em', fontWeight: 800, marginBottom: '0.3rem' }}>
+                      Routed value
+                    </div>
+                    <div style={{ color: '#fff', lineHeight: 1.58, overflowWrap: 'anywhere', fontWeight: 700 }}>{incident.valueLabel}</div>
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.6rem', flexWrap: 'wrap', marginTop: '1rem' }}>
+                    {incident.tags.map((tag) => (
+                      <span key={tag} style={{ padding: '0.42rem 0.72rem', borderRadius: '999px', border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.05)', color: '#dce5f8', fontSize: '0.72rem', letterSpacing: '0.08em', textTransform: 'uppercase', fontWeight: 700 }}>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div style={{ borderRadius: '28px', padding: '1.1rem', background: 'linear-gradient(160deg, rgba(7,14,28,0.96), rgba(7,24,30,0.9))', border: `1px solid ${hexToRgba(accent, 0.22)}` }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', marginBottom: '0.9rem', flexWrap: 'wrap' }}>
+                <div>
+                  <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.3rem' }}>
+                    Route visualizer
+                  </div>
+                  <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800 }}>
+                    {selectedEnvironment && selectedSurfaceItem && selectedExposureMode ? 'Response path assembled' : 'Build the path'}
+                  </div>
+                </div>
+                <div style={{ padding: '0.45rem 0.75rem', borderRadius: '999px', background: 'rgba(255,255,255,0.05)', color: '#cfe3f9', fontSize: '0.74rem', fontWeight: 700 }}>
+                  {resolvedIncidents.length} / {totalIncidents} resolved
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '0.9rem', alignItems: 'stretch' }}>
+                {[
+                  {
+                    label: 'Environment',
+                    item: selectedEnvironment,
+                    fallback: 'Choose a lane',
+                    signal: selectedEnvironment ? envSignals[selectedEnvironment.id] : null,
+                    color: selectedEnvironment?.color || '#7f8da9',
+                  },
+                  {
+                    label: 'Workflow Surface',
+                    item: selectedSurfaceItem,
+                    fallback: 'Choose where it shows up',
+                    signal: selectedSurfaceItem ? surfaceSignals[selectedSurfaceItem.id] : null,
+                    color: selectedSurfaceItem?.color || '#7f8da9',
+                  },
+                  {
+                    label: 'Exposure Policy',
+                    item: selectedExposureMode,
+                    fallback: 'Choose data safety',
+                    signal: selectedExposureMode ? exposureSignals[selectedExposureMode.id] : null,
+                    color: selectedExposureMode?.color || '#7f8da9',
+                  },
+                ].map((panel, index) => (
+                  <div key={panel.label} style={{
+                    borderRadius: '22px',
+                    padding: '1rem',
+                    minHeight: '168px',
+                    background: panel.item ? `linear-gradient(145deg, ${hexToRgba(panel.color, 0.18)}, rgba(255,255,255,0.03))` : 'rgba(255,255,255,0.03)',
+                    border: `1px solid ${panel.item ? hexToRgba(panel.color, 0.34) : 'rgba(255,255,255,0.08)'}`,
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}>
+                    <div style={{ position: 'absolute', right: '0.9rem', top: '0.8rem', color: panel.color, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                      0{index + 1}
+                    </div>
+                    <div style={{ color: '#8ea4c8', fontSize: '0.68rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.13em', marginBottom: '0.5rem' }}>
+                      {panel.label}
+                    </div>
+                    <div style={{
+                      width: '58px',
+                      height: '58px',
+                      borderRadius: '18px',
+                      display: 'grid',
+                      placeItems: 'center',
+                      background: panel.item ? hexToRgba(panel.color, 0.16) : 'rgba(255,255,255,0.05)',
+                      border: `1px solid ${panel.item ? hexToRgba(panel.color, 0.26) : 'rgba(255,255,255,0.08)'}`,
+                      color: panel.color,
+                      fontWeight: 900,
+                      letterSpacing: '0.08em',
+                      marginBottom: '0.8rem',
+                    }}>
+                      {panel.signal?.code || '...'}
+                    </div>
+                    <div style={{ color: '#fff', fontWeight: 800, fontSize: '0.98rem', marginBottom: '0.35rem' }}>
+                      {panel.item ? panel.item.label : panel.fallback}
+                    </div>
+                    <div style={{ color: panel.item ? '#dbe5f6' : '#8ea4c8', lineHeight: 1.55, fontSize: '0.83rem' }}>
+                      {panel.signal?.note || 'Awaiting selection'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', marginTop: '0.95rem', flexWrap: 'wrap' }}>
+                <div style={{ flex: 1, minWidth: '80px', height: '3px', background: selectedEnvironment && selectedSurfaceItem ? `linear-gradient(90deg, ${selectedEnvironment.color}, ${selectedSurfaceItem.color})` : 'rgba(255,255,255,0.08)', borderRadius: '999px' }} />
+                <div style={{ flex: 1, minWidth: '80px', height: '3px', background: selectedSurfaceItem && selectedExposureMode ? `linear-gradient(90deg, ${selectedSurfaceItem.color}, ${selectedExposureMode.color})` : 'rgba(255,255,255,0.08)', borderRadius: '999px' }} />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem' }}>
+              <div style={{ borderRadius: '20px', padding: '0.95rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.35rem' }}>
+                  Selected environment
+                </div>
+                <div style={{ color: selectedEnvironment ? selectedEnvironment.color : '#fff', fontWeight: 800, lineHeight: 1.4 }}>
+                  {selectedEnvironment ? selectedEnvironment.label : 'Waiting'}
+                </div>
+              </div>
+              <div style={{ borderRadius: '20px', padding: '0.95rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.35rem' }}>
+                  Selected surface
+                </div>
+                <div style={{ color: selectedSurfaceItem ? selectedSurfaceItem.color : '#fff', fontWeight: 800, lineHeight: 1.4 }}>
+                  {selectedSurfaceItem ? selectedSurfaceItem.label : 'Waiting'}
+                </div>
+              </div>
+              <div style={{ borderRadius: '20px', padding: '0.95rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.35rem' }}>
+                  Exposure policy
+                </div>
+                <div style={{ color: selectedExposureMode ? selectedExposureMode.color : '#fff', fontWeight: 800, lineHeight: 1.4 }}>
+                  {selectedExposureMode ? selectedExposureMode.label : 'Waiting'}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gap: '1rem' }}>
+            <div style={{
+              borderRadius: '26px',
+              padding: '1.1rem',
+              background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+              border: `1px solid ${hexToRgba(accent, 0.2)}`,
+            }}>
+              <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+                Choose environment
+              </div>
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {activity.environments.map((item) => {
+                  const isSelected = item.id === selectedEnv
+                  return (
+                    <motion.button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        if (isDone || isTransitioning) return
+                        setSelectedEnv(item.id)
+                        setResultState(null)
+                      }}
+                      whileHover={{ y: -4 }}
+                      whileTap={{ scale: 0.99 }}
+                      style={{
+                        textAlign: 'left',
+                        padding: '1rem',
+                        borderRadius: '22px',
+                        cursor: isDone ? 'default' : 'pointer',
+                        border: `1px solid ${isSelected ? item.color : 'rgba(255,255,255,0.08)'}`,
+                        background: isSelected ? `${item.color}16` : 'rgba(255,255,255,0.03)',
+                      }}
+                    >
+                      <div style={{ display: 'grid', gridTemplateColumns: '56px 1fr', gap: '0.85rem', alignItems: 'start' }}>
+                        <div style={{ width: '56px', height: '56px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: hexToRgba(item.color, 0.15), color: item.color, fontWeight: 900, letterSpacing: '0.08em', border: `1px solid ${hexToRgba(item.color, 0.26)}` }}>
+                          {envSignals[item.id].code}
+                        </div>
+                        <div>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem', alignItems: 'start' }}>
+                            <div style={{ color: item.color, fontWeight: 800, fontSize: '0.98rem' }}>{item.label}</div>
+                            <div style={{ padding: '0.3rem 0.55rem', borderRadius: '999px', background: hexToRgba(item.color, 0.12), color: item.color, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
+                              {item.role}
+                            </div>
+                          </div>
+                          <div style={{ color: '#c7d4eb', lineHeight: 1.58, fontSize: '0.84rem' }}>{item.desc}</div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div style={{
+              borderRadius: '26px',
+              padding: '1.1rem',
+              background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+              border: `1px solid ${hexToRgba(accent, 0.2)}`,
+            }}>
+              <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+                Choose workflow surface
+              </div>
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {activity.surfaces.map((item) => {
+                  const isSelected = item.id === selectedSurface
+                  return (
+                    <motion.button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        if (isDone || isTransitioning) return
+                        setSelectedSurface(item.id)
+                        setResultState(null)
+                      }}
+                      whileHover={{ y: -4 }}
+                      whileTap={{ scale: 0.99 }}
+                      style={{
+                        textAlign: 'left',
+                        padding: '1rem',
+                        borderRadius: '22px',
+                        cursor: isDone ? 'default' : 'pointer',
+                        border: `1px solid ${isSelected ? item.color : 'rgba(255,255,255,0.08)'}`,
+                        background: isSelected ? `${item.color}16` : 'rgba(255,255,255,0.03)',
+                      }}
+                    >
+                      <div style={{ display: 'grid', gridTemplateColumns: '56px 1fr', gap: '0.85rem', alignItems: 'start' }}>
+                        <div style={{ width: '56px', height: '56px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: hexToRgba(item.color, 0.15), color: item.color, fontWeight: 900, letterSpacing: '0.08em', border: `1px solid ${hexToRgba(item.color, 0.26)}` }}>
+                          {surfaceSignals[item.id].code}
+                        </div>
+                        <div>
+                          <div style={{ color: item.color, fontWeight: 800, fontSize: '0.98rem', marginBottom: '0.4rem' }}>{item.label}</div>
+                          <div style={{ color: '#c7d4eb', lineHeight: 1.58, fontSize: '0.84rem' }}>{item.desc}</div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div style={{
+              borderRadius: '26px',
+              padding: '1.1rem',
+              background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+              border: `1px solid ${hexToRgba(accent, 0.2)}`,
+            }}>
+              <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+                Choose exposure policy
+              </div>
+              <div style={{ display: 'grid', gap: '0.75rem' }}>
+                {activity.exposureModes.map((item) => {
+                  const isSelected = item.id === selectedExposure
+                  return (
+                    <motion.button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        if (isDone || isTransitioning) return
+                        setSelectedExposure(item.id)
+                        setResultState(null)
+                      }}
+                      whileHover={{ y: -4 }}
+                      whileTap={{ scale: 0.99 }}
+                      style={{
+                        textAlign: 'left',
+                        padding: '1rem',
+                        borderRadius: '22px',
+                        cursor: isDone ? 'default' : 'pointer',
+                        border: `1px solid ${isSelected ? item.color : 'rgba(255,255,255,0.08)'}`,
+                        background: isSelected ? `${item.color}16` : 'rgba(255,255,255,0.03)',
+                      }}
+                    >
+                      <div style={{ display: 'grid', gridTemplateColumns: '56px 1fr', gap: '0.85rem', alignItems: 'start' }}>
+                        <div style={{ width: '56px', height: '56px', borderRadius: '18px', display: 'grid', placeItems: 'center', background: hexToRgba(item.color, 0.15), color: item.color, fontWeight: 900, letterSpacing: '0.08em', border: `1px solid ${hexToRgba(item.color, 0.26)}` }}>
+                          {exposureSignals[item.id].code}
+                        </div>
+                        <div>
+                          <div style={{ color: item.color, fontWeight: 800, fontSize: '0.98rem', marginBottom: '0.4rem' }}>{item.label}</div>
+                          <div style={{ color: '#c7d4eb', lineHeight: 1.58, fontSize: '0.84rem' }}>{item.desc}</div>
+                        </div>
+                      </div>
+                    </motion.button>
+                  )
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="responsive-grid" style={{ gap: '1rem', alignItems: 'start', padding: '0 1.2rem 1.2rem' }}>
+          <div style={{
+            borderRadius: '24px',
+            padding: '1.1rem',
+            background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(6,16,24,0.95))',
+            border: `1px solid ${hexToRgba(accent, 0.18)}`,
+          }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
+              Route summary
+            </div>
+            <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+              {selectedEnvironment && selectedSurfaceItem && selectedExposureMode ? 'Command path ready' : 'Awaiting full route'}
+            </div>
+            <div style={{ color: '#dbe5f6', lineHeight: 1.65, fontSize: '0.9rem' }}>
+              {selectedEnvironment && selectedSurfaceItem && selectedExposureMode
+                ? `${selectedEnvironment.label} drives ${selectedSurfaceItem.label}, while ${selectedExposureMode.label.toLowerCase()} governs ${incident?.valueLabel || 'this value'}.`
+                : 'Pick one option in each column to generate a full environment routing path.'}
+            </div>
+          </div>
+
+          <div style={{
+            borderRadius: '24px',
+            padding: '1.1rem',
+            background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(12,10,24,0.95))',
+            border: `1px solid ${resultState ? (resultState.kind === 'success' ? 'rgba(134,255,183,0.28)' : resultState.kind === 'error' ? 'rgba(255,125,107,0.28)' : 'rgba(255,209,102,0.28)') : 'rgba(255,255,255,0.08)'}`,
+          }}>
+            <div style={{ color: resultState ? (resultState.kind === 'success' ? '#86ffb7' : resultState.kind === 'error' ? '#ff7d6b' : '#ffd166') : '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
+              Console feedback
+            </div>
+            <div style={{ color: '#fff', fontSize: '1rem', fontWeight: 800, marginBottom: '0.35rem' }}>
+              {resultState ? resultState.title : 'Awaiting execution'}
+            </div>
+            <div style={{ color: '#dbe5f6', lineHeight: 1.65, fontSize: '0.9rem' }}>
+              {resultState ? resultState.body : 'Build the incident response, then execute it. The console will explain whether the route matches the lesson.'}
+            </div>
+          </div>
+
+          <div style={{
+            borderRadius: '24px',
+            padding: '1.1rem',
+            background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+            border: `1px solid ${hexToRgba(accent, 0.18)}`,
+          }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+              Controls
+            </div>
+            <div style={{ display: 'grid', gap: '0.7rem' }}>
+              <button
+                type="button"
+                onClick={handleExecute}
+                disabled={!readyToExecute}
+                style={{
+                  padding: '0.95rem 1rem',
+                  borderRadius: '18px',
+                  border: 'none',
+                  cursor: readyToExecute ? 'pointer' : 'not-allowed',
+                  background: readyToExecute ? `linear-gradient(135deg, ${accent}, #00f5d4)` : 'rgba(255,255,255,0.08)',
+                  color: readyToExecute ? '#08111d' : '#94a8cb',
+                  fontWeight: 900,
+                  letterSpacing: '0.08em',
+                  textTransform: 'uppercase',
+                }}
+              >
+                {isTransitioning ? 'Routing next incident...' : 'Execute response'}
+              </button>
+              <button
+                type="button"
+                onClick={resetActivity}
+                style={{
+                  padding: '0.9rem 1rem',
+                  borderRadius: '18px',
+                  border: '1px solid rgba(255,255,255,0.12)',
+                  background: 'rgba(255,255,255,0.03)',
+                  color: '#fff',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                }}
+              >
+                Reset console
+              </button>
+              <div style={{ padding: '0.85rem 0.95rem', borderRadius: '18px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.45rem' }}>
+                  <span style={{ color: '#8ea4c8', fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.13em', fontWeight: 800 }}>Progress</span>
+                  <span style={{ color: '#fff', fontWeight: 800 }}>{resolvedIncidents.length} / {totalIncidents}</span>
+                </div>
+                <div style={{ height: '10px', borderRadius: '999px', background: 'rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+                  <div style={{ width: `${progress * 100}%`, height: '100%', borderRadius: '999px', background: 'linear-gradient(90deg, #61a8ff, #86ffb7)', transition: 'width 0.3s ease' }} />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 1.2rem 1.2rem' }}>
+          <div style={{
+            borderRadius: '24px',
+            padding: '1.1rem',
+            background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
+            border: `1px solid ${hexToRgba(accent, 0.18)}`,
+          }}>
+            <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.8rem' }}>
+              Mission log
+            </div>
+            <div style={{ display: 'grid', gap: '0.75rem' }}>
+              {missionLog.length === 0 && (
+                <div style={{ color: '#9aaed0', lineHeight: 1.6 }}>
+                  No incidents logged yet. Your last four responses will appear here.
+                </div>
+              )}
+              {missionLog.map((entry) => (
+                <div
+                  key={entry.id}
+                  style={{
+                    padding: '0.9rem 1rem',
+                    borderRadius: '18px',
+                    background: entry.kind === 'success' ? 'rgba(134,255,183,0.08)' : 'rgba(255,125,107,0.08)',
+                    border: `1px solid ${entry.kind === 'success' ? 'rgba(134,255,183,0.22)' : 'rgba(255,125,107,0.22)'}`,
+                  }}
+                >
+                  <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.8rem', marginBottom: '0.25rem' }}>
+                    <div style={{ color: '#fff', fontWeight: 800 }}>{entry.title}</div>
+                    <div style={{ color: entry.kind === 'success' ? '#86ffb7' : '#ff7d6b', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                      {entry.kind === 'success' ? 'Accepted' : 'Rejected'}
+                    </div>
+                  </div>
+                  <div style={{ color: '#c7d4eb', fontSize: '0.86rem', lineHeight: 1.55 }}>{entry.detail}</div>
                 </div>
               ))}
             </div>
-          )}
-
-          {errorTower && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              style={{ marginTop: '1rem', padding: '0.8rem', borderRadius: '14px', background: 'rgba(255,45,85,0.1)', border: '1px solid rgba(255,45,85,0.25)', color: '#ff95a4', fontSize: '0.85rem' }}
-            >
-              Wrong tower — think about whether this is local, rehearsal, or live.
-            </motion.div>
-          )}
-        </div>
-
-        {/* Tower buttons */}
-        <div style={{ display: 'grid', gap: '0.8rem' }}>
-          {activity.towers.map((tower) => {
-            const count = getRoutedCount(tower.id)
-            const isError = errorTower === tower.id
-            return (
-              <motion.button
-                key={tower.id}
-                type="button"
-                onClick={() => handleTowerClick(tower.id)}
-                whileHover={{ x: 6, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={isError ? 'jam-shake' : ''}
-                style={{
-                  padding: '1.1rem',
-                  borderRadius: '22px',
-                  textAlign: 'left',
-                  cursor: isDone ? 'default' : 'pointer',
-                  display: 'grid',
-                  gridTemplateColumns: '50px 1fr 44px',
-                  gap: '0.9rem',
-                  alignItems: 'center',
-                  background: isError ? 'linear-gradient(145deg, rgba(255,45,85,0.12), rgba(255,255,255,0.03))' : `linear-gradient(145deg, ${hexToRgba(tower.color, 0.12)}, rgba(255,255,255,0.03))`,
-                  border: `1px solid ${isError ? 'rgba(255,45,85,0.3)' : hexToRgba(tower.color, 0.35)}`,
-                  color: '#fff'
-                }}
-              >
-                <div style={{ width: '50px', height: '50px', borderRadius: '16px', display: 'grid', placeItems: 'center', background: hexToRgba(tower.color, 0.15), color: tower.color, fontWeight: 950, border: `1px solid ${hexToRgba(tower.color, 0.25)}` }}>
-                  {tower.label.charAt(0)}
-                </div>
-                <div>
-                  <div style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.15rem' }}>{tower.label}</div>
-                  <div style={{ color: '#96a8c4', fontSize: '0.82rem' }}>{tower.desc}</div>
-                </div>
-                <div style={{ width: '44px', height: '44px', borderRadius: '14px', display: 'grid', placeItems: 'center', background: 'rgba(255,255,255,0.05)', fontWeight: 900, fontSize: '1.1rem' }}>
-                  {count}
-                </div>
-              </motion.button>
-            )
-          })}
+          </div>
         </div>
       </div>
 
@@ -5224,9 +6038,10 @@ function ActivityBody({ activity, accent }) {
   if (activity.type === 'toolbelt') return <ToolbeltActivity activity={activity} accent={accent} />
   if (activity.type === 'branch_graph') return <BranchGraphActivity activity={activity} accent={accent} />
   if (activity.type === 'time_machine') return <TimeMachineActivity activity={activity} accent={accent} />
+  if (activity.type === 'history_rescue') return <HistoryRescueActivity activity={activity} accent={accent} />
+  if (activity.type === 'env_incident_console') return <EnvironmentIncidentConsoleActivity activity={activity} accent={accent} />
   if (activity.type === 'time_vault_3d') return <TimeVault3DActivity activity={activity} accent={accent} />
   if (activity.type === 'server_deploy') return <ServerDeployActivity activity={activity} accent={accent} />
-  if (activity.type === 'control_tower_3d') return <ControlTower3DActivity activity={activity} accent={accent} />
   if (activity.type === 'launchpad') return <LaunchpadActivity activity={activity} accent={accent} />
   return null
 }
