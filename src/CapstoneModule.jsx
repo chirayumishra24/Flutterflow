@@ -1,490 +1,957 @@
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react'
+import { motion } from 'framer-motion'
 
 const problemStatements = [
   {
     id: 1,
-    title: "E-commerce / Marketplace",
-    themeColor: "#ff2d55",
-    description: "Build a sleek e-commerce shopping app for a local clothing brand.",
+    title: 'E-commerce / Marketplace',
+    themeColor: '#ff2d55',
+    description: 'Build a polished commerce experience for a local brand with browsing, checkout, and seller flows.',
     requirements: [
-      "Product catalog with search/filter",
-      "Cart & Checkout system",
-      "User profile and Order history",
-      "Image uploads for products/sellers",
-      "Payment integration (Stripe/Razorpay via custom action)"
-    ]
+      'Product catalog with search and filtering',
+      'Cart and checkout system',
+      'User profiles and order history',
+      'Image uploads for products or sellers',
+      'Payment integration through custom actions',
+    ],
   },
   {
     id: 2,
-    title: "Social Media / Feed App",
-    themeColor: "#5856d6",
-    description: "Design a photo-sharing application tailored for foodies or creatives.",
+    title: 'Social Media / Feed App',
+    themeColor: '#5856d6',
+    description: 'Create a visual social app for creators, foodies, or niche communities with strong interaction loops.',
     requirements: [
-      "Post creation with media upload",
-      "Like/Comment system & Real-time feed",
-      "User profiles and Notifications",
-      "Hero animations for image views"
-    ]
+      'Post creation with media upload',
+      'Like/comment system and dynamic feed',
+      'User profiles and notifications',
+      'Hero or media transition animations',
+    ],
   },
   {
     id: 3,
-    title: "Task / Habit Tracker",
-    themeColor: "#ff9500",
-    description: "Create an advanced productivity app for tracking goals and daily habits.",
+    title: 'Task / Habit Tracker',
+    themeColor: '#ff9500',
+    description: 'Design a productivity system that helps users manage routines, deadlines, and progress.',
     requirements: [
-      "Categories, Due dates with reminders",
-      "File attachments and Progress analytics",
-      "Dark mode toggle",
-      "Custom animations for task completion"
-    ]
+      'Categories and due dates with reminders',
+      'File attachments and progress analytics',
+      'Theme or dark mode toggle',
+      'Custom interactions for task completion',
+    ],
   },
   {
     id: 4,
-    title: "Quiz / Learning App",
-    themeColor: "#4cd964",
-    description: "A visually engaging educational platform for quick modular courses.",
+    title: 'Quiz / Learning App',
+    themeColor: '#4cd964',
+    description: 'Build an educational app that combines learning content, assessments, and achievement systems.',
     requirements: [
-      "Multiple-choice quizzes & Score tracking",
-      "Media-rich questions (images/videos)",
-      "Leaderboard & Certificate generation (PDF)",
-      "Animations on correct/wrong answers"
-    ]
+      'Multiple-choice quizzes and score tracking',
+      'Media-rich questions with images or video',
+      'Leaderboard and certificate generation',
+      'Clear feedback animations for answers',
+    ],
   },
   {
     id: 5,
-    title: "Fitness / Meal Planner",
-    themeColor: "#5ac8fa",
-    description: "An app for users to log workouts, track calories, and plan healthy meals.",
+    title: 'Fitness / Meal Planner',
+    themeColor: '#5ac8fa',
+    description: 'Ship a wellness app for workout logging, meal tracking, and progress reporting.',
     requirements: [
-      "Workout/exercise library with videos",
-      "Meal logging with image upload",
-      "Progress tracking via charts",
-      "Custom functions for calorie calculation"
-    ]
+      'Workout or exercise library with media',
+      'Meal logging with image upload',
+      'Progress charts or analytics',
+      'Custom logic for calorie or plan calculations',
+    ],
   },
   {
     id: 6,
-    title: "Your Own Awesome Idea",
-    themeColor: "#ffcc00",
-    description: "Design and build an original app of similar complexity (approved by instructor).",
+    title: 'Your Own Awesome Idea',
+    themeColor: '#ffcc00',
+    description: 'Propose an original product at the same level of complexity and get it approved by your instructor.',
     requirements: [
-      "Must incorporate at least 80% of the course modules",
-      "Full backend integration",
-      "Responsive UI",
-      "Published to App/Play Store"
-    ]
-  }
-];
+      'Must use at least 80% of the course modules',
+      'Full backend integration',
+      'Responsive UI',
+      'Published web or app-store ready output',
+    ],
+  },
+]
 
-const GlassCard = ({ children, delay = 0, style = {}, className="" }) => (
-  <motion.div 
-    initial={{ opacity: 0, y: 20 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true, margin: "-20px" }}
-    transition={{ delay, duration: 0.35 }}
-    className={className}
-    style={{ 
-      background: 'rgba(255,255,255,0.03)', 
-      border: '1px solid rgba(255,255,255,0.05)', 
-      borderRadius: '24px', 
-      padding: '2.5rem', 
-      backdropFilter: 'blur(10px)',
-      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.3)',
-      ...style
-    }}
-  >
-    {children}
-  </motion.div>
-);
+const corePillars = [
+  { title: 'Authentication', detail: 'Real user flows, guarded screens, and session-aware UI.', accent: '#5ac8fa' },
+  { title: 'Backend', detail: 'Firestore, Supabase, or another real data layer with structured models.', accent: '#00f5d4' },
+  { title: 'State & Logic', detail: 'Meaningful app logic, actions, and user-driven state changes.', accent: '#ff9500' },
+  { title: 'Custom Capability', detail: 'Custom code, custom functions, or external API logic.', accent: '#ff2d55' },
+  { title: 'Polish', detail: 'Animations, media handling, responsive design, and production-level UI.', accent: '#7b2ff7' },
+  { title: 'Release Flow', detail: 'Branching discipline, testing, export, and final deployment.', accent: '#ffcc00' },
+]
 
-const SectionTitle = ({ children, icon, color = "#fff", delay = 0, style={} }) => (
-  <motion.h3 
-    initial={{ opacity: 0, x: -20 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, margin: "-20px" }}
-    transition={{ delay, duration: 0.35 }}
-    style={{ 
-      fontSize: 'clamp(1.5rem, 4vw, 2rem)', fontWeight: 800, color, marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '12px',
-      ...style
-    }}
-  >
-    {icon && <span style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', filter: `drop-shadow(0 0 10px ${color}80)` }}>{icon}</span>}
-    {children}
-  </motion.h3>
-);
+const timelinePhases = [
+  {
+    step: '01',
+    title: 'Frame the Product',
+    desc: 'Lock the user flow, data model, and design system before you build heavily.',
+  },
+  {
+    step: '02',
+    title: 'Build the Core',
+    desc: 'Implement auth, screens, backend, media, and the main interaction loop.',
+  },
+  {
+    step: '03',
+    title: 'Polish and Ship',
+    desc: 'Stress test edge cases, improve motion and UI quality, then deploy and document.',
+  },
+]
 
-const ListItem = ({ children, color = "#ff2d55", icon = "✦", delay = 0 }) => (
-  <motion.li 
-    initial={{ opacity: 0, x: -10 }}
-    whileInView={{ opacity: 1, x: 0 }}
-    viewport={{ once: true, margin: "-20px" }}
-    transition={{ delay, duration: 0.25 }}
-    style={{ display: 'flex', alignItems: 'flex-start', gap: '12px', color: '#b0b0cc', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '0.8rem' }}
-  >
-    <span style={{ color, marginTop: '2px', fontSize: '1.2rem', fontWeight: 'bold' }}>{icon}</span>
-    <span>{children}</span>
-  </motion.li>
-);
+const resourceLinks = [
+  { name: 'FlutterFlow Sample Apps', url: 'https://github.com/FlutterFlow/sample-apps', accent: '#4cd964' },
+  { name: 'FlutterFlow E-commerce Reference', url: 'https://github.com/TBR-Group/flutterflow_ecommerce', accent: '#ff2d55' },
+  { name: 'Quiz Creation Reference', url: 'https://github.com/extrawest/quiz_creation', accent: '#5ac8fa' },
+]
+
+const bonusChallenges = [
+  { title: 'AI Layer', desc: 'Add a smart workflow using OpenAI or Gemini through custom actions.', accent: '#ff9500' },
+  { title: 'Real-Time Sync', desc: 'Use listeners so multiple users see updates live.', accent: '#00f5d4' },
+  { title: 'Launch Surface', desc: 'Connect a custom domain or store-ready release path.', accent: '#7b2ff7' },
+  { title: 'Monetization', desc: 'Add subscriptions, payments, or ad logic where it makes sense.', accent: '#ff2d55' },
+]
+
+const fieldStyle = {
+  width: '100%',
+  padding: '1rem 1.05rem',
+  borderRadius: '16px',
+  background: 'rgba(255,255,255,0.04)',
+  border: '1px solid rgba(255,255,255,0.1)',
+  color: '#f7f9ff',
+  outline: 'none',
+}
+
+const htmlEscapes = {
+  '&': '&amp;',
+  '<': '&lt;',
+  '>': '&gt;',
+  '"': '&quot;',
+  "'": '&#39;',
+}
+
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>"']/g, (char) => htmlEscapes[char])
+}
+
+function buildCapstoneDocument({ selectedTopic, ffLink, githubLink, playStoreLink, demoLink }) {
+  const generatedOn = new Date().toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  })
+
+  return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+  <meta charset="utf-8" />
+  <title>Capstone Submission Package</title>
+  <style>
+    body {
+      font-family: Calibri, Arial, sans-serif;
+      color: #172033;
+      margin: 32px;
+      line-height: 1.55;
+    }
+    h1, h2, h3 {
+      color: #2a2f7a;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 24pt;
+      margin-top: 0;
+    }
+    h2 {
+      font-size: 15pt;
+      margin-top: 28px;
+      border-bottom: 1px solid #d7dcf5;
+      padding-bottom: 6px;
+    }
+    p, li {
+      font-size: 11pt;
+    }
+    .meta {
+      background: #f4f6ff;
+      border: 1px solid #d7dcf5;
+      padding: 14px 16px;
+      border-radius: 12px;
+    }
+    .label {
+      font-weight: 700;
+      color: #4f46e5;
+    }
+    .shot-box {
+      margin-top: 12px;
+      height: 180px;
+      border: 2px dashed #b9c2ea;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #6c7697;
+      font-style: italic;
+      text-align: center;
+      padding: 16px;
+    }
+    .note {
+      background: #fff8e8;
+      border-left: 4px solid #f59e0b;
+      padding: 12px 14px;
+      margin-top: 14px;
+    }
+    a {
+      color: #1d4ed8;
+      word-break: break-word;
+    }
+  </style>
+</head>
+<body>
+  <h1>Capstone Submission Package</h1>
+  <div class="meta">
+    <p><span class="label">Generated on:</span> ${escapeHtml(generatedOn)}</p>
+    <p><span class="label">Selected topic:</span> ${escapeHtml(selectedTopic.title)}</p>
+    <p><span class="label">Project brief:</span> ${escapeHtml(selectedTopic.description)}</p>
+  </div>
+
+  <h2>Project Links</h2>
+  <ul>
+    <li><span class="label">FlutterFlow Project:</span> <a href="${escapeHtml(ffLink)}">${escapeHtml(ffLink)}</a></li>
+    <li><span class="label">GitHub Repository:</span> <a href="${escapeHtml(githubLink)}">${escapeHtml(githubLink)}</a></li>
+    <li><span class="label">Demo Video:</span> <a href="${escapeHtml(demoLink)}">${escapeHtml(demoLink)}</a></li>
+    <li><span class="label">Published App Link:</span> ${
+      playStoreLink.trim()
+        ? `<a href="${escapeHtml(playStoreLink)}">${escapeHtml(playStoreLink)}</a>`
+        : 'Not provided'
+    }</li>
+  </ul>
+
+  <h2>Implementation Summary</h2>
+  <p>Describe the product goal, the target user, the backend used, and the most important implementation decisions you made.</p>
+  <p>Recommended sections:</p>
+  <ul>
+    <li>Main problem solved by the app</li>
+    <li>Core user flow and screens</li>
+    <li>Backend and database setup</li>
+    <li>Custom logic, APIs, or advanced FlutterFlow features used</li>
+    <li>Testing, deployment, and known limitations</li>
+  </ul>
+
+  <h2>Required Screenshots</h2>
+  <p>Add clear screenshots of the app below before submitting this document to the LMS.</p>
+  <div class="shot-box">Insert home screen screenshot here</div>
+  <div class="shot-box">Insert core workflow screenshot here</div>
+  <div class="shot-box">Insert backend, admin, or settings-related screenshot here</div>
+  <div class="shot-box">Insert responsive/mobile or final deployed screen here</div>
+
+  <h2>Submission Instructions</h2>
+  <ol>
+    <li>Open this downloaded document in Microsoft Word or a compatible editor.</li>
+    <li>Add your screenshots and fill in the implementation summary.</li>
+    <li>Save the completed document.</li>
+    <li>Upload the final document to the LMS as your capstone submission.</li>
+  </ol>
+
+  <div class="note">
+    Keep all project links public and working until the review is complete.
+  </div>
+</body>
+</html>`
+}
+
+function downloadCapstoneDocument(payload) {
+  if (typeof window === 'undefined') return
+
+  const documentHtml = buildCapstoneDocument(payload)
+  const blob = new Blob(['\ufeff', documentHtml], { type: 'application/msword' })
+  const url = window.URL.createObjectURL(blob)
+  const link = window.document.createElement('a')
+
+  link.href = url
+  link.download = `capstone-submission-package-topic-${payload.selectedTopic.id}.doc`
+  window.document.body.appendChild(link)
+  link.click()
+  link.remove()
+  window.URL.revokeObjectURL(url)
+}
+
+function SurfaceCard({ children, style = {} }) {
+  return (
+    <div
+      style={{
+        background: 'linear-gradient(155deg, rgba(13,16,33,0.95), rgba(7,23,29,0.92))',
+        border: '1px solid rgba(255,255,255,0.08)',
+        borderRadius: '28px',
+        boxShadow: '0 24px 60px rgba(0,0,0,0.22)',
+        ...style,
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+function SectionIntro({ eyebrow, title, body, accent = '#fff' }) {
+  return (
+    <div style={{ display: 'grid', gap: '0.85rem', maxWidth: '820px' }}>
+      <span
+        style={{
+          width: 'max-content',
+          padding: '0.45rem 0.95rem',
+          borderRadius: '999px',
+          background: `${accent}16`,
+          border: `1px solid ${accent}40`,
+          color: accent,
+          fontWeight: 800,
+          fontSize: '0.72rem',
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+        }}
+      >
+        {eyebrow}
+      </span>
+      <h2 style={{ margin: 0, color: '#fff', fontSize: 'clamp(2rem, 4vw, 3.3rem)', lineHeight: 1.02, fontWeight: 900 }}>
+        {title}
+      </h2>
+      <p style={{ margin: 0, color: '#b9c4df', lineHeight: 1.75, fontSize: '1.02rem' }}>{body}</p>
+    </div>
+  )
+}
+
+function RequirementList({ items, accent }) {
+  return (
+    <div style={{ display: 'grid', gap: '0.7rem' }}>
+      {items.map((item) => (
+        <div
+          key={item}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '22px 1fr',
+            gap: '0.8rem',
+            alignItems: 'start',
+            color: '#d8e0f1',
+            lineHeight: 1.55,
+          }}
+        >
+          <span style={{ color: accent, fontWeight: 900 }}>+</span>
+          <span>{item}</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function TopicWheel({ rotation, spinning, onSpin, selectedTopic }) {
+  return (
+    <SurfaceCard style={{ padding: '1.3rem' }}>
+      <div style={{ display: 'grid', gap: '1rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+          <div>
+            <div style={{ color: '#ffcc00', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
+              Randomizer
+            </div>
+            <div style={{ color: '#fff', fontSize: '1.2rem', fontWeight: 800 }}>Need a direction?</div>
+          </div>
+          <button
+            type="button"
+            onClick={onSpin}
+            disabled={spinning}
+            style={{
+              padding: '0.9rem 1.25rem',
+              borderRadius: '16px',
+              border: 'none',
+              cursor: spinning ? 'not-allowed' : 'pointer',
+              background: spinning ? 'rgba(255,255,255,0.08)' : 'linear-gradient(135deg, #ffcc00, #ff2d55)',
+              color: spinning ? '#8ea4c8' : '#08111d',
+              fontWeight: 900,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+            }}
+          >
+            {spinning ? 'Spinning...' : 'Spin'}
+          </button>
+        </div>
+
+        <div style={{ display: 'grid', placeItems: 'center', padding: '1rem 0 0.5rem' }}>
+          <div style={{ position: 'relative', width: 'min(100%, 320px)', aspectRatio: '1 / 1' }}>
+            <div
+              style={{
+                position: 'absolute',
+                left: '50%',
+                top: '-18px',
+                transform: 'translateX(-50%)',
+                width: 0,
+                height: 0,
+                borderLeft: '16px solid transparent',
+                borderRight: '16px solid transparent',
+                borderTop: '28px solid #f7f9ff',
+                filter: 'drop-shadow(0 4px 10px rgba(0,0,0,0.5))',
+                zIndex: 3,
+              }}
+            />
+            <motion.div
+              animate={{ rotate: rotation }}
+              transition={{ duration: 4.5, type: 'tween', ease: [0.1, 0.9, 0.2, 1] }}
+              style={{
+                width: '100%',
+                height: '100%',
+                borderRadius: '50%',
+                overflow: 'hidden',
+                border: '8px solid rgba(255,255,255,0.08)',
+                boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 30px 60px rgba(0,0,0,0.28)',
+                position: 'relative',
+                background: '#0c1020',
+              }}
+            >
+              <svg viewBox="0 0 380 380" width="100%" height="100%" style={{ display: 'block', transform: 'rotate(-90deg)' }}>
+                {problemStatements.map((item, i) => {
+                  const count = problemStatements.length
+                  const angle = 360 / count
+                  const radius = 190
+                  const cx = 190
+                  const cy = 190
+                  const startAngle = (i * angle) * (Math.PI / 180)
+                  const endAngle = ((i + 1) * angle) * (Math.PI / 180)
+                  const x1 = cx + radius * Math.cos(startAngle)
+                  const y1 = cy + radius * Math.sin(startAngle)
+                  const x2 = cx + radius * Math.cos(endAngle)
+                  const y2 = cy + radius * Math.sin(endAngle)
+                  const midAngle = (startAngle + endAngle) / 2
+                  const textRadius = radius * 0.64
+                  const textX = cx + textRadius * Math.cos(midAngle)
+                  const textY = cy + textRadius * Math.sin(midAngle)
+                  const textRotation = midAngle * (180 / Math.PI)
+                  const words = item.title.split(' ')
+                  const line1 = words.slice(0, Math.ceil(words.length / 2)).join(' ')
+                  const line2 = words.slice(Math.ceil(words.length / 2)).join(' ')
+
+                  return (
+                    <g key={item.id}>
+                      <path
+                        d={`M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`}
+                        fill={item.themeColor}
+                        stroke="rgba(255,255,255,0.16)"
+                        strokeWidth="2"
+                      />
+                      <text
+                        x={textX}
+                        y={textY}
+                        fill="#fff"
+                        fontSize="16"
+                        fontWeight="800"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        transform={`rotate(${textRotation}, ${textX}, ${textY})`}
+                        style={{ textShadow: '0 2px 6px rgba(0,0,0,0.85)' }}
+                      >
+                        <tspan x={textX} dy="-0.6em">{line1}</tspan>
+                        <tspan x={textX} dy="1.2em">{line2}</tspan>
+                      </text>
+                    </g>
+                  )
+                })}
+              </svg>
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 'calc(50% - 26px)',
+                  width: '52px',
+                  height: '52px',
+                  borderRadius: '999px',
+                  background: '#0c1020',
+                  border: '4px solid #fff',
+                  boxShadow: '0 10px 24px rgba(0,0,0,0.28)',
+                }}
+              />
+            </motion.div>
+          </div>
+        </div>
+
+        <div style={{ borderRadius: '18px', padding: '1rem', background: 'rgba(255,255,255,0.04)', border: `1px solid ${selectedTopic.themeColor}40` }}>
+          <div style={{ color: selectedTopic.themeColor, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.35rem' }}>
+            Current topic
+          </div>
+          <div style={{ color: '#fff', fontWeight: 800, fontSize: '1.05rem', marginBottom: '0.35rem' }}>{selectedTopic.title}</div>
+          <div style={{ color: '#b9c4df', lineHeight: 1.6, fontSize: '0.94rem' }}>{selectedTopic.description}</div>
+        </div>
+      </div>
+    </SurfaceCard>
+  )
+}
 
 export default function CapstoneModule() {
   const readSavedValue = (key, fallback = '') => {
-    if (typeof window === 'undefined') return fallback;
-    return window.localStorage.getItem(key) ?? fallback;
-  };
+    if (typeof window === 'undefined') return fallback
+    return window.localStorage.getItem(key) ?? fallback
+  }
 
   const readSavedTopic = () => {
-    if (typeof window === 'undefined') return problemStatements[0];
-    const savedId = Number(window.localStorage.getItem('capstone:selectedTopicId'));
-    return problemStatements.find((topic) => topic.id === savedId) || problemStatements[0];
-  };
+    if (typeof window === 'undefined') return problemStatements[0]
+    const savedId = Number(window.localStorage.getItem('capstone:selectedTopicId'))
+    return problemStatements.find((topic) => topic.id === savedId) || problemStatements[0]
+  }
 
-  const [spinning, setSpinning] = useState(false);
-  const [rotation, setRotation] = useState(() => Number(readSavedValue('capstone:rotation', '0')));
-  const [selectedTopic, setSelectedTopic] = useState(readSavedTopic);
-  
-  const [ffLink, setFfLink] = useState(() => readSavedValue('capstone:ffLink'));
-  const [githubLink, setGithubLink] = useState(() => readSavedValue('capstone:githubLink'));
-  const [playStoreLink, setPlayStoreLink] = useState(() => readSavedValue('capstone:playStoreLink'));
-  const [demoLink, setDemoLink] = useState(() => readSavedValue('capstone:demoLink'));
-  const [submitted, setSubmitted] = useState(() => readSavedValue('capstone:submitted', 'false') === 'true');
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('capstone:rotation', String(rotation));
-  }, [rotation]);
+  const [spinning, setSpinning] = useState(false)
+  const [rotation, setRotation] = useState(() => Number(readSavedValue('capstone:rotation', '0')))
+  const [selectedTopic, setSelectedTopic] = useState(readSavedTopic)
+  const [ffLink, setFfLink] = useState(() => readSavedValue('capstone:ffLink'))
+  const [githubLink, setGithubLink] = useState(() => readSavedValue('capstone:githubLink'))
+  const [playStoreLink, setPlayStoreLink] = useState(() => readSavedValue('capstone:playStoreLink'))
+  const [demoLink, setDemoLink] = useState(() => readSavedValue('capstone:demoLink'))
+  const [documentDownloaded, setDocumentDownloaded] = useState(() => readSavedValue('capstone:documentDownloaded', 'false') === 'true')
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !selectedTopic) return;
-    window.localStorage.setItem('capstone:selectedTopicId', String(selectedTopic.id));
-  }, [selectedTopic]);
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem('capstone:rotation', String(rotation))
+  }, [rotation])
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
-    window.localStorage.setItem('capstone:ffLink', ffLink);
-    window.localStorage.setItem('capstone:githubLink', githubLink);
-    window.localStorage.setItem('capstone:playStoreLink', playStoreLink);
-    window.localStorage.setItem('capstone:demoLink', demoLink);
-    window.localStorage.setItem('capstone:submitted', String(submitted));
-  }, [ffLink, githubLink, playStoreLink, demoLink, submitted]);
+    if (typeof window === 'undefined' || !selectedTopic) return
+    window.localStorage.setItem('capstone:selectedTopicId', String(selectedTopic.id))
+  }, [selectedTopic])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    window.localStorage.setItem('capstone:ffLink', ffLink)
+    window.localStorage.setItem('capstone:githubLink', githubLink)
+    window.localStorage.setItem('capstone:playStoreLink', playStoreLink)
+    window.localStorage.setItem('capstone:demoLink', demoLink)
+    window.localStorage.setItem('capstone:documentDownloaded', String(documentDownloaded))
+  }, [ffLink, githubLink, playStoreLink, demoLink, documentDownloaded])
 
   const spinWheel = () => {
-    if (spinning || submitted) return;
-    setSpinning(true);
-    
-    const winIndex = Math.floor(Math.random() * problemStatements.length);
-    const segmentAngle = 360 / problemStatements.length;
-    const baseSpins = 360 * 6;
-    const targetAngle = 360 - (winIndex * segmentAngle + segmentAngle / 2);
-    const offset = (Math.random() - 0.5) * (segmentAngle * 0.7); 
-    const finalRotation = rotation + baseSpins - (rotation % 360) + targetAngle + offset;
+    if (spinning || documentDownloaded) return
+    setSpinning(true)
 
-    setRotation(finalRotation);
+    const winIndex = Math.floor(Math.random() * problemStatements.length)
+    const segmentAngle = 360 / problemStatements.length
+    const baseSpins = 360 * 6
+    const targetAngle = 360 - (winIndex * segmentAngle + segmentAngle / 2)
+    const offset = (Math.random() - 0.5) * (segmentAngle * 0.7)
+    const finalRotation = rotation + baseSpins - (rotation % 360) + targetAngle + offset
+
+    setRotation(finalRotation)
 
     setTimeout(() => {
-      setSpinning(false);
-      setSelectedTopic(problemStatements[winIndex]);
-    }, 4500);
-  };
+      setSpinning(false)
+      setSelectedTopic(problemStatements[winIndex])
+    }, 4500)
+  }
+
+  const handleTopicSelect = (topic) => {
+    if (spinning || documentDownloaded) return
+    setSelectedTopic(topic)
+  }
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    if (ffLink.trim() && githubLink.trim() && demoLink.trim()) setSubmitted(true);
-  };
+    e.preventDefault()
+    if (!ffLink.trim() || !githubLink.trim() || !demoLink.trim()) return
+
+    downloadCapstoneDocument({
+      selectedTopic,
+      ffLink,
+      githubLink,
+      playStoreLink,
+      demoLink,
+    })
+
+    setDocumentDownloaded(true)
+  }
+
+  const handlePrepareAnother = () => {
+    setDocumentDownloaded(false)
+  }
 
   return (
-    <div style={{ backgroundColor: '#0f0f13', minHeight: '100vh', color: '#fff', fontFamily: 'system-ui, -apple-system, sans-serif', overflowX: 'hidden' }}>
-      
-      {/* ─── FULL-WIDTH HERO ─── */}
-      <div style={{ position: 'relative', width: '100%', padding: 'clamp(6rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem) clamp(4rem, 8vw, 6rem)', background: 'linear-gradient(180deg, rgba(123, 47, 247, 0.15) 0%, rgba(15, 15, 19, 1) 100%)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-        <div style={{ position: 'absolute', top: -200, right: '10%', width: '800px', height: '800px', background: 'radial-gradient(circle, rgba(123,47,247,0.1) 0%, rgba(0,0,0,0) 70%)', zIndex: 0 }} />
-        <div style={{ position: 'absolute', bottom: -100, left: '5%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,45,85,0.08) 0%, rgba(0,0,0,0) 70%)', zIndex: 0 }} />
-        
-        <motion.div initial={{ opacity: 0, x: -40 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.8 }} style={{ position: 'relative', zIndex: 1, maxWidth: '1400px', margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', padding: '0.6rem 1.5rem', background: 'rgba(255, 45, 85, 0.12)', color: '#ff2d55', borderRadius: '50px', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '2rem', border: '1px solid rgba(255,45,85,0.4)', boxShadow: '0 0 20px rgba(255,45,85,0.2)' }}>
-            <span style={{ marginRight: '10px' }}>🚀</span> Final Capstone Project
-          </div>
-          <h1 style={{ fontSize: 'clamp(3rem, 7vw, 6rem)', fontWeight: 950, marginBottom: '2rem', lineHeight: '1', letterSpacing: '-0.04em' }}>
-            Build, Deploy & <br/>
-            <span style={{ background: 'linear-gradient(135deg, #ff2d55 0%, #7b2ff7 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Showcase Your Vision</span>
-          </h1>
-          <p style={{ color: '#b0b0cc', fontSize: '1.4rem', lineHeight: '1.6', maxWidth: '850px', fontWeight: 450 }}>
-            The final frontier of your FlutterFlow journey. Apply everything from Modules 1–5 to create a production-ready application that represents your unique potential as a developer.
-          </p>
-        </motion.div>
-      </div>
+    <div
+      style={{
+        minHeight: '100vh',
+        color: '#fff',
+        background: 'radial-gradient(circle at 12% 8%, rgba(123,47,247,0.18), transparent 24%), radial-gradient(circle at 88% 14%, rgba(255,45,85,0.14), transparent 24%), linear-gradient(180deg, #0a0d17 0%, #08111b 50%, #071521 100%)',
+        overflowX: 'hidden',
+      }}
+    >
+      <section style={{ padding: 'clamp(4rem, 8vw, 6rem) 0 2rem' }}>
+        <div className="wrap" style={{ display: 'grid', gap: '1.4rem' }}>
+          <span
+            style={{
+              width: 'max-content',
+              padding: '0.5rem 1rem',
+              borderRadius: '999px',
+              background: 'rgba(255,45,85,0.12)',
+              border: '1px solid rgba(255,45,85,0.28)',
+              color: '#ff7d9e',
+              fontSize: '0.76rem',
+              fontWeight: 800,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+            }}
+          >
+            Final Capstone Module
+          </span>
 
-      {/* ─── MAIN CONTENT CONTAINER (Expansive Width) ─── */}
-      <div style={{ maxWidth: '1440px', margin: '0 auto', padding: 'clamp(2rem, 5vw, 4rem) clamp(1.5rem, 5vw, 4rem) 8rem', display: 'flex', flexDirection: 'column', gap: 'clamp(4rem, 8vw, 6rem)' }}>
-        
-        {/* Objective & Phases Section (Offset Layout) */}
-        <div className="responsive-grid" style={{ gap: '3rem'  }}>
-          
-          <div style={{ flex: '1 1 min(100%, 500px)', minWidth: 0 }}>
-            <SectionTitle icon="🎯" color="#5ac8fa" style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)' }}>Project Objective</SectionTitle>
-            <p style={{ color: '#ffffff', fontSize: '1.25rem', marginBottom: '2rem', fontWeight: 500, lineHeight: 1.6 }}>
-              Your capstone must be a comprehensive, real-world solution. <br/>
-              Ensure your application integrates these core pillars:
-            </p>
-            <div className="responsive-grid" style={{ gap: '1rem'  }}>
-               <ListItem color="#5ac8fa">User Authentication</ListItem>
-               <ListItem color="#5ac8fa">Backend (Firebase/Supabase)</ListItem>
-               <ListItem color="#5ac8fa">Advanced State Mgmt</ListItem>
-               <ListItem color="#5ac8fa">Custom Functions/Code</ListItem>
-               <ListItem color="#5ac8fa">Immersive Animations</ListItem>
-               <ListItem color="#5ac8fa">Responsive Design System</ListItem>
-               <ListItem color="#5ac8fa">Git Branching Workflow</ListItem>
-               <ListItem color="#5ac8fa">App Store Deployment</ListItem>
-            </div>
-          </div>
-
-          <div style={{ flex: '1 1 min(100%, 400px)', minWidth: 0 }}>
-            <GlassCard style={{ height: '100%', borderLeft: '4px solid #ffcc00', padding: 'clamp(1.5rem, 5vw, 3rem)' }}>
-              <SectionTitle icon="⏱️" color="#ffcc00" style={{ fontSize: '1.5rem' }}>Timeline</SectionTitle>
-              <h4 style={{ fontSize: 'clamp(2rem, 5vw, 2.5rem)', fontWeight: 900, color: '#fff', marginBottom: '1rem' }}>2–4 Weeks</h4>
-              <p style={{ color: '#b0b0cc', lineHeight: 1.6 }}>Take your time to polish the UI, fix edge cases, and ensure the backend logic is bulletproof before the final submission.</p>
-              
-              <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                 <div style={{ display: 'flex', gap: '1rem' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#ffcc0020', border: '1px solid #ffcc00', color: '#ffcc00', display: 'grid', placeItems: 'center', fontWeight: 900, flexShrink: 0 }}>1</div>
-                    <div><p style={{ color: '#fff', fontWeight: 600, margin: 0 }}>Planning & Setup</p><span style={{ color: '#888', fontSize: '0.85rem' }}>Define flows & design system</span></div>
-                 </div>
-                 <div style={{ display: 'flex', gap: '1rem' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#ffcc0020', border: '1px solid #ffcc00', color: '#ffcc00', display: 'grid', placeItems: 'center', fontWeight: 900, flexShrink: 0 }}>2</div>
-                    <div><p style={{ color: '#fff', fontWeight: 600, margin: 0 }}>Core Development</p><span style={{ color: '#888', fontSize: '0.85rem' }}>Auth, Backend, Logic, Media</span></div>
-                 </div>
-                 <div style={{ display: 'flex', gap: '1rem' }}>
-                    <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: '#ffcc0020', border: '1px solid #ffcc00', color: '#ffcc00', display: 'grid', placeItems: 'center', fontWeight: 900, flexShrink: 0 }}>3</div>
-                    <div><p style={{ color: '#fff', fontWeight: 600, margin: 0 }}>Polish & Launch</p><span style={{ color: '#888', fontSize: '0.85rem' }}>Testing, Git export, Deployment</span></div>
-                 </div>
-              </div>
-            </GlassCard>
-          </div>
-        </div>
-
-        {/* ─── FULL-WIDTH INTEGRATED WHEEL & IDEAS SECTION ─── */}
-        <section style={{ width: '100vw', marginLeft: 'calc(-50vw + 50%)', background: 'rgba(255,255,255,0.02)', padding: 'clamp(4rem, 8vw, 6rem) 0', borderTop: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-          <div style={{ maxWidth: '1440px', margin: '0 auto', padding: '0 clamp(1.5rem, 5vw, 4rem)' }}>
-            <div style={{ textAlign: 'left', marginBottom: '4rem' }}>
-              <SectionTitle icon="💡" color="#ff2d55" style={{ fontSize: 'clamp(2.5rem, 6vw, 3rem)' }}>Suggested Ideas</SectionTitle>
-              <p style={{ color: '#b0b0cc', fontSize: '1.2rem', maxWidth: '800px' }}>
-                Pick a starting point that aligns with your passion. Each of these templates contains the complexity required to showcase your expertise.
+          <div className="responsive-grid" style={{ gap: '1.4rem', alignItems: 'end' }}>
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 'clamp(3rem, 7vw, 5.6rem)',
+                  lineHeight: 0.94,
+                  fontWeight: 950,
+                  letterSpacing: '-0.05em',
+                }}
+              >
+                Build the
+                <span style={{ display: 'block', background: 'linear-gradient(135deg, #ff2d55, #7b2ff7, #00f5d4)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  strongest thing in your portfolio
+                </span>
+              </h1>
+              <p style={{ margin: 0, color: '#b9c4df', fontSize: '1.08rem', lineHeight: 1.8, maxWidth: '760px' }}>
+                This capstone should feel like a real shipped product, not a classroom demo. Use the course stack end-to-end: product thinking, FlutterFlow UI, backend integration, logic, polish, testing, and deployment.
               </p>
             </div>
 
-            <div className="responsive-grid" style={{ gap: '4rem', alignItems: 'start'  }}>
-               
-               {/* Ideas Matrix */}
-               <div className="responsive-grid" style={{ gap: '1.5rem'  }}>
-                  {[
-                    { title: "E-commerce System", desc: "Cart, Checkout, Stripe Payments.", color: "#ff2d55" },
-                    { title: "Social Interaction", desc: "Feeds, Likes, Media Uploads.", color: "#5856d6" },
-                    { title: "Productivity Engine", desc: "Habits, Reminders, Analytics.", color: "#ff9500" },
-                    { title: "LMS Interface", desc: "Quizzes, Certificates, Progress.", color: "#4cd964" },
-                    { title: "Health Discovery", desc: "Meal Logs, Workout Plans.", color: "#5ac8fa" },
-                    { title: "Custom Vision", desc: "Bring your own unique concept.", color: "#ffcc00" }
-                  ].map((idea, idx) => (
-                    <motion.div key={idx} whileHover={{ y: -5, x: 5 }} transition={{ type: 'spring', stiffness: 300 }}
-                      style={{ background: 'rgba(255,255,255,0.03)', padding: '2rem', borderRadius: '24px', borderLeft: `6px solid ${idea.color}`, backdropFilter: 'blur(5px)' }}
-                    >
-                      <h4 style={{ color: '#fff', fontSize: '1.25rem', fontWeight: 800, marginBottom: '0.5rem' }}>{idea.title}</h4>
-                      <p style={{ color: '#8c8cae', margin: 0, fontSize: '1rem' }}>{idea.desc}</p>
-                    </motion.div>
-                  ))}
-               </div>
+            <SurfaceCard style={{ padding: '1.35rem' }}>
+              <div style={{ display: 'grid', gap: '0.9rem' }}>
+                <div style={{ color: '#ffcc00', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                  Delivery standard
+                </div>
+                <div style={{ color: '#fff', fontSize: '1.6rem', fontWeight: 900 }}>2–4 week production sprint</div>
+                <div style={{ color: '#b9c4df', lineHeight: 1.7 }}>
+                  Ship something you can defend technically. The final review should show clear product scope, backend reasoning, UI quality, and release readiness.
+                </div>
+              </div>
+            </SurfaceCard>
+          </div>
+        </div>
+      </section>
 
-               {/* Integrated Wheel Design */}
-               <div style={{ flex: '1 1 min(100%, 300px)', display: 'flex', flexDirection: 'column', alignItems: 'center', background: 'rgba(0,0,0,0.2)', padding: 'clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem)', borderRadius: '40px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                  <h3 style={{ color: '#fff', fontSize: '1.8rem', fontWeight: 900, marginBottom: '2.5rem', textAlign: 'center' }}>Can't decide? <br/><span style={{ color: '#7b2ff7' }}>Let fate select.</span></h3>
-                  
-                  <div style={{ position: 'relative', width: 'min(90vw, 300px)', height: 'min(90vw, 300px)', marginBottom: '3rem' }}>
-                    <div style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', width: 0, height: 0, borderLeft: '15px solid transparent', borderRight: '15px solid transparent', borderTop: '30px solid #fff', zIndex: 10, filter: 'drop-shadow(0px 5px 10px rgba(0,0,0,0.8))' }} />
-                    
-                    <motion.div
-                      style={{ width: '100%', height: '100%', borderRadius: '50%', border: '6px solid #2a2a35', overflow: 'hidden', position: 'relative', boxShadow: '0 0 50px rgba(123,47,247,0.4), inset 0 0 20px rgba(0,0,0,0.8)' }}
-                      animate={{ rotate: rotation }}
-                      transition={{ duration: 4.5, type: 'tween', ease: [0.1, 0.9, 0.2, 1] }}
-                    >
-                      <svg width="100%" height="100%" viewBox="0 0 380 380" style={{ transform: 'rotate(-90deg)', display: 'block' }}>
-                        {problemStatements.map((item, i) => {
-                          const N = problemStatements.length;
-                          const angle = 360 / N;
-                          const radius = 190;
-                          const cx = 190;
-                          const cy = 190;
-                          const startAngle = (i * angle) * (Math.PI / 180);
-                          const endAngle = ((i + 1) * angle) * (Math.PI / 180);
-                          const x1 = cx + radius * Math.cos(startAngle);
-                          const y1 = cy + radius * Math.sin(startAngle);
-                          const x2 = cx + radius * Math.cos(endAngle);
-                          const y2 = cy + radius * Math.sin(endAngle);
-                          const midAngle = (startAngle + endAngle) / 2;
-                          const textRadius = radius * 0.65;
-                          const textX = cx + textRadius * Math.cos(midAngle);
-                          const textY = cy + textRadius * Math.sin(midAngle);
-                          const textRotation = midAngle * (180 / Math.PI); 
-                          const words = item.title.split(' ');
-                          const line1 = words.slice(0, Math.ceil(words.length / 2)).join(' ');
-                          const line2 = words.slice(Math.ceil(words.length / 2)).join(' ');
-                          return (
-                            <g key={item.id}>
-                              <path d={`M ${cx} ${cy} L ${x1} ${y1} A ${radius} ${radius} 0 0 1 ${x2} ${y2} Z`} fill={item.themeColor} stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
-                              <text x={textX} y={textY} fill="#fff" fontSize="16" fontWeight="800" textAnchor="middle" dominantBaseline="middle" transform={`rotate(${textRotation}, ${textX}, ${textY})`} style={{ textShadow: '0px 2px 4px rgba(0,0,0,0.9)' }}>
-                                <tspan x={textX} dy="-0.6em">{line1}</tspan>
-                                <tspan x={textX} dy="1.2em">{line2}</tspan>
-                              </text>
-                            </g>
-                          );
-                        })}
-                      </svg>
-                      <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', borderRadius: '50%', background: '#1c1c24', border: '3px solid #fff', zIndex: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#fff' }}/>
-                      </div>
-                    </motion.div>
+      <section style={{ padding: '1rem 0 0' }}>
+        <div className="wrap" style={{ display: 'grid', gap: '3rem' }}>
+          <SectionIntro
+            eyebrow="Project Brief"
+            title="What your capstone must prove"
+            body="The capstone is your final synthesis task. It should demonstrate that you can turn a product idea into a responsive, data-backed application with thoughtful user flows and a release-ready surface."
+            accent="#5ac8fa"
+          />
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '1rem' }}>
+            {corePillars.map((pillar) => (
+              <SurfaceCard key={pillar.title} style={{ padding: '1.2rem', borderColor: `${pillar.accent}40`, background: `linear-gradient(160deg, ${pillar.accent}12, rgba(10,14,28,0.96))` }}>
+                <div style={{ color: pillar.accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.55rem' }}>
+                  Required
+                </div>
+                <div style={{ color: '#fff', fontSize: '1.08rem', fontWeight: 800, marginBottom: '0.45rem' }}>{pillar.title}</div>
+                <div style={{ color: '#b9c4df', lineHeight: 1.6, fontSize: '0.92rem' }}>{pillar.detail}</div>
+              </SurfaceCard>
+            ))}
+          </div>
+
+          <div className="responsive-grid" style={{ gap: '1rem', alignItems: 'stretch' }}>
+            <SurfaceCard style={{ padding: '1.35rem' }}>
+              <div style={{ color: '#5ac8fa', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+                Objective
+              </div>
+              <div style={{ color: '#fff', fontSize: '1.45rem', fontWeight: 900, marginBottom: '0.8rem' }}>Build a complete product slice</div>
+              <RequirementList
+                accent="#5ac8fa"
+                items={[
+                  'Real authentication flow',
+                  'Structured backend integration',
+                  'State-driven screens and actions',
+                  'Custom logic or external capability',
+                  'Media, motion, and responsive design',
+                  'Documented deployment-ready outcome',
+                ]}
+              />
+            </SurfaceCard>
+
+            <SurfaceCard style={{ padding: '1.35rem' }}>
+              <div style={{ color: '#ffcc00', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+                Timeline
+              </div>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                {timelinePhases.map((phase) => (
+                  <div key={phase.step} style={{ display: 'grid', gridTemplateColumns: '54px 1fr', gap: '0.9rem', alignItems: 'start' }}>
+                    <div style={{ width: '54px', height: '54px', borderRadius: '18px', background: 'rgba(255,204,0,0.12)', border: '1px solid rgba(255,204,0,0.28)', display: 'grid', placeItems: 'center', color: '#ffcc00', fontWeight: 900 }}>
+                      {phase.step}
+                    </div>
+                    <div>
+                      <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.25rem' }}>{phase.title}</div>
+                      <div style={{ color: '#b9c4df', lineHeight: 1.6 }}>{phase.desc}</div>
+                    </div>
                   </div>
-                  
-                  <motion.button 
-                    onClick={spinWheel} 
-                    disabled={spinning}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
+                ))}
+              </div>
+            </SurfaceCard>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '4rem 0 0' }}>
+        <div className="wrap" style={{ display: 'grid', gap: '2rem' }}>
+          <SectionIntro
+            eyebrow="Topic Lab"
+            title="Choose a problem worth shipping"
+            body="You can spin for a random direction or select a topic directly. The goal is not novelty for its own sake. Pick a shape that lets you demonstrate backend reasoning, polished UI, and meaningful product logic."
+            accent="#ff2d55"
+          />
+
+          <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'stretch' }}>
+            <div style={{ display: 'grid', gap: '1rem' }}>
+              {problemStatements.map((topic) => {
+                const isSelected = selectedTopic.id === topic.id
+                return (
+                  <motion.button
+                    key={topic.id}
+                    type="button"
+                    whileHover={{ y: -3 }}
+                    whileTap={{ scale: 0.99 }}
+                    onClick={() => handleTopicSelect(topic)}
                     style={{
-                      padding: 'clamp(1rem, 3vw, 1.2rem) clamp(1.5rem, 5vw, 4rem)', fontSize: 'clamp(1rem, 3vw, 1.3rem)', fontWeight: 900, borderRadius: '50px', textTransform: 'uppercase', letterSpacing: '2px',
-                      border: 'none', background: 'linear-gradient(135deg, #7b2ff7, #ff2d55)', color: '#fff', cursor: spinning ? 'not-allowed' : 'pointer',
-                      boxShadow: '0 20px 40px rgba(123, 47, 247, 0.4)', transition: 'all 0.3s'
+                      textAlign: 'left',
+                      padding: '1rem 1.05rem',
+                      borderRadius: '22px',
+                      cursor: spinning ? 'not-allowed' : 'pointer',
+                      border: `1px solid ${isSelected ? topic.themeColor : 'rgba(255,255,255,0.08)'}`,
+                      background: isSelected ? `${topic.themeColor}14` : 'rgba(255,255,255,0.03)',
+                      color: '#fff',
                     }}
                   >
-                    {spinning ? 'Deciding...' : 'Spin the Wheel!'}
-                  </motion.button>
-               </div>
-            </div>
-            
-            {/* Wheel Spin Result (Full-Width Popover style) */}
-            <div>
-              {selectedTopic && (
-                <motion.div initial={false} animate={{ opacity: 1, scale: 1 }} style={{ marginTop: '4rem' }}>
-                   <GlassCard style={{ borderLeft: `8px solid ${selectedTopic.themeColor}`, background: `${selectedTopic.themeColor}10` }}>
-                      <div style={{ display: 'flex', gap: '3rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <div style={{ flex: '1 1 min(100%, 300px)' }}>
-                           <span style={{ color: selectedTopic.themeColor, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', fontSize: '0.9rem' }}>{spinning ? 'Current Assignment' : 'Official Assignment'}</span>
-                           <h2 style={{ fontSize: 'clamp(2rem, 6vw, 3rem)', fontWeight: 900, margin: '1rem 0' }}>{selectedTopic.title}</h2>
-                           <p style={{ color: '#d0d0e0', fontSize: '1.2rem', lineHeight: 1.6 }}>{selectedTopic.description}</p>
-                        </div>
-                        <div style={{ flex: '1 1 min(100%, 300px)', background: 'rgba(0,0,0,0.2)', padding: 'clamp(1rem, 4vw, 2rem)', borderRadius: '24px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                           <h4 style={{ color: '#fff', fontWeight: 900, marginBottom: '1.5rem', fontSize: '1.1rem' }}>Engineering Requirements:</h4>
-                           <ul style={{ listStyle: 'none', padding: 0 }}>
-                              {selectedTopic.requirements.map((req, i) => (
-                                <ListItem key={i} color={selectedTopic.themeColor} icon="✦">{req}</ListItem>
-                              ))}
-                           </ul>
-                        </div>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.8rem', marginBottom: '0.45rem', alignItems: 'start', flexWrap: 'wrap' }}>
+                      <div style={{ color: topic.themeColor, fontWeight: 800, fontSize: '1rem' }}>{topic.title}</div>
+                      <div style={{ padding: '0.28rem 0.55rem', borderRadius: '999px', background: `${topic.themeColor}18`, color: topic.themeColor, fontSize: '0.68rem', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
+                        Topic {topic.id}
                       </div>
-                   </GlassCard>
+                    </div>
+                    <div style={{ color: '#b9c4df', lineHeight: 1.58, fontSize: '0.9rem' }}>{topic.description}</div>
+                  </motion.button>
+                )
+              })}
+            </div>
+
+            <TopicWheel rotation={rotation} spinning={spinning} onSpin={spinWheel} selectedTopic={selectedTopic} />
+          </div>
+
+          <motion.div
+            key={selectedTopic.id}
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.35 }}
+          >
+            <SurfaceCard style={{ padding: '1.4rem', borderLeft: `6px solid ${selectedTopic.themeColor}` }}>
+              <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'stretch' }}>
+                <div style={{ display: 'grid', gap: '0.8rem' }}>
+                  <div style={{ color: selectedTopic.themeColor, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                    Selected direction
+                  </div>
+                  <div style={{ color: '#fff', fontSize: 'clamp(1.8rem, 4vw, 2.8rem)', fontWeight: 900, lineHeight: 1.02 }}>
+                    {selectedTopic.title}
+                  </div>
+                  <div style={{ color: '#cfd8ee', lineHeight: 1.7, fontSize: '1rem' }}>
+                    {selectedTopic.description}
+                  </div>
+                </div>
+
+                <div style={{ borderRadius: '22px', padding: '1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.8rem' }}>Implementation requirements</div>
+                  <RequirementList items={selectedTopic.requirements} accent={selectedTopic.themeColor} />
+                </div>
+              </div>
+            </SurfaceCard>
+          </motion.div>
+        </div>
+      </section>
+
+      <section style={{ padding: '4rem 0 0' }}>
+        <div className="wrap" style={{ display: 'grid', gap: '2rem' }}>
+          <SectionIntro
+            eyebrow="Support Stack"
+            title="References and stretch goals"
+            body="Use references to reduce friction, but do not ship a clone. The strongest capstone submissions adapt patterns and then make deliberate product decisions of their own."
+            accent="#4cd964"
+          />
+
+          <div className="responsive-grid" style={{ gap: '1rem', alignItems: 'stretch' }}>
+            <SurfaceCard style={{ padding: '1.35rem' }}>
+              <div style={{ color: '#4cd964', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+                References
+              </div>
+              <div style={{ display: 'grid', gap: '0.85rem' }}>
+                {resourceLinks.map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      textDecoration: 'none',
+                      borderRadius: '18px',
+                      padding: '1rem',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: '1px solid rgba(255,255,255,0.08)',
+                      display: 'grid',
+                      gap: '0.35rem',
+                    }}
+                  >
+                    <span style={{ color: item.accent, fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>Open resource</span>
+                    <span style={{ color: '#fff', fontWeight: 800 }}>{item.name}</span>
+                    <span style={{ color: '#8ea4c8', fontSize: '0.88rem' }}>{item.url}</span>
+                  </a>
+                ))}
+              </div>
+            </SurfaceCard>
+
+            <SurfaceCard style={{ padding: '1.35rem' }}>
+              <div style={{ color: '#ff9500', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginBottom: '0.8rem' }}>
+                Bonus challenges
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 220px), 1fr))', gap: '0.9rem' }}>
+                {bonusChallenges.map((item) => (
+                  <div
+                    key={item.title}
+                    style={{
+                      borderRadius: '20px',
+                      padding: '1rem',
+                      background: 'rgba(255,255,255,0.03)',
+                      border: `1px solid ${item.accent}35`,
+                    }}
+                  >
+                    <div style={{ color: item.accent, fontWeight: 800, marginBottom: '0.4rem' }}>{item.title}</div>
+                    <div style={{ color: '#b9c4df', lineHeight: 1.58, fontSize: '0.9rem' }}>{item.desc}</div>
+                  </div>
+                ))}
+              </div>
+            </SurfaceCard>
+          </div>
+        </div>
+      </section>
+
+      <section style={{ padding: '4rem 0 6rem' }}>
+        <div className="wrap" style={{ display: 'grid', gap: '2rem' }}>
+          <SectionIntro
+            eyebrow="Submission"
+            title="Prepare the LMS submission document"
+            body="Enter the project links, download the Word submission package, add screenshots and notes in the document, then upload that completed file to the LMS."
+            accent="#7b2ff7"
+          />
+
+          <SurfaceCard style={{ padding: '1.35rem' }}>
+            <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start' }}>
+              <div style={{ display: 'grid', gap: '1rem' }}>
+                <div style={{ color: '#7b2ff7', fontSize: '0.72rem', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase' }}>
+                  Review checklist
+                </div>
+                <RequirementList
+                  accent="#7b2ff7"
+                  items={[
+                    'Working FlutterFlow project link',
+                    'Public GitHub repository',
+                    'Demo walkthrough video',
+                    'Downloaded Word package with screenshots added',
+                  ]}
+                />
+
+                <div style={{ padding: '1rem', borderRadius: '18px', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                  <div style={{ color: '#fff', fontWeight: 800, marginBottom: '0.35rem' }}>What happens after download</div>
+                  <div style={{ color: '#b9c4df', lineHeight: 1.65 }}>
+                    Open the generated Word file, insert app screenshots, add your implementation summary, save the final document, and upload that file in the LMS.
+                  </div>
+                </div>
+              </div>
+
+              {!documentDownloaded ? (
+                <form
+                  onSubmit={handleSubmit}
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
+                    gap: '1rem',
+                  }}
+                >
+                  <div style={{ display: 'grid', gap: '0.45rem' }}>
+                    <label style={{ color: '#dce5f8', fontWeight: 700, fontSize: '0.92rem' }}>FlutterFlow Project Link *</label>
+                    <input required type="url" value={ffLink} onChange={(e) => setFfLink(e.target.value)} placeholder="https://app.flutterflow.io/..." style={fieldStyle} />
+                  </div>
+                  <div style={{ display: 'grid', gap: '0.45rem' }}>
+                    <label style={{ color: '#dce5f8', fontWeight: 700, fontSize: '0.92rem' }}>GitHub Repository *</label>
+                    <input required type="url" value={githubLink} onChange={(e) => setGithubLink(e.target.value)} placeholder="https://github.com/you/repo" style={fieldStyle} />
+                  </div>
+                  <div style={{ display: 'grid', gap: '0.45rem' }}>
+                    <label style={{ color: '#dce5f8', fontWeight: 700, fontSize: '0.92rem' }}>Play Store / App Link</label>
+                    <input type="url" value={playStoreLink} onChange={(e) => setPlayStoreLink(e.target.value)} placeholder="Optional published link" style={fieldStyle} />
+                  </div>
+                  <div style={{ display: 'grid', gap: '0.45rem' }}>
+                    <label style={{ color: '#dce5f8', fontWeight: 700, fontSize: '0.92rem' }}>Demo Video *</label>
+                    <input required type="url" value={demoLink} onChange={(e) => setDemoLink(e.target.value)} placeholder="Loom / Drive / YouTube link" style={fieldStyle} />
+                  </div>
+
+                  <button
+                    type="submit"
+                    style={{
+                      gridColumn: '1 / -1',
+                      padding: '1rem 1.2rem',
+                      borderRadius: '18px',
+                      border: 'none',
+                      background: 'linear-gradient(135deg, #7b2ff7, #00f5d4)',
+                      color: '#07111b',
+                      fontWeight: 900,
+                      letterSpacing: '0.08em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Download Submission Document
+                  </button>
+                </form>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{
+                    borderRadius: '28px',
+                    padding: '2rem',
+                    background: 'linear-gradient(145deg, rgba(76,217,100,0.14), rgba(255,255,255,0.03))',
+                    border: '1px solid rgba(76,217,100,0.35)',
+                    display: 'grid',
+                    gap: '0.8rem',
+                    textAlign: 'center',
+                    placeItems: 'center',
+                  }}
+                >
+                  <div style={{ fontSize: '4rem' }}>🏁</div>
+                  <div style={{ color: '#fff', fontSize: '2rem', fontWeight: 900 }}>Submission document downloaded</div>
+                  <div style={{ color: '#d9e4f4', lineHeight: 1.7, maxWidth: '540px' }}>
+                    Add screenshots of the app inside the downloaded Word file, complete your implementation summary, save it, and upload that final document to the LMS.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handlePrepareAnother}
+                    style={{
+                      marginTop: '0.4rem',
+                      padding: '0.9rem 1.15rem',
+                      borderRadius: '16px',
+                      border: '1px solid rgba(255,255,255,0.14)',
+                      background: 'rgba(255,255,255,0.05)',
+                      color: '#f7f9ff',
+                      fontWeight: 800,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Regenerate Document
+                  </button>
                 </motion.div>
               )}
             </div>
-          </div>
-        </section>
-
-        {/* ─── REFERENCES & BONUS SECTION (Left Aligned Columns) ─── */}
-        <div className="responsive-grid" style={{ gap: 'clamp(2rem, 5vw, 4rem)'  }}>
-           <div style={{ flex: '1 1 min(100%, 300px)', minWidth: 0 }}>
-              <SectionTitle icon="🔗" color="#4cd964">Resources</SectionTitle>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-                 {[
-                   { name: "Sample Apps", url: "https://github.com/FlutterFlow/sample-apps", color: "#4cd964" },
-                   { name: "E-commerce Template", url: "https://github.com/TBR-Group/flutterflow_ecommerce", color: "#4cd964" },
-                   { name: "Quiz Creator", url: "https://github.com/extrawest/quiz_creation", color: "#4cd964" }
-                 ].map((link, i) => (
-                   <a key={i} href={link.url} target="_blank" rel="noreferrer" style={{ display: 'block' }}>
-                      <strong style={{ display: 'block', color: '#fff', fontSize: '1.1rem', marginBottom: '0.2rem' }}>{link.name}</strong>
-                      <span style={{ color: '#666', fontSize: '0.9rem' }}>View on GitHub →</span>
-                   </a>
-                 ))}
-              </div>
-           </div>
-
-           <div style={{ flex: '1 1 min(100%, 500px)', minWidth: 0 }}>
-              <GlassCard style={{ background: 'linear-gradient(135deg, rgba(255,149,0,0.1), transparent)', borderTop: '4px solid #ff9500', padding: 'clamp(1.5rem, 5vw, 3rem)' }}>
-                 <SectionTitle icon="🔥" color="#ff9500">Elite Bonus Challenges</SectionTitle>
-                 <div className="responsive-grid" style={{ gap: '2rem'  }}>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px' }}>
-                       <h5 style={{ color: '#ff9500', fontWeight: 800, marginBottom: '0.5rem' }}>AI Integration</h5>
-                       <p style={{ color: '#8c8cae', fontSize: '0.9rem', margin: 0 }}>Leverage Gemini or OpenAI custom actions to bring smart features.</p>
-                    </div>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px' }}>
-                       <h5 style={{ color: '#ff9500', fontWeight: 800, marginBottom: '0.5rem' }}>Real-time Sync</h5>
-                       <p style={{ color: '#8c8cae', fontSize: '0.9rem', margin: 0 }}>Implement listeners for live updates across multiple users.</p>
-                    </div>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px' }}>
-                       <h5 style={{ color: '#ff9500', fontWeight: 800, marginBottom: '0.5rem' }}>Full Domain Launch</h5>
-                       <p style={{ color: '#8c8cae', fontSize: '0.9rem', margin: 0 }}>Connect a custom domain and SSL to your FlutterFlow web export.</p>
-                    </div>
-                    <div style={{ background: 'rgba(255,255,255,0.05)', padding: '1.5rem', borderRadius: '16px' }}>
-                       <h5 style={{ color: '#ff9500', fontWeight: 800, marginBottom: '0.5rem' }}>Monetization</h5>
-                       <p style={{ color: '#8c8cae', fontSize: '0.9rem', margin: 0 }}>Integrate Google Ads or RevenueCat for in-app subscriptions.</p>
-                    </div>
-                 </div>
-              </GlassCard>
-           </div>
+          </SurfaceCard>
         </div>
-
-        {/* ─── SUBMISSION SUB-FOOTER ─── */}
-        <GlassCard style={{ border: '2px solid #7b2ff7', background: 'radial-gradient(circle at top right, rgba(123, 47, 247, 0.1), transparent 70%)' }}>
-          <div className="responsive-grid" style={{ gap: '4rem', alignItems: 'center'  }}>
-            <div>
-              <SectionTitle icon="⭐" color="#7b2ff7">Final Submission</SectionTitle>
-              <p style={{ color: '#b0b0cc', fontSize: '1.1rem', lineHeight: 1.6 }}>Ready to showcase? Please provide the public URLs for your project. Our instructors will evaluate the tech stack, UI polish, and functional logic.</p>
-              <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#00000030', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                 <p style={{ color: '#fff', fontWeight: 700, fontSize: '0.9rem', marginBottom: '0.5rem' }}>Required Documentation:</p>
-                 <span style={{ color: '#888', fontSize: '0.85rem' }}>Must include a README.md with screenshots, tech stack, and a summary of your problem-solving approach.</span>
-              </div>
-            </div>
-
-            {!submitted ? (
-               <form onSubmit={handleSubmit} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: '1.5rem' }}>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                     <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>Project URL *</label>
-                     <input required type="url" value={ffLink} onChange={e=>setFfLink(e.target.value)} placeholder="FlutterFlow Link" style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                     <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>GitHub Repo *</label>
-                     <input required type="url" value={githubLink} onChange={e=>setGithubLink(e.target.value)} placeholder="github.com/you/..." style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                     <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>Play Store Link</label>
-                     <input type="url" value={playStoreLink} onChange={e=>setPlayStoreLink(e.target.value)} placeholder="Play Store Link (Optional)" style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                     <label style={{ color: '#fff', fontSize: '0.9rem', fontWeight: 700 }}>Demo Video *</label>
-                     <input required type="url" value={demoLink} onChange={e=>setDemoLink(e.target.value)} placeholder="Loom/Drive Video" style={{ padding: '1.2rem', borderRadius: '16px', background: '#ffffff05', border: '1.5px solid #ffffff10', color: '#fff', outline: 'none' }} />
-                  </div>
-                  <button type="submit" style={{ gridColumn: '1 / -1', marginTop: '1rem', padding: 'clamp(1rem, 3vw, 1.5rem)', background: '#fff', color: '#000', fontWeight: 900, fontSize: 'clamp(1rem, 3vw, 1.2rem)', borderRadius: '16px', border: 'none', cursor: 'pointer', transition: '0.2s' }} onMouseOver={e=>e.currentTarget.style.transform='scale(1.01)'} onMouseOut={e=>e.currentTarget.style.transform='scale(1)'}>
-                    Initialize Final Submission
-                  </button>
-               </form>
-            ) : (
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{ padding: '4rem', gridColumn: '1 / 3', textAlign: 'center', background: 'rgba(76, 217, 100, 0.1)', borderRadius: '30px', border: '1.5px solid #4cd964' }}>
-                 <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🏆</div>
-                 <h2 style={{ fontSize: '2.5rem', fontWeight: 900, color: '#fff', marginBottom: '1rem' }}>Mission Accomplished</h2>
-                 <p style={{ color: '#c8c8e0', fontSize: '1.2rem' }}>Our team has received your application. Prepare for your final evaluation!</p>
-              </motion.div>
-            )}
-          </div>
-        </GlassCard>
-
-        {/* Dynamic Footer Tips */}
-        <div style={{ padding: 'clamp(1.5rem, 4vw, 3rem)', background: 'rgba(255,255,255,0.02)', borderRadius: '100px', display: 'flex', flexWrap: 'wrap', gap: 'clamp(1rem, 4vw, 3rem)', alignItems: 'center', justifyContent: 'center', border: '1px solid rgba(255,255,255,0.05)' }}>
-           <div style={{ display: 'flex', gap: '0.5rem', color: '#ff2d55', fontWeight: 800 }}><span>01</span> Test Locally</div>
-           <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#333' }} />
-           <div style={{ display: 'flex', gap: '0.5rem', color: '#7b2ff7', fontWeight: 800 }}><span>02</span> Iterate Design</div>
-           <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#333' }} />
-           <div style={{ display: 'flex', gap: '0.5rem', color: '#00f5d4', fontWeight: 800 }}><span>03</span> Document Flow</div>
-           <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#333' }} />
-           <div style={{ display: 'flex', gap: '0.5rem', color: '#ffcc00', fontWeight: 800 }}><span>04</span> Deploy & Share</div>
-        </div>
-
-      </div>
+      </section>
     </div>
-  );
+  )
 }
