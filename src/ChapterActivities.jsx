@@ -4690,7 +4690,7 @@ function HistoryRescueActivity({ activity, accent }) {
         </div>
       </div>
 
-      <div style={{
+      <div className="env-incident-shell" style={{
         borderRadius: '24px',
         padding: '1.1rem',
         background: 'linear-gradient(155deg, rgba(7,11,24,0.98), rgba(9,14,30,0.95))',
@@ -5426,7 +5426,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
         background: 'radial-gradient(circle at 12% 18%, rgba(108,240,168,0.18), transparent 24%), radial-gradient(circle at 88% 16%, rgba(97,168,255,0.14), transparent 22%), linear-gradient(155deg, rgba(6,12,24,0.99), rgba(5,20,28,0.97))',
         boxShadow: `0 30px 80px ${hexToRgba(accent, 0.12)}`,
       }}>
-        <div style={{ padding: '1.1rem 1.15rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="env-incident-header" style={{ padding: '1.1rem 1.15rem', borderBottom: '1px solid rgba(255,255,255,0.08)', display: 'flex', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap', alignItems: 'center' }}>
           <div>
             <div style={{ color: accent, fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '0.35rem' }}>
               Environment command wall
@@ -5435,7 +5435,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
               {isDone ? 'All incidents stabilized' : `${incident.title} · ${currentIncident + 1}/${totalIncidents}`}
             </div>
           </div>
-          <div style={{ minWidth: '220px', flex: '0 0 240px' }}>
+          <div className="env-incident-meter" style={{ minWidth: '220px', flex: '0 0 240px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', color: '#8ea4c8', fontSize: '0.76rem', marginBottom: '0.45rem' }}>
               <span>Integrity</span>
               <span>{integrity}%</span>
@@ -5446,7 +5446,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
           </div>
         </div>
 
-        <div className="responsive-grid" style={{ gap: '1.2rem', alignItems: 'start', padding: '1.2rem' }}>
+        <div className="responsive-grid env-incident-body" style={{ gap: '1.2rem', alignItems: 'start', padding: '1.2rem' }}>
           <div style={{ display: 'grid', gap: '1rem' }}>
             <div style={{ borderRadius: '26px', padding: '1.15rem', background: 'rgba(255,255,255,0.035)', border: `1px solid ${hexToRgba(accent, 0.18)}` }}>
               <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.45rem' }}>
@@ -5559,7 +5559,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.8rem' }}>
+            <div className="env-incident-selected-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.8rem' }}>
               <div style={{ borderRadius: '20px', padding: '0.95rem 1rem', background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
                 <div style={{ color: '#8ea4c8', fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.14em', marginBottom: '0.35rem' }}>
                   Selected environment
@@ -5625,7 +5625,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
                           {envSignals[item.id].code}
                         </div>
                         <div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem', alignItems: 'start' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', gap: '0.75rem', marginBottom: '0.4rem', alignItems: 'start', flexWrap: 'wrap' }}>
                             <div style={{ color: item.color, fontWeight: 800, fontSize: '0.98rem' }}>{item.label}</div>
                             <div style={{ padding: '0.3rem 0.55rem', borderRadius: '999px', background: hexToRgba(item.color, 0.12), color: item.color, fontSize: '0.68rem', letterSpacing: '0.12em', textTransform: 'uppercase', fontWeight: 800 }}>
                               {item.role}
@@ -5736,7 +5736,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
           </div>
         </div>
 
-        <div className="responsive-grid" style={{ gap: '1rem', alignItems: 'start', padding: '0 1.2rem 1.2rem' }}>
+        <div className="responsive-grid env-incident-footer" style={{ gap: '1rem', alignItems: 'start', padding: '0 1.2rem 1.2rem' }}>
           <div style={{
             borderRadius: '24px',
             padding: '1.1rem',
@@ -5829,7 +5829,7 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
           </div>
         </div>
 
-        <div style={{ padding: '0 1.2rem 1.2rem' }}>
+        <div className="env-incident-log-wrap" style={{ padding: '0 1.2rem 1.2rem' }}>
           <div style={{
             borderRadius: '24px',
             padding: '1.1rem',
@@ -5867,6 +5867,31 @@ function EnvironmentIncidentConsoleActivity({ activity, accent }) {
             </div>
           </div>
         </div>
+
+        <style>{`
+          @media (max-width: 720px) {
+            .env-incident-header {
+              padding: 0.95rem !important;
+            }
+
+            .env-incident-meter {
+              min-width: 0 !important;
+              flex: 1 1 100% !important;
+            }
+
+            .env-incident-body,
+            .env-incident-footer,
+            .env-incident-log-wrap {
+              padding-left: 0.95rem !important;
+              padding-right: 0.95rem !important;
+              padding-bottom: 0.95rem !important;
+            }
+
+            .env-incident-selected-grid {
+              grid-template-columns: 1fr !important;
+            }
+          }
+        `}</style>
       </div>
 
       <CelebrationOverlay active={showCelebration} />
